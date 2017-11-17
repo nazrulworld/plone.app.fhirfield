@@ -2,12 +2,12 @@
     :target: https://pypi.python.org/pypi/plone.recipe.sublimetext/
     :alt: Egg Status
 
-.. image:: https://img.shields.io/travis/collective/plone.recipe.sublimetext/master.svg
-    :target: http://travis-ci.org/collective/plone.recipe.sublimetext
+.. image:: https://img.shields.io/travis/nazrulworld/plone.app.fhirfield/master.svg
+    :target: http://travis-ci.org/nazrulworld/plone.app.fhirfield
     :alt: Travis Build Status
 
-.. image:: https://img.shields.io/coveralls/collective/plone.recipe.sublimetext/master.svg
-    :target: https://coveralls.io/r/collective/plone.recipe.sublimetext
+.. image:: https://img.shields.io/coveralls/nazrulworld/plone.app.fhirfield/master.svg
+    :target: https://coveralls.io/r/nazrulworld/plone.app.fhirfield
     :alt: Test Coverage
 
 .. image:: https://img.shields.io/pypi/pyversions/plone.recipe.sublimetext.svg
@@ -63,15 +63,15 @@ Links
 
 Code repository:
 
-    https://github.com/collective/plone.recipe.sublimetext
+    https://github.com/nazrulworld/plone.app.fhirfield
 
 Continuous Integration:
 
-    https://travis-ci.org/collective/plone.recipe.sublimetext
+    https://travis-ci.org/nazrulworld/plone.app.fhirfield
 
 Issue Tracker:
 
-    https://github.com/collective/plone.recipe.sublimetext/issues
+    https://github.com/nazrulworld/plone.app.fhirfield/issues
 
 
 
