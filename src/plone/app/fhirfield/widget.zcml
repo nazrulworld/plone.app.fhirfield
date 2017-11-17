@@ -1,0 +1,60 @@
+<configure
+    i18n_domain="plone.app.fhirfield"
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:z3c="http://namespaces.zope.org/z3c"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+    <include file="meta.zcml" package="z3c.form" />
+    <include package="z3c.form" />
+    <!--
+      register data converter for FhirResourceWidget
+    -->
+    <adapter
+        factory=".widget.FhirResourceConverter"
+        for=".interfaces.IFhirResourceField
+             .widget.IFhirResourceWidget"
+    />
+    <!--
+      also register a data converter for the basic z3c.form ITextAreaWidget,
+      so it can be used without json editor.
+     -->
+    <adapter
+        factory=".widget.FhirResourceAreaConverter"
+        for=".interfaces.IFhirResourceField
+             z3c.form.interfaces.ITextAreaWidget"
+    />
+    <!--
+        register new widget
+    -->
+  <class class=".widget.FhirResourceWidget">
+    <require
+        interface=".widget.IFhirResourceWidget"
+        permission="zope.Public"
+    />
+  </class>
+
+  <z3c:widgetTemplate
+      layer="z3c.form.interfaces.IFormLayer"
+      mode="display"
+      template="templates/widget/display.pt"
+      widget=".widget.IFhirResourceWidget"
+  />
+  <z3c:widgetTemplate
+      layer="z3c.form.interfaces.IFormLayer"
+      mode="input"
+      template="templates/widget/input.pt"
+      widget=".widget.IFhirResourceWidget"
+  />
+  <adapter factory=".widget.FhirResourceFieldWidget" />
+  <!--
+    register alternative template for ITextAreaWidget display in order to
+    render FhirResourceValue as json string
+  -->
+  <z3c:widgetTemplate
+      layer="plone.app.z3cform.interfaces.IPloneFormLayer"
+      mode="display"
+      template="templates/widget/textarea_display.pt"
+      widget="z3c.form.interfaces.ITextAreaWidget"
+      zcml:condition="installed plone.app.z3cform"
+  />
+</configure>

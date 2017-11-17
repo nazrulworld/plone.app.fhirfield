@@ -1,7 +1,8 @@
 # _*_ coding: utf-8 _*_
 from importlib import import_module
 from plone.app.fhirfield import _
-from zope.interafce import Invalid
+from plone.app.fhirfield.compat import json
+from zope.interface import Invalid
 
 import six
 import sys
@@ -49,3 +50,12 @@ def import_string(dotted_path):
         msg = 'Module "{0}" does not define a "{1}" attribute/class'.format(
             module_path, class_name)
         six.reraise(ImportError, ImportError(msg), sys.exc_info()[2])
+
+
+def parse_json_str(self, str_val):
+    """ """
+    try:
+        json_dict = json.dumps(str_val, encoding='utf-8')
+    except ValueError as exc:
+        raise Invalid('Invalid JSON String is provided!\n{0!s}'.format(exc))
+    return json_dict

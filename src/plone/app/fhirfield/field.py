@@ -10,7 +10,6 @@ from plone.app.fhirfield.value import FhirResourceValue
 from zope.interface import implementer
 from zope.interface import Invalid
 from zope.schema import Object
-from plone.schemaeditor.fields import FieldFactory
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
 from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import WrongType
@@ -55,8 +54,6 @@ class FhirResourceField(Object):
         """ """
         json_dict = self.parse_str(str_val)
 
-        self.validate_extra(json_dict)
-
         return self.from_dict(json_dict)
 
     def from_dict(self, dict_value):
@@ -98,6 +95,3 @@ class FhirResourceField(Object):
 
         if not self.constraint(value):
             raise ConstraintNotSatisfied(value)
-
-
-FhirResourceFieldFactory = FieldFactory(FhirResourceField, _(u'FHIR Resource Field'))
