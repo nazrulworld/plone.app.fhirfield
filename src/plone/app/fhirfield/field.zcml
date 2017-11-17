@@ -1,0 +1,22 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="plone.app.fhirfield">
+
+  <class class=".field.FhirResourceField">
+    <implements interface=".intrefaces.IFhirResourceFieldEdit" />
+  </class>
+
+  <utility
+      name="plone.app.fhirfield.FhirResourceField"
+      component=".field.FhirResourceFieldFactory"
+    />
+    <!--Serializer for REST API -->
+    <configure zcml:condition="installed plone.restapi">
+        <adapter factory=".serializer.FhirResourceFieldSerializer" />
+    </configure>
+
+    <!-- Deserializer for REST API -->
+    <configure zcml:condition="installed plone.restapi">
+        <adapter factory=".deserializer.FhirResourceFieldDeserializer" />
+    </configure>
+</configure>
