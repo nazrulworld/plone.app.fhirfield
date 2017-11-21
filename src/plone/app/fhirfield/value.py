@@ -39,8 +39,9 @@ class FhirResourceValue(object):
 
     def stringify(self):
         """ """
-        json_dict = self.as_json()
-        return json_dict is not None and json.dumps(json_dict, encoding=self._encoding) or ''
+        return self._storage.raw is not None and \
+            json.dumps(self._storage.raw.as_json(), encoding=self._encoding) or \
+            ''
 
     def json_patch(self, patch):
         """ """

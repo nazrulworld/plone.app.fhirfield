@@ -45,6 +45,12 @@
       template="templates/widget/input.pt"
       widget=".widget.IFhirResourceWidget"
   />
+  <z3c:widgetTemplate
+      layer="z3c.form.interfaces.IFormLayer"
+      mode="hidden"
+      template="templates/widget/hidden.pt"
+      widget=".widget.IFhirResourceWidget"
+  />
   <adapter factory=".widget.FhirResourceFieldWidget" />
   <!--
     register alternative template for ITextAreaWidget display in order to
