@@ -26,7 +26,7 @@
 
     <!-- Configure plone.schemaeditor field factory if installed -->
     <include zcml:condition="installed plone.schemaeditor"
-        file="editor.zcml"
+        file="schemaeditor.zcml"
     />
 
     <!-- Configure plone.restapi serializer  if installed -->

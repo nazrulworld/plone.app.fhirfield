@@ -3,11 +3,10 @@
 from plone.app.fhirfield import _
 from zope.interface import Attribute
 from zope.interface import Interface
-from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import IObject
 
 
-class IFhirResource(Interface):
+class IFhirResourceModel(Interface):
     """ """
     resource_type = Attribute(
         'resource_type',
@@ -15,17 +14,13 @@ class IFhirResource(Interface):
     )
 
 
-class IFhirResourceField(IObject):
+class IFhirResource(IObject):
     """ """
     model = Attribute('model', _('FHIR Resource Model from fhirclient'))
     resource_type = Attribute('resource_type', _('FHIR Resource Type'))
 
     def from_dict(dict_value):
         pass
-
-
-class IFhirResourceFieldEdit(IFhirResourceField, IFromUnicode):
-    """ """
 
 
 class IFhirResourceValue(Interface):

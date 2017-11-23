@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
-from plone.app.fhirfield.interfaces import IFhirResourceField
+from plone.app.fhirfield.interfaces import IFhirResource
 from plone.dexterity.interfaces import IDexterityContent
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
@@ -11,9 +11,9 @@ from zope.interface import Interface
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 
-@adapter(IFhirResourceField, IDexterityContent, Interface)
+@adapter(IFhirResource, IDexterityContent, Interface)
 @implementer(IFieldSerializer)
-class FhirResourceFieldSerializer(DefaultFieldSerializer):
+class FhirResourceSerializer(DefaultFieldSerializer):
 
     def __init__(self, field, context, request):
         self.context = context

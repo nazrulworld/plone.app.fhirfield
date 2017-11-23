@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from plone.app.fhirfield.field import FhirResourceField
-from plone.app.fhirfield.interfaces import IFhirResourceField
+from plone.app.fhirfield.field import FhirResource
+from plone.app.fhirfield.interfaces import IFhirResource
 from plone.supermodel.exportimport import BaseHandler
 from plone.supermodel.interfaces import IToUnicode
 from zope.component import adapter
@@ -10,7 +10,7 @@ from zope.interface import implementer
 __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 
 
-class FhirResourceFieldHandler_(BaseHandler):
+class FhirResourceHandler_(BaseHandler):
     """Special handling for the FhirResourceField field, to deal with 'default'
     that may be unicode.
     """
@@ -20,11 +20,11 @@ class FhirResourceFieldHandler_(BaseHandler):
     filteredAttributes.update({'schema': 'rw'})
 
     def __init__(self, klass):
-        super(FhirResourceFieldHandler_, self).__init__(klass)
+        super(FhirResourceHandler_, self).__init__(klass)
 
 
 @implementer(IToUnicode)
-@adapter(IFhirResourceField)
+@adapter(IFhirResource)
 class FhirResourceToUnicode(object):
 
     def __init__(self, context):
@@ -34,4 +34,4 @@ class FhirResourceToUnicode(object):
         return value.stringfy()
 
 
-FhirResourceFieldHandler = FhirResourceFieldHandler_(FhirResourceField)
+FhirResourceHandler = FhirResourceHandler_(FhirResource)

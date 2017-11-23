@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
 from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
-from plone.app.fhirfield.interfaces import IFhirResourceField
+from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.value import FhirResourceValue
 from z3c.form.browser.textarea import TextAreaWidget
@@ -36,7 +36,7 @@ class FhirResourceWidget(TextAreaWidget):
         addFieldClass(self)
 
 
-@adapter(IFhirResourceField, IFormLayer)
+@adapter(IFhirResource, IFormLayer)
 @implementer(IFieldWidget)
 def FhirResourceFieldWidget(field, request):
     """IFieldWidget factory for FhirResourceWidget."""

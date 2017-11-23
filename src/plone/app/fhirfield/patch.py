@@ -7,6 +7,6 @@ def monkey_patch_fhir_base_model():
     """" """
     from zope.interfaces import implementer
     import fhirclient.model.resource
-    from plone.app.fhirfield.interfaces import IFhirResource
-    # We forcely implement IFhirResource
-    fhirclient.model.resource.Resource = implementer(IFhirResource)(fhirclient.model.resource.Resource)
+    from plone.app.fhirfield.interfaces import IFhirResourceModel
+    # We forcely implement IFhirResourceModel
+    fhirclient.model.resource.Resource = implementer(IFhirResourceModel)(fhirclient.model.resource.Resource)

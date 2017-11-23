@@ -1,6 +1,6 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
     <!-- Deserializer for REST API -->
-    <adapter factory=".deserializer.FhirResourceFieldDeserializer" />
+    <adapter factory=".deserializer.FhirResourceDeserializer" />
 
 </configure>

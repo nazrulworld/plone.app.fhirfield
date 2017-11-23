@@ -4,8 +4,8 @@
 
   <!-- plone.supermodel configuration -->
   <utility
-      component=".handler.FhirResourceFieldHandler"
-      name="plone.app.fhirfield.FhirResourceField"
+      component=".handler.FhirResourceHandler"
+      name="plone.app.fhirfield.FhirResource"
       />
   <adapter
       factory=".handler.FhirResourceToUnicode"

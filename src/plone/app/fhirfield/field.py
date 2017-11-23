@@ -4,7 +4,7 @@ from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.helpers import import_string
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
 from plone.app.fhirfield.interfaces import IFhirResource
-from plone.app.fhirfield.interfaces import IFhirResourceField
+from plone.app.fhirfield.interfaces import IFhirResourceModel
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.value import FhirResourceValue
 from zope.interface import implementer
@@ -21,8 +21,8 @@ import six
 __author__ = 'Md Nazrul Islam<nazrul@zitelab.dk>'
 
 
-@implementer(IFhirResourceField, IFromUnicode)
-class FhirResourceField(Object):
+@implementer(IFhirResource, IFromUnicode)
+class FhirResource(Object):
     """FHIR Resource field"""
 
     def __init__(self, model=None, resource_type=None, schema=IFhirResourceValue, **kw):
@@ -34,7 +34,7 @@ class FhirResourceField(Object):
             self.model = import_string(self.model)
 
         if inspect.isclass(self.model):
-            if not IFhirResource.implementedBy(self.model):
+            if not IFhirResourceModel.implementedBy(self.model):
                 raise Invalid(_('{0} must be valid model class from fhirclient.model'.format(self.model)))
 
         if self.resource_type and self.model is not None:
@@ -48,7 +48,7 @@ class FhirResourceField(Object):
             if isinstance(default, six.string_types):
                 kw['default'] = self.fromUnicode(default)
 
-        super(FhirResourceField, self).__init__(schema=schema, **kw)
+        super(FhirResource, self).__init__(schema=schema, **kw)
 
     def fromUnicode(self, str_val):
         """ """
@@ -95,3 +95,4 @@ class FhirResourceField(Object):
 
         if not self.constraint(value):
             raise ConstraintNotSatisfied(value)
+    # def _validate(self, value):

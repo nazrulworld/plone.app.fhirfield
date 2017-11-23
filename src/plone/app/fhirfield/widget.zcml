@@ -11,7 +11,7 @@
     -->
     <adapter
         factory=".widget.FhirResourceConverter"
-        for=".interfaces.IFhirResourceField
+        for=".interfaces.IFhirResource
              .widget.IFhirResourceWidget"
     />
     <!--
@@ -20,7 +20,7 @@
      -->
     <adapter
         factory=".widget.FhirResourceAreaConverter"
-        for=".interfaces.IFhirResourceField
+        for=".interfaces.IFhirResource
              z3c.form.interfaces.ITextAreaWidget"
     />
     <!--
@@ -56,6 +56,7 @@
     register alternative template for ITextAreaWidget display in order to
     render FhirResourceValue as json string
   -->
+  <!--
   <z3c:widgetTemplate
       layer="plone.app.z3cform.interfaces.IPloneFormLayer"
       mode="display"
@@ -63,4 +64,5 @@
       widget="z3c.form.interfaces.ITextAreaWidget"
       zcml:condition="installed plone.app.z3cform"
   />
+  -->
 </configure>
