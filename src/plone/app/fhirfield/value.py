@@ -51,7 +51,7 @@ class FhirResourceValue(object):
         """ """
         if raw is not None:
             # Let's validate first
-            if IFhirResource.provideBy(raw):
+            if IFhirResource.providedBy(raw):
                 raise WrongType('Object must be derived from valid FHIR resource model class!')
             try:
                 raw.as_json()

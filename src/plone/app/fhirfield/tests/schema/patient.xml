@@ -1,0 +1,24 @@
+<model xmlns:form="http://namespaces.plone.org/supermodel/form"
+       xmlns:security="http://namespaces.plone.org/supermodel/security"
+       xmlns="http://namespaces.plone.org/supermodel/schema">
+  <schema>
+    <field name="name" type="zope.schema.TextLine">
+      <description/>
+      <title>Name</title>
+    </field>
+    <field name="description" type="zope.schema.Text">
+      <description/>
+      <title>A short summary</title>
+    </field>
+    <field name="bio" type="plone.app.textfield.RichText">
+      <description/>
+      <required>False</required>
+      <title>Bio</title>
+    </field>
+    <field name="photo" type="plone.namedfile.field.NamedBlobImage">
+      <description>Please upload an image.</description>
+      <required>False</required>
+      <title>Photo</title>
+    </field>I
+  </schema>
+</model>

@@ -57,6 +57,14 @@
         post_handler=".setuphandlers.uninstall"
     />
 
+    <genericsetup:registerProfile
+        name="testing"
+        title="plone.app.fhirfield (testing)"
+        directory="profiles/testing"
+        description="Testing the plone.app.fhirfield add-on."
+        provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
     <utility
         factory=".setuphandlers.HiddenProfiles"
         name="plone.app.fhirfield-hiddenprofiles"

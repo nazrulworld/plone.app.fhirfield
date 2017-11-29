@@ -19,7 +19,7 @@ class FhirResourceDeserializer(DefaultFieldDeserializer):
 
     def __call__(self, value):
         """ """
-        if isinstance(value, six):
+        if isinstance(value, six.string_types):
             return IFhirResource(self.field).fromUnicode(value)
         elif isinstance(value, dict):
             return IFhirResource(self.field).from_dict(value)

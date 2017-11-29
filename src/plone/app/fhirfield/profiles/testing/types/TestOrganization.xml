@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="Organization"
+    name="TestOrganization"
     meta_type="Dexterity FTI"
-    i18n:domain="danbio.touch.api">
+    i18n:domain="plone.app.fhirfield">
 
   <!-- Basic properties -->
   <property
@@ -13,44 +13,32 @@
       name="description">FHIR Resourcees</property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">Organization</property>
+  <property name="factory">TestOrganization</property>
   <property name="icon_expr"></property>
   <property name="link_target"></property>
 
   <!-- Hierarchy control -->
   <property name="allowed_content_types" purge="False">
-    <element value="Patient"/>
-    <element value="Questionnaire"/>
-    <element value="ValueSet"/>
+    <element value="TestPatient"/>
   </property>
   <property name="filter_content_types">True</property>
-  <property name="global_allow">False</property>
+  <property name="global_allow">True</property>
 
   <!-- Schema, class and security -->
-  <property name="add_permission">danbio.touch.api.AddOrganization</property>
-  <property name="klass">danbio.touch.api.content.organization.Organization</property>
+  <property name="add_permission">cmf.ManagePortal</property>
+  <property name="klass">plone.app.fhirfield.tests.schema.TestOrganization</property>
   <property name="model_file"></property>
   <property name="model_source"></property>
-  <property name="schema">danbio.touch.api.schema.organization.IOrganization</property>
+  <property name="schema">plone.app.fhirfield.tests.schema.ITestOrganization</property>
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
-    <!-- <element value="plone.app.content.interfaces.INameFromTitle"/>
-    <element value="plone.app.dexterity.behaviors.discussion.IAllowDiscussion"/>
-    <element value="plone.app.dexterity.behaviors.exclfromnav.IExcludeFromNavigation"/>
-    <element value="plone.app.dexterity.behaviors.id.IShortName"/> -->
     <element value="plone.app.dexterity.behaviors.metadata.IDublinCore"/>
-    <!--<element value="plone.app.referenceablebehavior.referenceable.IReferenceable" />-->
-    <!--<element value="plone.app.lockingbehavior.behaviors.ILocking" />-->
     <element value="plone.app.dexterity.behaviors.metadata.IBasic"/>
-    <!--<element value="plone.app.relationfield.behavior.IRelatedItems"/>-->
-    <!--<element value="plone.app.versioningbehavior.behaviors.IVersionable" />-->
-    <!--<element value="plone.app.contenttypes.behaviors.tableofcontents.ITableOfContents"/>-->
-    <!--<element value="plone.app.contenttypes.behaviors.richtext.IRichText"/>-->
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++Organization</property>
+  <property name="add_view_expr">string:${folder_url}/++add++TestOrganization</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>

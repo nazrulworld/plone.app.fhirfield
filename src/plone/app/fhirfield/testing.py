@@ -5,23 +5,45 @@ from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
 from plone.testing import z2
+from zope.configuration import xmlconfig
 
-import plone.app.fhirfield
+
+TEST_ZCML = """\
+<configure
+    xmlns="http://namespaces.zope.org/zope">
+</configure>
+"""
 
 
 class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
     defaultBases = (PLONE_APP_CONTENTTYPES_FIXTURE,)
 
-    def setUpZope(self, app, configurationContext):
+    def setUpZope(self, app, configuration_context):  # noqa: N802
         # Load any other ZCML that is required for your tests.
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
-        self.loadZCML(package=plone.app.fhirfield)
+        import plone.restapi
+        self.loadZCML(package=plone.restapi)
 
-    def setUpPloneSite(self, portal):
+        import plone.app.fhirfield
+        self.loadZCML(package=plone.app.fhirfield)
+        # Load Custom
+        xmlconfig.string(TEST_ZCML, context=configuration_context)
+
+    def setUpPloneSite(self, portal):  # noqa: N802
+
+        setRoles(portal, TEST_USER_ID, ['Manager'])
+
+        applyProfile(portal, 'plone.restapi:default')
+
         applyProfile(portal, 'plone.app.fhirfield:default')
+
+        # Apply Test profile
+        applyProfile(portal, 'plone.app.fhirfield:testing')
 
 
 PLONE_APP_FHIRFIELD_FIXTURE = PloneAppFhirfieldLayer()

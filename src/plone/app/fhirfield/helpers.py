@@ -20,6 +20,7 @@ fhir_resource_models_map = {
     'Practitioner': 'fhirclient.models.practitioner',
     'QuestionnaireResponse': 'fhirclient.models.questionnaireresponse',
     'Observation': 'fhirclient.models.observation',
+    'Organization': 'fhirclient.models.organization',
     'ActivityDefinition': 'fhirclient.models.activitydefinition',
     'DeviceRequest': 'fhirclient.models.devicerequest'
 }
@@ -29,9 +30,9 @@ def resource_type_str_to_fhir_model(resource_type):
     """ """
     dotted_path = fhir_resource_models_map.get(resource_type, None)
     if dotted_path is None:
-        Invalid(_('Invalid `{0}` is not valid resource type!'))
+        raise Invalid(_('Invalid: `{0}` is not valid resource type!'.format(resource_type)))
 
-    return import_string(dotted_path)
+    return import_string('{0}.{1}'.format(dotted_path, resource_type))
 
 
 def import_string(dotted_path):
@@ -52,10 +53,11 @@ def import_string(dotted_path):
         six.reraise(ImportError, ImportError(msg), sys.exc_info()[2])
 
 
-def parse_json_str(self, str_val):
+def parse_json_str(str_val):
     """ """
     try:
-        json_dict = json.dumps(str_val, encoding='utf-8')
+        json_dict = json.loads(str_val, encoding='utf-8')
     except ValueError as exc:
-        raise Invalid('Invalid JSON String is provided!\n{0!s}'.format(exc))
+        six.reraise(Invalid, Invalid('Invalid JSON String is provided!\n{0!s}'.format(exc)), sys.exc_info()[2])
+
     return json_dict
