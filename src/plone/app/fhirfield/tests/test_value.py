@@ -5,6 +5,7 @@ from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from zope.interface import Invalid
+from zope.schema.interfaces import WrongType
 
 import json
 import inspect
@@ -72,6 +73,13 @@ class ValueIntegrationTest(unittest.TestCase):
             pass
 
         self.assertIn('Empty Value', repr(empty_resource))
+
+        # Validation Test
+        try:
+            value.FhirResourceValue(raw=dict(hello='Ketty'))
+            raise AssertionError('Code should not come here, because should raise validation error!')
+        except WrongType:
+            pass
 
 
 
