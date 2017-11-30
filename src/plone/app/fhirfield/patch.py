@@ -5,8 +5,8 @@ __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 
 def monkey_patch_fhir_base_model():
     """" """
-    from zope.interfaces import implementer
-    import fhirclient.model.resource
+    from zope.interface import implementer
+    import fhirclient.models.resource
     from plone.app.fhirfield.interfaces import IFhirResourceModel
     # We forcely implement IFhirResourceModel
-    fhirclient.model.resource.Resource = implementer(IFhirResourceModel)(fhirclient.model.resource.Resource)
+    fhirclient.models.resource.Resource = implementer(IFhirResourceModel)(fhirclient.models.resource.Resource)

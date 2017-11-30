@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
-from .interfaces import IFhirResource
+from .interfaces import IFhirResourceModel
 from .interfaces import IFhirResourceValue
 from persistent import Persistent
 from plone.app.fhirfield.compat import json
@@ -18,7 +18,7 @@ class ObjectStorage(Persistent):
         self.raw = raw
 
     def __repr__(self):
-        return u"<ObjectStorage: %s>" % self.raw
+        return u'<ObjectStorage: %s>' % self.raw
 
     def __eq__(self, other):
         if not isinstance(other, ObjectStorage):
@@ -51,15 +51,15 @@ class FhirResourceValue(object):
         """ """
         if raw is not None:
             # Let's validate first
-            if IFhirResource.providedBy(raw):
+            if not IFhirResourceModel.providedBy(raw):
                 raise WrongType('Object must be derived from valid FHIR resource model class!')
             try:
                 raw.as_json()
             except Exception as e:
                 raise Invalid(e)
 
-        self._storage = ObjectStorage(raw)
-        self._encoding = encoding
+        object.__setattr__(self, '_storage', ObjectStorage(raw))
+        object.__setattr__(self, '_encoding', encoding)
 
     def __getattr__(self, name):
         """Any attribute from FHIR Resource Object is accessible via this class"""
@@ -78,12 +78,11 @@ class FhirResourceValue(object):
 
     def __repr__(self):
         """ """
-        json_dict = self.as_json()
-
-        if json_dict:
-            return json.dumps(json_dict, encoding=self.encoding, indent=4)
+        json_str = self.stringify()
+        if json_str:
+            return json_str
         else:
-            u'<FhirResourceValue: Empty Value>'
+            return u'<FhirResourceValue: Empty Value>'
 
     def __eq__(self, other):
         if not isinstance(other, FhirResourceValue):

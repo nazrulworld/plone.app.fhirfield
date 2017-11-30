@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Module where all interfaces, events and exceptions live."""
-from plone.app.fhirfield import _
+from plone.app.fhirfield.compat import _
 from zope.interface import Attribute
 from zope.interface import Interface
 from zope.schema.interfaces import IObject

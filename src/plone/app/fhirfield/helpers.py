@@ -1,6 +1,6 @@
 # _*_ coding: utf-8 _*_
 from importlib import import_module
-from plone.app.fhirfield import _
+from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from zope.interface import Invalid
 

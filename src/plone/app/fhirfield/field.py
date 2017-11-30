@@ -1,5 +1,5 @@
 # _*_ coding:utf-8 _*_
-from plone.app.fhirfield import _
+from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.helpers import import_string
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model

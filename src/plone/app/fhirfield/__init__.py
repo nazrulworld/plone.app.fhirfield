@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Init and utils."""
-from zope.i18nmessageid import MessageFactory
+from plone.app.fhirfield import patch
 
-_ = MessageFactory('plone.app.fhirfield')
+__author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+
+patch.monkey_patch_fhir_base_model()
+
+# Imports as API
+from .field import FhirResource
+from .widget import FhirResourceWidget

@@ -1,13 +1,9 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
-from plone import api
 from plone.app.fhirfield import helpers
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
-from zope.component import queryMultiAdapter
-from zope.publisher.browser import TestRequest
 from zope.interface import Invalid
 
-import json
 import inspect
 import os
 import unittest

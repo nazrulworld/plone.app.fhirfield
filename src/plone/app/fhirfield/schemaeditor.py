@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
-from plone.app.fhirfield import _
+from plone.app.fhirfield.compat import _
 from plone.app.fhirfield import field
 from plone.app.fhirfield import interfaces
 from plone.schemaeditor.fields import FieldFactory
