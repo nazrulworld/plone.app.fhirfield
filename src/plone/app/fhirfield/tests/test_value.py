@@ -76,7 +76,7 @@ class ValueIntegrationTest(unittest.TestCase):
 
         self.assertIn('NoneType', repr(empty_resource))
 
-        # Validation Test
+        # Validation Test:: more explict???
         try:
             value.FhirResourceValue(raw=dict(hello='Ketty'))
             raise AssertionError('Code should not come here, because should raise validation error!')

@@ -2,10 +2,18 @@
 from .interfaces import IFhirResourceModel
 from .interfaces import IFhirResourceValue
 from persistent import Persistent
+from plone import api
 from plone.app.fhirfield.compat import json
 from zope.interface import implementer
 from zope.interface import Invalid
+from zope.interface.exceptions import BrokenImplementation
+from zope.interface.exceptions import BrokenMethodImplementation
+from zope.interface.exceptions import DoesNotImplement
+from zope.interface.verify import verifyObject
 from zope.schema.interfaces import WrongType
+
+import six
+import sys
 
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
@@ -60,16 +68,30 @@ class FhirResourceValue(object):
             json.dumps(self._storage.raw.as_json(), encoding=self._encoding) or \
             ''
 
+    def _validate_object(self, obj):
+        """ """
+        if obj is None:
+            return
+
+        try:
+            verifyObject(IFhirResourceModel, obj, False)
+
+        except (BrokenImplementation, BrokenMethodImplementation) as exc:
+            six.reraise(Invalid, Invalid(str(exc)), sys.exc_info()[2])
+
+        except DoesNotImplement as exc:
+            msg = 'Object must be derived from valid FHIR resource model class!'
+            if api.env.debug_mode():
+                msg += 'But it is found that object is derived from `{0}`'.\
+                    format(obj.__class__.__module__ + '.' + obj.__class__.__name__)
+                msg += '\nOriginal Exception: {0!s}'.format(exc)
+
+            six.reraise(WrongType, WrongType(msg), sys.exc_info()[2])
+
     def __init__(self, raw=None, encoding='utf-8'):
         """ """
-        if raw is not None:
-            # Let's validate first
-            if not IFhirResourceModel.providedBy(raw):
-                raise WrongType('Object must be derived from valid FHIR resource model class!')
-            try:
-                raw.as_json()
-            except Exception as e:
-                raise Invalid(e)
+        # Let's validate before value assignment!
+        self._validate_object(raw)
 
         object.__setattr__(self, '_storage', ObjectStorage(raw))
         object.__setattr__(self, '_encoding', encoding)
