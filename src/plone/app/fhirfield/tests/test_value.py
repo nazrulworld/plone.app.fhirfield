@@ -3,18 +3,17 @@ from . import FHIR_FIXTURE_PATH
 from plone.app.fhirfield import value
 from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
-from zope.interface import Invalid
+from plone.app.fhirfield.interfaces import IFhirResourceModel
 from zope.schema.interfaces import WrongType
 
 import json
-import inspect
 import os
 import six
 import unittest
 
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+
 
 class ValueIntegrationTest(unittest.TestCase):
     """ """
@@ -41,6 +40,7 @@ class ValueIntegrationTest(unittest.TestCase):
 
         # __bool__ should be True
         self.assertTrue(fhir_resource_value)
+        self.assertTrue(IFhirResourceModel.providedBy(fhir_resource_value.foreground_origin()))
         self.assertIsInstance(fhir_resource_value.stringify(), six.string_types)
         # Make sure string is transformable to fhir resource
         json_str = fhir_resource_value.stringify()
@@ -55,6 +55,8 @@ class ValueIntegrationTest(unittest.TestCase):
         empty_resource = value.FhirResourceValue()
         # __bool__ should be False
         self.assertFalse(empty_resource)
+
+        self.assertIsNone(empty_resource.foreground_origin())
 
         self.assertFalse(fhir_resource_value == empty_resource)
         self.assertFalse(empty_resource == fhir_resource_value)
@@ -72,7 +74,7 @@ class ValueIntegrationTest(unittest.TestCase):
         except AttributeError:
             pass
 
-        self.assertIn('Empty Value', repr(empty_resource))
+        self.assertIn('NoneType', repr(empty_resource))
 
         # Validation Test
         try:
@@ -80,10 +82,3 @@ class ValueIntegrationTest(unittest.TestCase):
             raise AssertionError('Code should not come here, because should raise validation error!')
         except WrongType:
             pass
-
-
-
-
-
-
-

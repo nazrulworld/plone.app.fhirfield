@@ -31,21 +31,34 @@ class ObjectStorage(Persistent):
             return NotImplemented
         return not equal
 
+    def __bool__(self):
+        """ """
+        return self.raw is not None
+    __nonzero__ = __bool__
+
 
 @implementer(IFhirResourceValue)
 class FhirResourceValue(object):
-    """ """
+    """FhirResourceValue is a proxy class for holding any object derrived from
+    fhirclient.models.resource.Resource"""
     __slot__ = ('_storage', '_encoding')
+
+    def foreground_origin(self):
+        """Return the original object of FHIR model that is proxied!"""
+        if bool(self._storage):
+            return self._storage.raw
+        else:
+            return None
+
+    def json_patch(self, patch):
+        """ """
+        pass
 
     def stringify(self):
         """ """
         return self._storage.raw is not None and \
             json.dumps(self._storage.raw.as_json(), encoding=self._encoding) or \
             ''
-
-    def json_patch(self, patch):
-        """ """
-        pass
 
     def __init__(self, raw=None, encoding='utf-8'):
         """ """
@@ -78,11 +91,20 @@ class FhirResourceValue(object):
 
     def __repr__(self):
         """ """
-        json_str = self.stringify()
-        if json_str:
-            return json_str
+        if self.__bool__():
+            return "<{0} object represents object of {1} at {2}>".\
+                format(
+                    self.__class__.__module__ + '.' + self.__class__.__name__,
+                    self._storage.raw.__class__.__module__ + '.' + self._storage.raw.__class__.__name__,
+                    hex(id(self))
+                )
         else:
-            return u'<FhirResourceValue: Empty Value>'
+            return '<{0} object represents object of {1} at {2}>'.\
+                format(
+                    self.__class__.__module__ + '.' + self.__class__.__name__,
+                    None.__class__.__name__,
+                    hex(id(self))
+                )
 
     def __eq__(self, other):
         if not isinstance(other, FhirResourceValue):
@@ -97,5 +119,5 @@ class FhirResourceValue(object):
 
     def __bool__(self):
         """ """
-        return self._storage.raw is not None
+        return bool(self._storage)
     __nonzero__ = __bool__

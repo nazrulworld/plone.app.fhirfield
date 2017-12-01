@@ -49,6 +49,7 @@ class SerializerIntegrationTest(unittest.TestCase):
     def test_serializer_available(self):
         """ """
         obj = self.add_item()
+        import pdb;pdb.set_trace()
         # # Insert field values
         # for schema in iterSchemata(self.context):
 

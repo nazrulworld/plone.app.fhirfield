@@ -30,3 +30,7 @@ class IFhirResourceValue(Interface):
 
     def json_patch(patch):
         pass
+
+    def foreground_origin():
+        """Return the original object of FHIR model that is proxied!"""
+        pass
