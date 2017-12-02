@@ -26,9 +26,19 @@ fhir_resource_models_map = {
 }
 
 
+def resource_type_to_dotted_model_name(resource_type, silent=False):
+    """Simple helper function to feed dotted resource model name from models map"""
+    try:
+        return fhir_resource_models_map[resource_type]
+    except KeyError as e:
+        if not silent:
+            raise e
+    return None
+
+
 def resource_type_str_to_fhir_model(resource_type):
     """ """
-    dotted_path = fhir_resource_models_map.get(resource_type, None)
+    dotted_path = resource_type_to_dotted_model_name(resource_type, True)
     if dotted_path is None:
         raise Invalid(_('Invalid: `{0}` is not valid resource type!'.format(resource_type)))
 
@@ -53,10 +63,10 @@ def import_string(dotted_path):
         six.reraise(ImportError, ImportError(msg), sys.exc_info()[2])
 
 
-def parse_json_str(str_val):
+def parse_json_str(str_val, encoding='utf-8'):
     """ """
     try:
-        json_dict = json.loads(str_val, encoding='utf-8')
+        json_dict = json.loads(str_val, encoding=encoding)
     except ValueError as exc:
         six.reraise(Invalid, Invalid('Invalid JSON String is provided!\n{0!s}'.format(exc)), sys.exc_info()[2])
 

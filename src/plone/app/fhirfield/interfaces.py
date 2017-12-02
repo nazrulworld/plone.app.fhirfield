@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Module where all interfaces, events and exceptions live."""
 from plone.app.fhirfield.compat import _
+from zope import schema as zs
 from zope.interface import Attribute
 from zope.interface import Interface
 from zope.schema.interfaces import IObject
@@ -35,15 +36,34 @@ class IFhirResourceModel(Interface):
 
 class IFhirResource(IObject):
     """ """
-    model = Attribute('model', _('FHIR Resource Model from fhirclient'))
-    resource_type = Attribute('resource_type', _('FHIR Resource Type'))
+    resource_type = zs.TextLine(
+        title=_('FHIR Resource Type'),
+        required=False
+    )
+    model = zs.DottedName(
+        title=_('FHIR Resource Model from fhirclient'),
+        required=False
+    )
+    model_interface = zs.InterfaceField(
+        title=_('FHIR Model Interface'),
+        required=False
+    )
 
     def from_dict(dict_value):
-        pass
+        """ """
 
 
 class IFhirResourceValue(Interface):
     """ """
+    _encoding = Attribute(
+        '_encoding',
+        _('Encoding name that will be used during json generation')
+    )
+    _storage = Attribute(
+        '_storage',
+        _('_storage to hold Fhir resource model object.')
+    )
+
     def stringify():
         pass
 
