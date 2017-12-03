@@ -1,4 +1,5 @@
 # _*_ coding:utf-8 _*_
+from fhirclient.models.fhirabstractbase import FHIRValidationError
 from plone import api
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.helpers import fhir_resource_models_map
@@ -14,6 +15,7 @@ from zope.interface import implementer
 from zope.interface import Invalid
 from zope.interface.exceptions import BrokenImplementation
 from zope.interface.exceptions import BrokenMethodImplementation
+from zope.interface.exceptions import DoesNotImplement
 from zope.interface.verify import verifyObject
 from zope.schema import Object
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
@@ -51,7 +53,7 @@ class FhirResource(Object):
 
     def fromUnicode(self, str_val):
         """ """
-        json_dict = self.parse_str(str_val)
+        json_dict = parse_json_str(str_val)
 
         return self.from_dict(json_dict)
 
@@ -137,9 +139,9 @@ class FhirResource(Object):
 
         if self.model_interface:
             try:
-                verifyObject(self.model_interfacel, value, False)
+                verifyObject(self.model_interface, value.foreground_origin(), False)
 
-            except (BrokenImplementation, BrokenMethodImplementation) as exc:
+            except (BrokenImplementation, BrokenMethodImplementation, DoesNotImplement) as exc:
                 six.reraise(Invalid, Invalid(str(exc)), sys.exc_info()[2])
 
         if self.resource_type and value.resource_type != self.resource_type:
@@ -154,3 +156,9 @@ class FhirResource(Object):
                 msg = 'Wrong fhir resource value is provided! Value should be object of {0!r} but got {1!r}'.\
                     format(klass, value.foreground_origin().__class__)
                 raise WrongContainedType(msg)
+
+        try:
+            value.foreground_origin().as_json()
+        except (FHIRValidationError, TypeError) as exc:
+            msg = 'There is invalid element inside fhir model object.\n{0!s}'.format(exc)
+            six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
