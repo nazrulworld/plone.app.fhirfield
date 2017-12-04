@@ -21,6 +21,7 @@ from zope.schema import Object
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
 from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import WrongContainedType
+from zope.schema.interfaces import WrongType
 
 import six
 import sys
@@ -65,6 +66,12 @@ class FhirResource(Object):
         if self.model:
             # enforce use class from defined! this is kind of validation
             klass = import_string(self.model)
+            if klass.resource_type != dict_value.get('resourceType'):
+                raise ConstraintNotSatisfied(
+                    'Fhir Model mismatched with provided resource type!\n'\
+                    '`{0}` resource type is permitted but got `{1}`'.\
+                    format(klass.resource_type, dict_value.get('resourceType'))
+                )
 
         elif self.resource_type:
             klass = resource_type_str_to_fhir_model(self.resource_type)
@@ -123,8 +130,12 @@ class FhirResource(Object):
         fhir_dict = None
         if isinstance(fhir_json, six.string_types):
             fhir_dict = parse_json_str(fhir_json).copy()
-        else:
+        elif isinstance(fhir_json, dict):
             fhir_dict = fhir_json.copy()
+        else:
+            raise WrongType(
+                'Only dict type data is allowed but got `{0}` type data!'.format(type(fhir_json))
+            )
 
         if 'resourceType' not in fhir_dict.keys() or 'id' not in fhir_dict.keys():
             raise Invalid('Invalid FHIR resource json is provided!\n{0}'.format(fhir_json))

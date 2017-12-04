@@ -6,8 +6,8 @@ from plone.app.fhirfield.interfaces import IFhirResourceModel
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.value import FhirResourceValue
 from zope.interface import Invalid
-from zope.schema.interfaces import WrongContainedType
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
+from zope.schema.interfaces import WrongContainedType
 from zope.schema.interfaces import WrongType
 
 import json
@@ -191,7 +191,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         try:
             fhir_field._validate(fhir_resource_value)
-            raise AssertionError('Code should not come here! model missmatched!')
+            raise AssertionError('Code should not come here! model mismatched!')
         except ConstraintNotSatisfied as exc:
             self.assertIn('Resource type must be `Task`', str(exc))
 
@@ -206,6 +206,83 @@ class FieldIntegrationTest(unittest.TestCase):
 
         try:
             fhir_field._validate(fhir_resource_value)
-            raise AssertionError('Code should not come here! interface and object missmatched!')
+            raise AssertionError('Code should not come here! interface and object mismatched!')
         except Invalid as exc:
             self.assertIn('An object does not implement', str(exc))
+
+    def test_from_dict(self):
+        """ """
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            json_dict = json.load(f)
+
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.organization.Organization'
+        )
+
+        try:
+            fhir_resource_value = fhir_field.from_dict(json_dict)
+        except Invalid as exc:
+            raise AssertionError(
+                'Code should not come here! as should return valid FhirResourceValue.\n{0!s}'.format(exc)
+                )
+
+        self.assertEqual(fhir_resource_value.resource_type, json_dict['resourceType'])
+        try:
+            fhir_resource_value.as_json()
+        except Exception:
+            raise AssertionError('Code should not come here! as should be valid fhir resource')
+        # Test with invalid data type
+        try:
+            invalid_data = ('hello', 'tree', 'go', )
+            fhir_field.from_dict(invalid_data)
+        except WrongType as exc:
+            self.assertIn('Only dict type data is allowed', str(exc))
+
+        # Test with invalid fhir data
+        try:
+            invalid_data = dict(hello='fake', foo='bar')
+            fhir_field.from_dict(invalid_data)
+
+            raise AssertionError('Code should not come here, because of invalid data')
+        except Invalid as exc:
+            self.assertIn('Invalid FHIR resource', str(exc))
+
+        # Test contraint
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.task.Task'
+        )
+
+        try:
+            fhir_field.from_dict(json_dict)
+            raise AssertionError(
+                'Code should not come here as required fhir model is mismatched with provided resourcetype'
+            )
+        except ConstraintNotSatisfied as exc:
+            self.assertIn('Fhir Model mismatched', str(exc))
+
+    def test_fromUnicode(self):
+        """ """
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            json_str = f.read()
+
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.organization.Organization'
+        )
+
+        try:
+            fhir_field.fromUnicode(json_str)
+        except Invalid as exc:
+            raise AssertionError(
+                'Code should not come here! as should return valid FhirResourceValue.\n{0!s}'.format(exc)
+                )
+
+        # Test with invalid json string
+        try:
+            invalid_data = '{hekk: invalg, 2:3}'
+            fhir_field.fromUnicode(invalid_data)
+            raise AssertionError('Code should not come here! invalid json string is provided')
+        except Invalid as exc:
+            self.assertIn('Invalid JSON String', str(exc))
