@@ -56,7 +56,7 @@ PLONE_APP_FHIRFIELD_INTEGRATION_TESTING = IntegrationTesting(
 
 
 PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_FHIRFIELD_FIXTURE,),
+    bases=(PLONE_APP_FHIRFIELD_FIXTURE, z2.ZSERVER_FIXTURE),
     name='PloneAppFhirfieldLayer:FunctionalTesting'
 )
 

@@ -11,7 +11,8 @@ __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 class ITestOrganization(model.Schema):
     """ """
     resource = FhirResource(
-        title=u'Fhir Resource Field'
+        title=u'Fhir Resource Field',
+        model='fhirclient.models.organization.Organization'
     )
 
 
