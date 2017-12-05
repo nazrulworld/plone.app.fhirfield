@@ -14,12 +14,12 @@
     :target: https://pypi.python.org/pypi/plone.recipe.sublimetext/
     :alt: Python Versions
 
-.. image:: https://img.shields.io/pypi/v/plone.recipe.sublimetext.svg
-    :target: https://pypi.python.org/pypi/plone.recipe.sublimetext/
+.. image:: https://img.shields.io/pypi/v/plone.app.fhirfield.svg
+    :target: https://pypi.python.org/pypi/plone.app.fhirfield/
     :alt: Latest Version
 
-.. image:: https://img.shields.io/pypi/l/plone.recipe.sublimetext.svg
-    :target: https://pypi.python.org/pypi/plone.recipe.sublimetext/
+.. image:: https://img.shields.io/pypi/l/plone.app.fhirfield.svg
+    :target: https://pypi.python.org/pypi/plone.app.fhirfield/
     :alt: License
 
 
@@ -28,18 +28,21 @@
 Introduction (plone.app.fhirfield)
 ==================================
 
+`FHIR`_ (Fast Healthcare Interoperability Resources) is the standard for Healthcare system. Our intend to implemnt `FHIR`_ based system using `Plone`_! `plone.app.fhirfield`_ will make life easier to create, manage content for `FHIR resources`_.
 
 Features
 --------
 
-- Can be bullet points
+- Plone restapi support
 
 
 Roadmaps
 --------
 
-This add-on can be seen in action at the following sites:
-- Is there a page on the internet where everybody can see the features?
+- Widget support
+- z3cform support
+- indexing
+- elastic search support
 
 
 Installation
@@ -79,3 +82,8 @@ License
 -------
 
 The project is licensed under the GPLv2.
+
+.. _`FHIR`: https://www.hl7.org/fhir/overview.html
+.. _`Plone`: https://www.plone.org/
+.. _`FHIR Resources`: https://www.hl7.org/fhir/resourcelist.html
+.. _`Plone restapi`: http://plonerestapi.readthedocs.io/en/latest/
