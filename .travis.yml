@@ -1,13 +1,13 @@
-dist: xenial
 language: python
 python:
-  - 2.7
+  - 2.7.14
   - 3.5
 sudo: false
 cache:
   pip: true
   directories:
-    - $HOME/buildout-cache
+    - eggs
+    - downloads
 env:
   matrix:
     - PLONE_VERSION=4.3.x
@@ -18,15 +18,11 @@ env:
     - python: 3.5
 before_install:
   - mkdir -p $HOME/buildout-cache/{eggs,downloads}
-  - mkdir $HOME/.buildout
-  - echo "[buildout]" > $HOME/.buildout/default.cfg
-  - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
-  - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
-  - virtualenv .
+  - virtualenv --clear -p `which python` .
   - bin/pip install -r requirements.txt
 install:
   - sed -ie "s#plone-x.x.x.cfg#plone-$PLONE_VERSION.cfg#" travis.cfg
-  - bin/buildout -t 10 -c travis.cfg
+  - bin/buildout -N -t 3 -c travis.cfg buildout:download-cache=downloads
 script:
   - bin/code-analysis
   - bin/test
