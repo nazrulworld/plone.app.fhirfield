@@ -26,7 +26,7 @@ class ObjectStorage(Persistent):
         self.raw = raw
 
     def __repr__(self):
-        return u'<ObjectStorage: %s>' % self.raw
+        return u'<ObjectStorage: {0!r}>'.format(self.raw)
 
     def __eq__(self, other):
         if not isinstance(other, ObjectStorage):
@@ -114,7 +114,7 @@ class FhirResourceValue(object):
     def __repr__(self):
         """ """
         if self.__bool__():
-            return "<{0} object represents object of {1} at {2}>".\
+            return '<{0} object represents object of {1} at {2}>'.\
                 format(
                     self.__class__.__module__ + '.' + self.__class__.__name__,
                     self._storage.raw.__class__.__module__ + '.' + self._storage.raw.__class__.__name__,

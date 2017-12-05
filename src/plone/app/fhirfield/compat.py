@@ -1,6 +1,7 @@
 # _*_ coding: utf-8 _*_
 from zope.i18nmessageid import MessageFactory
 
+
 try:
     # Looking ujson first!
     import ujson as json

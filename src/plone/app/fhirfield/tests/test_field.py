@@ -22,7 +22,7 @@ __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 class FieldIntegrationTest(unittest.TestCase):
     """ """
 
-    def test_init_validate(self):
+    def test_init_validate(self):  # noqa: C901
         """ """
         # Test with minimal params
         try:
@@ -160,7 +160,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         type_, address_ = fhir_resource_value.type, fhir_resource_value.address
         fhir_resource_value.type = 390
-        fhir_resource_value.address = "i am wrong type"
+        fhir_resource_value.address = 'i am wrong type'
 
         try:
             fhir_field._validate(fhir_resource_value)

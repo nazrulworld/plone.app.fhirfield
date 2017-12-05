@@ -68,8 +68,8 @@ class FhirResource(Object):
             klass = import_string(self.model)
             if klass.resource_type != dict_value.get('resourceType'):
                 raise ConstraintNotSatisfied(
-                    'Fhir Model mismatched with provided resource type!\n'\
-                    '`{0}` resource type is permitted but got `{1}`'.\
+                    'Fhir Model mismatched with provided resource type!\n'
+                    '`{0}` resource type is permitted but got `{1}`'.
                     format(klass.resource_type, dict_value.get('resourceType'))
                 )
 
@@ -118,7 +118,7 @@ class FhirResource(Object):
         if self.model_interface:
             if self.model_interface is not IFhirResourceModel and\
                  not issubclass(self.model_interface, IFhirResourceModel):
-                msg = '`{0!r}` must be derived from {0}'.format(
+                msg = '`{0!r}` must be derived from {1}'.format(
                     self.model_interface,
                     IFhirResourceModel.__module__ + '.' + IFhirResourceModel.__class__.__name__
                     )
