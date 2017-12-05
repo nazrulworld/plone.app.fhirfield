@@ -8,11 +8,11 @@ from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.restapi.testing import RelativeSession
 from plone.restapi.interfaces import IDeserializeFromJson
 from plone.restapi.interfaces import IFieldDeserializer
 from plone.restapi.services.content.utils import create
 from plone.restapi.services.content.utils import rename
+from plone.restapi.testing import RelativeSession
 from zope.component import queryMultiAdapter
 from zope.interface import Invalid
 from zope.publisher.browser import TestRequest
