@@ -13,8 +13,6 @@ env:
     - PLONE_VERSION=5.0.x  QA=true
     - PLONE_VERSION=5.1.x  QA=true
 
-  allow_failures:
-    - python: 3.5
 before_install:
   - mkdir -p $HOME/buildout-cache/{eggs,downloads}
   - mkdir $HOME/.buildout
@@ -33,6 +31,10 @@ after_success:
   - bin/test-coverage
   - pip install coverage==3.7.1 coveralls
   - coveralls
+
+matrix:
+  allow_failures:
+    - python: 3.5
 
 notifications:
   email:
