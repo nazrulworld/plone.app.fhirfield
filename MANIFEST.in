@@ -1,4 +1,8 @@
 graft src/plone
 graft docs
-include *.rst
+prune .cache
 global-exclude *.pyc
+include *.rst
+include LICENSE.GPL
+exclude *.cfg
+exclude requirements.txt
