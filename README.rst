@@ -87,3 +87,4 @@ The project is licensed under the GPLv2.
 .. _`Plone`: https://www.plone.org/
 .. _`FHIR Resources`: https://www.hl7.org/fhir/resourcelist.html
 .. _`Plone restapi`: http://plonerestapi.readthedocs.io/en/latest/
+.. _`plone.app.fhirfield`: https://pypi.python.org/pypi/plone.app.fhirfield/
