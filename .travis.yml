@@ -3,9 +3,7 @@ language: python
 python:
   - 2.7
   - 3.5
-sudo: required
-services:
-  - docker
+sudo: false
 cache:
   pip: true
   directories:
@@ -20,8 +18,10 @@ env:
     - python: 3.5
 before_install:
   - mkdir -p $HOME/buildout-cache/{eggs,downloads}
-  - sudo apt install python-setuptools build-essential libssl-dev libxml2-dev libxslt1-dev libbz2-dev libjpeg62-dev
-  - sudo apt install git libreadline-dev wv poppler-utils
+  - mkdir $HOME/.buildout
+  - echo "[buildout]" > $HOME/.buildout/default.cfg
+  - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
+  - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
   - virtualenv .
   - bin/pip install -r requirements.txt
 install:
