@@ -1,30 +1,40 @@
 language: python
-sudo: false
+python:
+  - 2.7
+  - 3.5
+sudo: required
+services:
+  - docker
 cache:
   pip: true
   directories:
-  - eggs
-  - downloads
-python:
-  - 2.7
-matrix:
-  fast_finish: true
-install:
+    - $HOME/buildout-cache
+env:
+  matrix:
+    - PLONE_VERSION=4.3.x
+    - PLONE_VERSION=5.0.x
+    - PLONE_VERSION=5.1.x
+
+  allow_failures:
+    - python: 3.5
+before_install:
+  - mkdir -p $HOME/buildout-cache/{eggs,downloads}
   - virtualenv .
+  - sudo apt install python2.7 python2.7-dev
+  - sudo apt install python-setuptools build-essential libssl-dev libxml2-dev libxslt1-dev libbz2-dev libjpeg62-dev
+  - sudo apt install git libreadline-dev wv poppler-utils
   - bin/pip install -r requirements.txt
-  - bin/buildout -N buildout:download-cache=downloads code-analysis:return-status-codes=True annotate
-  - bin/buildout -N buildout:download-cache=downloads code-analysis:return-status-codes=True
-before_script:
-- export DISPLAY=:99.0
-- sh -e /etc/init.d/xvfb start
-- firefox -v
+install:
+  - sed -ie "s#plone-x.x.x.cfg#plone-$PLONE_VERSION.cfg#" travis.cfg
+  - bin/buildout -t 10 -c travis.cfg
 script:
   - bin/code-analysis
   - bin/test
 after_success:
-  - bin/createcoverage
-  - pip install coveralls
+  - bin/test-coverage
+  - pip install coverage==3.7.1 coveralls
   - coveralls
+
 notifications:
   email:
-    - email2nazrul@gmail.com
+    - connect2nazrul@gmail.com

@@ -1,5 +1,5 @@
-.. image:: https://img.shields.io/pypi/status/plone.recipe.sublimetext.svg
-    :target: https://pypi.python.org/pypi/plone.recipe.sublimetext/
+.. image:: https://img.shields.io/pypi/status/plone.app.fhirfield.svg
+    :target: https://pypi.python.org/pypi/plone.app.fhirfield/
     :alt: Egg Status
 
 .. image:: https://img.shields.io/travis/nazrulworld/plone.app.fhirfield/master.svg
