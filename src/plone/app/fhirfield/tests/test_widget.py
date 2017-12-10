@@ -1,4 +1,5 @@
 # _*_ coding: utf-8 _*_
+from __future__ import print_function  # noqa: I001
 from . import FHIR_FIXTURE_PATH
 from .schema import ITestOrganization
 from plone.app.fhirfield import widget
@@ -6,11 +7,7 @@ from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.restapi.interfaces import IDeserializeFromJson
-from plone.restapi.services.content.utils import create
-from plone.restapi.services.content.utils import rename
 from plone.testing import z2
-from z3c.form import form
 from z3c.form.interfaces import IDataConverter
 from z3c.form.interfaces import IFieldWidget
 from zope.component import queryMultiAdapter
@@ -34,25 +31,6 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
 
-    def add_item(self):
-        """ """
-        body = {
-            '@type': 'TestOrganization',
-            'title': 'Test Organization xxx',
-        }
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            body['resource'] = json.load(f)
-
-        request = TestRequest(BODY=json.dumps(body))
-        obj = create(self.portal, body['@type'], id_=None, title=body['title'])
-
-        deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
-        assert deserializer is not None
-        deserializer(validate_all=True)
-        rename(obj)
-
-        return obj
-
     def test_widget(self):
         """ """
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
@@ -65,18 +43,11 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertIsNone(fhir_widget.value)
         fhir_widget.update()
         self.assertEqual(fhir_widget.value, fhir_str)
-
         fhir_field = getFields(ITestOrganization)['resource']
-        # fhir_value = fhir_field.fromUnicode(fhir_str)
 
         field_widget = widget.FhirResourceFieldWidget(fhir_field, request)
         self.assertTrue(IFieldWidget.providedBy(field_widget))
-
-        class TestAddForm(form.AddForm):
-            """ """
-            fields = ITestOrganization
-
-        add_form = TestAddForm(self.portal, request)
+        # @TODO: Make sure widget.render() works!
 
     def test_data_converter(self):
         """ """
@@ -110,7 +81,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         def raising(self, info):
             import traceback
             traceback.print_tb(info[2])
-            print info[1]
+            print (info[1])
 
         from Products.SiteErrorLog.SiteErrorLog import SiteErrorLog
         SiteErrorLog.raising = raising
@@ -120,7 +91,7 @@ class WidgetFunctionalTest(unittest.TestCase):
 
         # Go admin
         browser = self.browser
-        browser.open(self.portal_url + "/login_form")
+        browser.open(self.portal_url + '/login_form')
         browser.getControl(name='__ac_name').value = SITE_OWNER_NAME
         browser.getControl(name='__ac_password').value = SITE_OWNER_PASSWORD
         browser.getControl(name='submit').click()
@@ -168,11 +139,10 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.getControl(name='form.widgets.IBasic.title').value = 'hello organization'
         browser.getControl(name='form.widgets.resource').value = fhir_str
         browser.getControl(name='form.buttons.save').click()
-
         # There must be form error! as required title is missing so url is unchanged
         self.assertEqual(browser.mech_browser.geturl(), self.portal_url + '/++add++TestOrganization')
-        # TODO: should pass!
-        # self.assertEqual(browser.getControl(name='form.widgets.resource').value, fhir_str)
+        # Test Value exist, even form resubmit
+        self.assertEqual(json.loads(browser.getControl(name='form.widgets.resource').value), json.loads(fhir_str))
 
         # Let's fullfill required
         browser.getControl(name='form.widgets.IDublinCore.title').value = 'hello organization'

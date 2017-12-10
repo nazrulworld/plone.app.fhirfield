@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
-from plone.app.fhirfield.field import FhirResource
+from plone.app.fhirfield import FhirResource
 from plone.dexterity.content import Container
 from plone.supermodel import model
 from zope.interface import implementer
