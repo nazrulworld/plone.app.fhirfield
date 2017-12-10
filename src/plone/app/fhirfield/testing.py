@@ -29,6 +29,12 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         import plone.restapi
         self.loadZCML(package=plone.restapi)
 
+        import z3c.form
+        self.loadZCML(package=z3c.form)
+
+        import plone.app.z3cform
+        self.loadZCML(package=plone.app.z3cform)
+
         import plone.app.fhirfield
         self.loadZCML(package=plone.app.fhirfield)
         # Load Custom

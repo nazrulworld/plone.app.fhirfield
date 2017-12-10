@@ -19,6 +19,6 @@
                           onkeypress view/onkeypress;
                           onkeydown view/onkeydown;
                           onkeyup view/onkeyup">
-            <tal:block condition="view/value" content="python:view.value.stringfy()" />
+            <tal:block condition="view/value" content="view/value/stringify" />
     </code>
 </html>

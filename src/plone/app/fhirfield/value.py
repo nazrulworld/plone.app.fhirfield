@@ -62,10 +62,16 @@ class FhirResourceValue(object):
         """ """
         pass
 
-    def stringify(self):
+    def stringify(self, prettify=False):
         """ """
+        params = {}
+        params['encoding'] = self._encoding
+        if prettify:
+            # will make little bit slow, so apply only if needed
+            params['indent'] = 4
+
         return self._storage.raw is not None and \
-            json.dumps(self._storage.raw.as_json(), encoding=self._encoding) or \
+            json.dumps(self._storage.raw.as_json(), **params) or \
             ''
 
     def _validate_object(self, obj):

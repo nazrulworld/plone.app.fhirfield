@@ -89,6 +89,10 @@ class FhirResource(Object):
 
         return value
 
+    def from_none(self):
+        """" """
+        return FhirResourceValue()
+
     def init_validate(self):
         """ """
         if self.resource_type and self.model is not None:

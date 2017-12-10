@@ -1,15 +1,16 @@
 # _*_ coding: utf-8 _*_
-from plone.app.fhirfield.helpers import parse_json_str
-from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
+from Acquisition import ImplicitAcquisitionWrapper
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
-from plone.app.fhirfield.value import FhirResourceValue
+from plone.app.z3cform.utils import closest_content
+from UserDict import UserDict
 from z3c.form.browser.textarea import TextAreaWidget
 from z3c.form.browser.widget import addFieldClass
 from z3c.form.converter import BaseDataConverter
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer
 from z3c.form.interfaces import ITextAreaWidget
+from z3c.form.interfaces import NOVALUE
 from z3c.form.widget import FieldWidget
 from zope.component import adapter
 from zope.interface import implementer
@@ -35,6 +36,23 @@ class FhirResourceWidget(TextAreaWidget):
         super(FhirResourceWidget, self).update()
         addFieldClass(self)
 
+    def wrapped_context(self):
+        context = self.context
+        content = closest_content(context)
+        # We'll wrap context in the current site *if* it's not already
+        # wrapped.  This allows the template to acquire tools with
+        # ``context/portal_this`` if context is not wrapped already.
+        # Any attempts to satisfy the Kupu template in a less idiotic
+        # way failed. Also we turn dicts into UserDicts to avoid
+        # short-circuiting path traversal. :-s
+        if context.__class__ == dict:
+            context = UserDict(self.context)
+        return ImplicitAcquisitionWrapper(context, content)
+
+    def extract(self, default=NOVALUE):
+        raw = self.request.get(self.name, default)
+        return raw
+
 
 @adapter(IFhirResource, IFormLayer)
 @implementer(IFieldWidget)
@@ -46,59 +64,39 @@ def FhirResourceFieldWidget(field, request):
 class FhirResourceConverter(BaseDataConverter):
     """Data converter for the FhirResourceWidget
     """
-    def fhir_resource_from_dict(self, dict_value):
-        """ """
-        try:
-            model = resource_type_str_to_fhir_model(dict_value['resourceType'])
-        except KeyError:
-            raise ValueError('Invalid Fhir JSON String is provided! Resource type is missing')
-        else:
-            return FhirResourceValue(
-                raw=model(dict_value),
-                encoding='utf-8',
-            )
 
     def toWidgetValue(self, value):
         if IFhirResourceValue.providedBy(value):
             return value
+
+        elif value in (NOVALUE, None, ''):
+            return IFhirResource(self.field).from_none()
+
         elif isinstance(value, six.string_types):
-            json_dict = parse_json_str(value)
-            return self.fhir_resource_from_dict(json_dict)
-        elif value is None:
-            return None
+            return IFhirResource(self.field).fromUnicode(value)
+
         raise ValueError(
-            'Can not convert {0:s} to an IFhirResourceValue'.format(repr(value))
+            'Can not convert {0!r} to an IFhirResourceValue'.format(value)
         )
 
     def toFieldValue(self, value):
         """ """
         if IFhirResourceValue.providedBy(value):
             return value
+
         elif isinstance(value, six.string_types):
-            return self.field.fromUnicode(value)
+            return IFhirResource(self.field).fromUnicode(value)
+
+        elif value in (NOVALUE, None, ''):
+            return IFhirResource(self.field).from_none()
+
         raise ValueError(
-            'Can not convert {0:s} to an IFhirResourceValue'.format(repr(value))
+            'Can not convert {0!r} to an IFhirResourceValue'.format(value)
         )
 
 
 class FhirResourceAreaConverter(BaseDataConverter):
-    """Data converter for the original z3cform TextWidget
-
-    This converter ignores the fact allowed_mime_types might be set,
-    because the widget has no way to select it.
-    It always assumes the default_mime_type was used.
-    """
-    def fhir_resource_from_dict(self, dict_value):
-        """ """
-        try:
-            model = resource_type_str_to_fhir_model(dict_value['resourceType'])
-        except KeyError:
-            raise ValueError('Invalid Fhir JSON String is provided! Resource type is missing')
-        else:
-            return FhirResourceValue(
-                raw=model(dict_value),
-                encoding='utf-8',
-            )
+    """Data converter for the original z3cform TextWidget"""
 
     def toWidgetValue(self, value):
         """ """
@@ -109,13 +107,13 @@ class FhirResourceAreaConverter(BaseDataConverter):
                 elif self.widget.mode == 'display':
                     return value.stringfy()
             else:
-                return None
+                return ''
 
         if isinstance(value, six.string_types):
             return value
 
-        elif value is None:
-            return None
+        elif value in (None, '', NOVALUE):
+            return ''
 
         raise ValueError(
             'Can not convert {0:s} to unicode'.format(repr(value))
@@ -123,13 +121,15 @@ class FhirResourceAreaConverter(BaseDataConverter):
 
     def toFieldValue(self, value):
         """ """
-        if not value:
-            return None
-        elif isinstance(value, six.string_types):
-            json_dict = parse_json_str(value)
+        if IFhirResourceValue.providedBy(value):
+            return value
 
-            return self.fhir_resource_from_dict(json_dict)
+        elif isinstance(value, six.string_types):
+            return IFhirResource(self.field).fromUnicode(value)
+
+        elif value in (NOVALUE, None, ''):
+            return IFhirResource(self.field).from_none()
 
         raise ValueError(
-            'Can not convert {0:s} to an FhirResourceValue'.format(repr(value))
+            'Can not convert {0!r} to an IFhirResourceValue'.format(value)
         )

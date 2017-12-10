@@ -286,3 +286,25 @@ class FieldIntegrationTest(unittest.TestCase):
             raise AssertionError('Code should not come here! invalid json string is provided')
         except Invalid as exc:
             self.assertIn('Invalid JSON String', str(exc))
+
+    def test_from_none(self):
+        """ """
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.organization.Organization'
+        )
+
+        empty_value = fhir_field.from_none()
+        self.assertFalse(empty_value)
+
+        try:
+            empty_value.resource_type
+            raise AssertionError('Code should not come here! should raise attribute error')
+        except AttributeError:
+            pass
+
+        try:
+            empty_value.resource_type = 'set value'
+            raise AssertionError('Code should not come here! should raise attribute error')
+        except AttributeError:
+            pass

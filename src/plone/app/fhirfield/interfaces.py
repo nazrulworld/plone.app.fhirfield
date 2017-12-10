@@ -51,6 +51,8 @@ class IFhirResource(IObject):
 
     def from_dict(dict_value):
         """ """
+    def from_none():
+        """Make FhirResourceValue isntance without FHIR data """
 
 
 class IFhirResourceValue(Interface):
@@ -64,7 +66,7 @@ class IFhirResourceValue(Interface):
         _('_storage to hold Fhir resource model object.')
     )
 
-    def stringify():
+    def stringify(prettify=False):
         pass
 
     def json_patch(patch):
