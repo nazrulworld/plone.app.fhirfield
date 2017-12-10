@@ -161,5 +161,6 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.getControl(name='form.widgets.resource').value = json.dumps(fhir_json)
         browser.getControl(name='form.buttons.save').click()
         # should sucess
-        self.assertIn('<dl class="portalMessage info success">', browser.contents)
+        self.assertIn('class="portalMessage info"', browser.contents)
+        self.assertIn('Changes saved', browser.contents)
         self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/testorganization')
