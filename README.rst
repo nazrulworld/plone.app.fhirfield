@@ -34,13 +34,11 @@ Features
 --------
 
 - Plone restapi support
+- Widget: z3cform support
 
 
 Roadmaps
 --------
-
-- Widget support
-- z3cform support
 - indexing
 - elastic search support
 
