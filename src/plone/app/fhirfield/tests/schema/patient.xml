@@ -2,23 +2,12 @@
        xmlns:security="http://namespaces.plone.org/supermodel/security"
        xmlns="http://namespaces.plone.org/supermodel/schema">
   <schema>
-    <field name="name" type="zope.schema.TextLine">
-      <description/>
-      <title>Name</title>
+    <field name="resource" type="plone.app.fhirfield.field.FhirResource">
+      <description>Patient FHIR Resource.</description>
+      <required>True</required>
+      <title>Patient</title>
+      <model>fhirclient.models.organization.Organization</model>
+      <model_interface>plone.app.fhirfield.interfaces.IFhirResourceModel</model_interface>
     </field>
-    <field name="description" type="zope.schema.Text">
-      <description/>
-      <title>A short summary</title>
-    </field>
-    <field name="bio" type="plone.app.textfield.RichText">
-      <description/>
-      <required>False</required>
-      <title>Bio</title>
-    </field>
-    <field name="photo" type="plone.namedfile.field.NamedBlobImage">
-      <description>Please upload an image.</description>
-      <required>False</required>
-      <title>Photo</title>
-    </field>I
   </schema>
 </model>

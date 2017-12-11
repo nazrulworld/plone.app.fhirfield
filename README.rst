@@ -39,7 +39,10 @@ Features
 
 Roadmaps
 --------
-- indexing
+- indexing: we have plan to support json index like elastic search model. Ofcourse performance will be main issue. bellows are some libraries, I found. You are welcome to suggest me any better library for json search.
+    - `jmespath`_
+    - `jsonpath-ng`_
+    - `jsonpath-rw`_
 - elastic search support
 
 
@@ -86,3 +89,6 @@ The project is licensed under the GPLv2.
 .. _`FHIR Resources`: https://www.hl7.org/fhir/resourcelist.html
 .. _`Plone restapi`: http://plonerestapi.readthedocs.io/en/latest/
 .. _`plone.app.fhirfield`: https://pypi.python.org/pypi/plone.app.fhirfield/
+.. _`jmespath`: https://github.com/jmespath/jmespath.py
+.. _`jsonpath-rw`: http://jsonpath-rw.readthedocs.io/en/latest/
+.. _`jsonpath-ng`: https://pypi.python.org/pypi/jsonpath-ng/1.4.3

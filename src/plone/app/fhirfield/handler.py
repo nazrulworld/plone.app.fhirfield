@@ -6,6 +6,8 @@ from plone.supermodel.interfaces import IToUnicode
 from zope.component import adapter
 from zope.interface import implementer
 
+import six
+
 
 __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 
@@ -31,7 +33,7 @@ class FhirResourceToUnicode(object):
         self.context = context
 
     def toUnicode(self, value):
-        return value.stringfy()
+        return six.text_type(value.stringify())
 
 
 FhirResourceHandler = FhirResourceHandler_(FhirResource)

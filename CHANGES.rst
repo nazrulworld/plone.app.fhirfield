@@ -5,7 +5,7 @@ Changelog
 1.0.0a3 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- plone.supermodel support is confirmed.[nazrulworld]
 
 
 1.0.0a2 (2017-12-10)

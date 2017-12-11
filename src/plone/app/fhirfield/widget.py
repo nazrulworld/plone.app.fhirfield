@@ -1,9 +1,6 @@
 # _*_ coding: utf-8 _*_
-from Acquisition import ImplicitAcquisitionWrapper
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
-from plone.app.z3cform.utils import closest_content
-from UserDict import UserDict
 from z3c.form.browser.textarea import TextAreaWidget
 from z3c.form.browser.widget import addFieldClass
 from z3c.form.converter import BaseDataConverter
@@ -36,19 +33,6 @@ class FhirResourceWidget(TextAreaWidget):
         super(FhirResourceWidget, self).update()
         addFieldClass(self)
 
-    def wrapped_context(self):
-        context = self.context
-        content = closest_content(context)
-        # We'll wrap context in the current site *if* it's not already
-        # wrapped.  This allows the template to acquire tools with
-        # ``context/portal_this`` if context is not wrapped already.
-        # Any attempts to satisfy the Kupu template in a less idiotic
-        # way failed. Also we turn dicts into UserDicts to avoid
-        # short-circuiting path traversal. :-s
-        if context.__class__ == dict:
-            context = UserDict(self.context)
-        return ImplicitAcquisitionWrapper(context, content)
-
     def extract(self, default=NOVALUE):
         raw = self.request.get(self.name, default)
         return raw
@@ -76,7 +60,7 @@ class FhirResourceConverter(BaseDataConverter):
             return IFhirResource(self.field).fromUnicode(value)
 
         raise ValueError(
-            'Can not convert {0!r} to an IFhirResourceValue'.format(value)
+            'Can not convert {0!s} to an IFhirResourceValue'.format(value)
         )
 
     def toFieldValue(self, value):
@@ -91,7 +75,7 @@ class FhirResourceConverter(BaseDataConverter):
             return IFhirResource(self.field).from_none()
 
         raise ValueError(
-            'Can not convert {0!r} to an IFhirResourceValue'.format(value)
+            'Can not convert {0!s} to an IFhirResourceValue'.format(value)
         )
 
 

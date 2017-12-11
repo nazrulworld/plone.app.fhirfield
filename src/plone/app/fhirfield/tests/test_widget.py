@@ -5,11 +5,13 @@ from .schema import ITestOrganization
 from plone.app.fhirfield import widget
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
+from plone.app.fhirfield.value import FhirResourceValue
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
 from z3c.form.interfaces import IDataConverter
 from z3c.form.interfaces import IFieldWidget
+from z3c.form.interfaces import NOVALUE
 from zope.component import queryMultiAdapter
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
@@ -58,8 +60,39 @@ class WidgetIntegrationTest(unittest.TestCase):
         field_widget = widget.FhirResourceFieldWidget(fhir_field, request)
 
         converter = queryMultiAdapter((fhir_field, field_widget), IDataConverter)
-
         self.assertIsNotNone(converter)
+
+        # All Test: toWidgetValue
+        fhir_value = converter.toWidgetValue('')
+        self.assertFalse(fhir_value)
+        self.assertIsInstance(fhir_value, FhirResourceValue)
+
+        fhir_value = converter.toWidgetValue(fhir_str)
+        self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
+
+        try:
+            converter.toWidgetValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('IFhirResourceValue', str(exc))
+
+        # All Test: toFieldValue
+        fhir_value = converter.toFieldValue(NOVALUE)
+        self.assertFalse(fhir_value)
+        self.assertIsInstance(fhir_value, FhirResourceValue)
+
+        fhir_value = converter.toFieldValue(fhir_str)
+        self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
+
+        try:
+            converter.toFieldValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('IFhirResourceValue', str(exc))
+
+    def test_textarea_data_converter(self):
+        """ """
+
 
 
 class WidgetFunctionalTest(unittest.TestCase):
