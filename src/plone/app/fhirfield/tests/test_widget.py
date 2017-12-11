@@ -94,7 +94,6 @@ class WidgetIntegrationTest(unittest.TestCase):
         """ """
 
 
-
 class WidgetFunctionalTest(unittest.TestCase):
     """ """
     layer = PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
