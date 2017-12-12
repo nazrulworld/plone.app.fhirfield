@@ -6,6 +6,7 @@ Changelog
 --------------------
 
 - plone.supermodel support is confirmed.[nazrulworld]
+- plone.rfc822 marshaler field support.[nazrulworld]
 
 
 1.0.0a2 (2017-12-10)

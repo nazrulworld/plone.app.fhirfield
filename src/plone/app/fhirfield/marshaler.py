@@ -14,7 +14,7 @@ class FhirResourceFieldMarshaler(BaseFieldMarshaler):
     def encode(self, value, charset='utf-8', primary=False):
         if value is None:
             return
-        actual_value = value.stringify()
+        actual_value = value.stringify(prettify=True)
         if not actual_value:
             return
         return actual_value.encode(charset)
