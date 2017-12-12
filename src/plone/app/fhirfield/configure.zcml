@@ -39,6 +39,11 @@
         file="deserializer.zcml"
     />
 
+    <!-- Configure plone.rfc822 field encode/decode if installed -->
+    <include zcml:condition="installed plone.rfc822"
+        file="marshaler.zcml"
+    />
+
     <genericsetup:registerProfile
         name="default"
         title="plone.app.fhirfield"
