@@ -78,7 +78,7 @@ class SchemaeditorFunctionalTest(unittest.TestCase):
         browser.getControl(name='__ac_password').value = SITE_OWNER_PASSWORD
         browser.getControl(name='submit').click()
 
-    def test_widget(self):
+    def test_schemaeditor(self):
         """" """
         self.login_as_admin()
 

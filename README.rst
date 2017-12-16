@@ -35,6 +35,8 @@ Features
 
 - Plone restapi support
 - Widget: z3cform support
+- plone.supermodel support
+- plone.rfc822 marshaler field support
 
 
 Roadmaps
