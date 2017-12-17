@@ -63,8 +63,6 @@ class MarshalerIntegrationTest(unittest.TestCase):
         self.assertIsNone(value)
 
         encode_str = field_marshaler.encode(context.resource)
-        decoded_value = field_marshaler.decode(encode_str)
-        self.assertEqual(decoded_value.as_json(), context.resource.as_json())
 
         rfc822_msg = constructMessageFromSchema(context, ITestOrganization)
         self.assertIsInstance(rfc822_msg, Message)
@@ -72,3 +70,39 @@ class MarshalerIntegrationTest(unittest.TestCase):
             rfc822_msg.as_string()
         except Exception as exc:
             raise AssertionError('Code should not come here!\n{0!s}'.format(exc))
+
+        # Test with None value
+        value = field_marshaler.encode(None)
+        self.assertIsNone(value)
+
+        decoded_value = field_marshaler.decode(encode_str)
+        self.assertEqual(decoded_value.as_json(), context.resource.as_json())
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            already_decoded = f.read().decode('utf-8')
+
+        encoding = field_marshaler.getCharset()
+        self.assertEqual(encoding, 'utf-8')
+
+        content_type = field_marshaler.getContentType()
+        self.assertEqual(content_type, 'application/json')
+        try:
+            already_decoded.decode(encoding)
+            raise AssertionError('Code should not come here! should raise Unicode decoding error.')
+        except UnicodeEncodeError:
+            decoded_value2 = field_marshaler.decode(already_decoded, charset=encoding, contentType=content_type)
+            self.assertEqual(decoded_value.as_json(), decoded_value2.as_json())
+
+        decoded_value = field_marshaler.decode('', charset=encoding, contentType=content_type)
+        self.assertIsInstance(decoded_value, decoded_value2.__class__)
+
+        context.resource = None
+        fhir_field = getFields(ITestOrganization)['resource']
+
+        field_marshaler = queryMultiAdapter((context, fhir_field), IFieldMarshaler)
+
+        encoding = field_marshaler.getCharset()
+        self.assertIsNone(encoding)
+
+        content_type = field_marshaler.getContentType()
+        self.assertIsNone(content_type)

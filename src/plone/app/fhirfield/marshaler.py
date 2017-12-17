@@ -26,7 +26,7 @@ class FhirResourceFieldMarshaler(BaseFieldMarshaler):
             unicode_value = value  # was already unicode
 
         if unicode_value in ('', None):
-            decoded_value = IFhirResource(self.field).from_none(unicode_value)
+            decoded_value = IFhirResource(self.field).from_none()
         else:
             decoded_value = IFhirResource(self.field).fromUnicode(unicode_value)
         return decoded_value
