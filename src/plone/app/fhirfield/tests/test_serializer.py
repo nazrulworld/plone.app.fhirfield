@@ -77,6 +77,10 @@ class SerializerIntegrationTest(unittest.TestCase):
         value = serializer()
         self.assertEqual(json_dict['resourceType'], value['resourceType'])
 
+        # Test with None value
+        serializer.context.resource = None
+        self.assertIsNone(serializer())
+
     def test_serialize(self):
         """ """
         context = self.add_item()

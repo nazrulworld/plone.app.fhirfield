@@ -84,20 +84,17 @@ class FhirResourceAreaConverter(BaseDataConverter):
 
     def toWidgetValue(self, value):
         """ """
+        if value in (None, '', NOVALUE):
+            return ''
+
         if IFhirResourceValue.providedBy(value):
-            if value:
-                if self.widget.mode in ('input', 'hidden'):
-                    return value.stringfy()
-                elif self.widget.mode == 'display':
-                    return value.stringfy()
-            else:
-                return ''
+            if self.widget.mode in ('input', 'hidden'):
+                return value.stringify()
+            elif self.widget.mode == 'display':
+                return value.stringify()
 
         if isinstance(value, six.string_types):
             return value
-
-        elif value in (None, '', NOVALUE):
-            return ''
 
         raise ValueError(
             'Can not convert {0:s} to unicode'.format(repr(value))

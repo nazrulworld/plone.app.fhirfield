@@ -84,6 +84,9 @@ class WidgetIntegrationTest(unittest.TestCase):
         fhir_value = converter.toFieldValue(fhir_str)
         self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
 
+        fhir_value2 = converter.toFieldValue(fhir_value)
+        self.assertEqual(fhir_value, fhir_value2)
+
         try:
             converter.toFieldValue(('hello', 'wrong type', ))
             raise AssertionError('Code should not come here! As wrong types data is provided')
@@ -92,6 +95,56 @@ class WidgetIntegrationTest(unittest.TestCase):
 
     def test_textarea_data_converter(self):
         """ """
+        from z3c.form.browser.textarea import TextAreaWidget
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            fhir_str = f.read()
+        request = TestRequest(form={'resource': fhir_str})
+        fhir_field = getFields(ITestOrganization)['resource']
+        field_widget = TextAreaWidget(request)
+
+        converter = queryMultiAdapter((fhir_field, field_widget), IDataConverter)
+        self.assertIsNotNone(converter)
+
+        # All Test: toFieldValue
+        fhir_value_empty = converter.toFieldValue(NOVALUE)
+        self.assertFalse(fhir_value_empty)
+        self.assertIsInstance(fhir_value_empty, FhirResourceValue)
+
+        fhir_value = converter.toFieldValue(fhir_str)
+        self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
+
+        fhir_value2 = converter.toFieldValue(fhir_value)
+        self.assertEqual(fhir_value, fhir_value2)
+
+        try:
+            converter.toFieldValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('IFhirResourceValue', str(exc))
+
+        # All Test: toWidgetValue
+        fhir_value = converter.toWidgetValue('')
+        self.assertFalse(fhir_value)
+        self.assertEqual('', '')
+
+        fhir_value_1 = converter.toWidgetValue(fhir_str)
+        self.assertIn('Organization', fhir_value_1)
+        self.assertIn('resourceType', fhir_value_1)
+
+        fhir_value_2 = converter.toWidgetValue(fhir_value2)
+        self.assertEqual(json.loads(fhir_value_1), json.loads(fhir_value_2))
+
+        converter.widget.mode = 'display'
+
+        fhir_value_3 = converter.toWidgetValue(fhir_value_empty)
+        self.assertEqual(fhir_value_3, '')
+
+        try:
+            converter.toWidgetValue(('hello', 'wrong type', ))
+            raise AssertionError('Code should not come here! As wrong types data is provided')
+        except ValueError as exc:
+            self.assertIn('Can not convert', str(exc))
 
 
 class WidgetFunctionalTest(unittest.TestCase):

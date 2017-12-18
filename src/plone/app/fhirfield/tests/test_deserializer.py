@@ -35,6 +35,28 @@ class DeserializerIntegrationTest(unittest.TestCase):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
 
+    def assert_field(self, context, field, json_dict):
+        """ """
+        # Deserialize to field value
+        deserializer = queryMultiAdapter(
+              (field, context, self.request),
+              IFieldDeserializer
+              )
+        self.assertIsNotNone(deserializer)
+
+        field_value = deserializer(json_dict)
+        # Value type is derived from right interface
+        self.assertTrue(IFhirResourceValue.providedBy(field_value))
+        # Test from string data
+        field_value2 = deserializer(json.dumps(json_dict))
+        self.assertTrue(field_value.as_json(), field_value2.as_json())
+
+        try:
+            deserializer(['I am invalid'])
+            raise AssertionError('Code should not come here! because invalid data type is provided.')
+        except ValueError:
+            pass
+
     def test_available_adapter(self):
         """ """
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
@@ -49,18 +71,9 @@ class DeserializerIntegrationTest(unittest.TestCase):
 
         for name, field in getFields(ITestOrganization).items():
 
-                if not IFhirResource.providedBy(field):
-                    continue
-                # Deserialize to field value
-                deserializer = queryMultiAdapter(
-                    (field, context, self.request),
-                    IFieldDeserializer
-                )
-                self.assertIsNotNone(deserializer)
-
-                field_value = deserializer(json_dict)
-                # Value type is derived from right interface
-                self.assertTrue(IFhirResourceValue.providedBy(field_value))
+            if not IFhirResource.providedBy(field):
+                continue
+            self.assert_field(context, field, json_dict)
 
     def test_deserializer(self):
         """ """
