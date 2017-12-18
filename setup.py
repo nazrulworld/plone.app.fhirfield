@@ -47,7 +47,8 @@ setup(
         'Products.GenericSetup>=1.8.2',
         'setuptools',
         'z3c.jbot',
-        'fhirclient'
+        'fhirclient',
+        'jsonpatch'
     ],
     extras_require={
         'test': [

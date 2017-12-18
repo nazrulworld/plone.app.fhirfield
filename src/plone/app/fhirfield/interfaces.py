@@ -69,7 +69,7 @@ class IFhirResourceValue(Interface):
     def stringify(prettify=False):
         pass
 
-    def json_patch(patch):
+    def patch(patch_data):
         pass
 
     def foreground_origin():

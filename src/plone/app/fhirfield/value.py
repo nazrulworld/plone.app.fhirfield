@@ -12,6 +12,7 @@ from zope.interface.exceptions import DoesNotImplement
 from zope.interface.verify import verifyObject
 from zope.schema.interfaces import WrongType
 
+import jsonpatch
 import six
 import sys
 
@@ -58,9 +59,22 @@ class FhirResourceValue(object):
         else:
             return None
 
-    def json_patch(self, patch):
-        """ """
-        pass
+    def patch(self, patch_data):
+        """:@links: https://python-json-patch.readthedocs.io/en/latest/tutorial.html#creating-a-patch"""
+        if not isinstance(patch_data, (list, tuple)):
+            raise WrongType('patch value must be list or tuple type! but got `{0}` type.'.format(type(patch_data)))
+
+        if not bool(self._storage):
+            raise Invalid('None object cannot be patched! Make sure fhir resource value is not empty!')
+        try:
+            patcher = jsonpatch.JsonPatch(patch_data)
+            value = patcher.apply(self._storage.raw.as_json())
+
+            new_value = self._storage.raw.__class__(value)
+            self._storage.raw = new_value
+
+        except jsonpatch.JsonPatchException as e:
+            six.reraise(Invalid, Invalid(str(e)), sys.exc_info()[2])
 
     def stringify(self, prettify=False):
         """ """

@@ -5,6 +5,7 @@ Changelog
 1.0.0a3 (unreleased)
 --------------------
 
+- `FHIR Patch`_ support added. Now patching fhir resource is more easy to manage.
 - plone.supermodel support is confirmed.[nazrulworld]
 - plone.rfc822 marshaler field support.[nazrulworld]
 
@@ -20,3 +21,5 @@ Changelog
 
 - Initial release.
   [nazrulworld]
+
+.. _`FHIR Patch`: https://www.hl7.org/fhir/fhirpatch.html
