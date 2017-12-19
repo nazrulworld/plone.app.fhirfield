@@ -37,6 +37,7 @@ class FhirResource(Object):
 
     def __init__(self, model=None, resource_type=None, model_interface=None, **kw):
 
+        self.schema = IFhirResourceValue
         self.model = model
         self.resource_type = resource_type
         self.model_interface = model_interface
@@ -49,8 +50,10 @@ class FhirResource(Object):
                 kw['default'] = self.fromUnicode(default)
             elif isinstance(default, dict):
                 kw['default'] = self.from_dict(default)
+            elif default is None:
+                kw['default'] = self.from_none()
 
-        super(FhirResource, self).__init__(schema=IFhirResourceValue, **kw)
+        super(FhirResource, self).__init__(schema=self.schema, **kw)
 
     def fromUnicode(self, str_val):
         """ """
@@ -148,10 +151,6 @@ class FhirResource(Object):
         """ """
         super(FhirResource, self)._validate(value)
 
-        # No further validation for None value
-        if value == self.missing_value:
-            return
-
         if self.model_interface:
             try:
                 verifyObject(self.model_interface, value.foreground_origin(), False)
@@ -167,13 +166,15 @@ class FhirResource(Object):
         if self.model:
             klass = import_string(self.model)
 
-            if not isinstance(value.foreground_origin(), klass):
+            if value.foreground_origin() is not None and\
+                    not isinstance(value.foreground_origin(), klass):
                 msg = 'Wrong fhir resource value is provided! Value should be object of {0!r} but got {1!r}'.\
                     format(klass, value.foreground_origin().__class__)
                 raise WrongContainedType(msg)
 
-        try:
-            value.foreground_origin().as_json()
-        except (FHIRValidationError, TypeError) as exc:
-            msg = 'There is invalid element inside fhir model object.\n{0!s}'.format(exc)
-            six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
+        if value.foreground_origin() is not None:
+            try:
+                value.foreground_origin().as_json()
+            except (FHIRValidationError, TypeError) as exc:
+                msg = 'There is invalid element inside fhir model object.\n{0!s}'.format(exc)
+                six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])

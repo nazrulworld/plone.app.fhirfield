@@ -16,6 +16,20 @@ class HelperIntegrationTest(unittest.TestCase):
     """ """
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
+    def test_resource_type_to_dotted_model_name(self):
+        """ """
+        dotted_path = helpers.resource_type_to_dotted_model_name('DeviceRequest')
+        self.assertEqual('fhirclient.models.devicerequest', dotted_path)
+
+        dotted_path = helpers.resource_type_to_dotted_model_name('FakeResource', silent=True)
+        self.assertIsNone(dotted_path)
+
+        try:
+            helpers.resource_type_to_dotted_model_name('FakeResource', silent=False)
+            raise AssertionError('Code should not come here! because invalid resource is provided with explicit error')
+        except KeyError:
+            pass
+
     def test_resource_type_str_to_fhir_model(self):
         """ """
         task = helpers.resource_type_str_to_fhir_model('Task')

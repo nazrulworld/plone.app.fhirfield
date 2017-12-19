@@ -67,11 +67,10 @@ class IFhirResourceValue(Interface):
     )
 
     def stringify(prettify=False):
-        pass
+        """Transformation to JSON string representation"""
 
     def patch(patch_data):
-        pass
+        """FHIR Patch implementation: https://www.hl7.org/fhir/fhirpatch.html"""
 
     def foreground_origin():
         """Return the original object of FHIR model that is proxied!"""
-        pass

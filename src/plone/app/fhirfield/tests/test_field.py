@@ -228,10 +228,25 @@ class FieldIntegrationTest(unittest.TestCase):
                 )
 
         self.assertEqual(fhir_resource_value.resource_type, json_dict['resourceType'])
+
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            resource_type='Organization'
+        )
+
+        fhir_resource_value = fhir_field.from_dict(json_dict)
         try:
             fhir_resource_value.as_json()
         except Exception:
             raise AssertionError('Code should not come here! as should be valid fhir resource')
+
+        # Test auto discovery resource type
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource')
+        )
+        fhir_resource_value = fhir_field.from_dict(json_dict)
+        self.assertEqual(fhir_resource_value.resource_type, json_dict['resourceType'])
+
         # Test with invalid data type
         try:
             invalid_data = ('hello', 'tree', 'go', )
@@ -308,3 +323,30 @@ class FieldIntegrationTest(unittest.TestCase):
             raise AssertionError('Code should not come here! should raise attribute error')
         except AttributeError:
             pass
+
+    def test_default_value(self):
+        """ """
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            json_dict = json.load(f)
+
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.organization.Organization',
+            default=json_dict
+        )
+        self.assertEqual(json_dict, fhir_field.default.as_json())
+
+        fhir_field2 = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.organization.Organization',
+            default=json.dumps(json_dict)
+        )
+
+        self.assertEqual(fhir_field2.default.as_json(), fhir_field.default.as_json())
+
+        fhir_field3 = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.organization.Organization',
+            default=None
+        )
+        self.assertEqual(str(fhir_field3.default), '')

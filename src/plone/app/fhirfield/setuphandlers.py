@@ -10,6 +10,7 @@ class HiddenProfiles(object):
         """Hide uninstall profile from site-creation and quickinstaller."""
         return [
             'plone.app.fhirfield:uninstall',
+            'plone.app.fhirfield:testing'
         ]
 
 
