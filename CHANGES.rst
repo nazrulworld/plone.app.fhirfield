@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0.0a3 (unreleased)
+1.0.0a3 (2017-12-22)
 --------------------
 
 - `FHIR Patch`_ support added. Now patching fhir resource is more easy to manage.
