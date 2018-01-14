@@ -5,13 +5,13 @@ Changelog
 1.0.0a6 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- missing `HealthcareService` fhir model is added as supported model.
 
 
 1.0.0a5 (2018-01-14)
 --------------------
 
-- Person fhir model added in whitelist.
+- `Person` fhir model added in whitelist.
 
 
 1.0.0a4 (2018-01-14)
