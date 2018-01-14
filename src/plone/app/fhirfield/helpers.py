@@ -22,7 +22,8 @@ fhir_resource_models_map = {
     'Observation': 'fhirclient.models.observation',
     'Organization': 'fhirclient.models.organization',
     'ActivityDefinition': 'fhirclient.models.activitydefinition',
-    'DeviceRequest': 'fhirclient.models.devicerequest'
+    'DeviceRequest': 'fhirclient.models.devicerequest',
+    'ValueSet': 'fhirclient.models.valueset'
 }
 
 
@@ -49,7 +50,7 @@ def import_string(dotted_path):
     """Shameless hack from django utils, please don't mind!"""
     try:
         module_path, class_name = dotted_path.rsplit('.', 1)
-    except ValueError:
+    except (ValueError, AttributeError):
         msg = "{0} doesn't look like a module path".format(dotted_path)
         six.reraise(ImportError, ImportError(msg), sys.exc_info()[2])
 

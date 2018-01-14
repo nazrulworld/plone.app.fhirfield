@@ -2,7 +2,6 @@
 from . import FHIR_FIXTURE_PATH
 from plone.app.fhirfield import field
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
-from plone.app.fhirfield.interfaces import IFhirResourceModel
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.value import FhirResourceValue
 from zope.interface import Invalid
@@ -36,7 +35,7 @@ class FieldIntegrationTest(unittest.TestCase):
             field.FhirResource(
                 title=six.text_type('Organization resource'),
                 model='fhirclient.models.organization.Organization',
-                model_interface=IFhirResourceModel
+                model_interface='plone.app.fhirfield.interfaces.IFhirResourceModel'
             )
         except Invalid as exc:
             raise AssertionError('Code should not come here, as everything should goes fine.\n{0!s}'.format(exc))
@@ -94,11 +93,35 @@ class FieldIntegrationTest(unittest.TestCase):
         try:
             field.FhirResource(
                 title=six.text_type('Organization resource'),
-                model_interface=IFhirResourceValue
+                model_interface='plone.app.fhirfield.interfaces.IFhirResourceValue'
             )
             raise AssertionError('Code should not come here! as wrong subclass of interface is provided')
         except Invalid:
             pass
+
+    def test_init_validation_with_noninterface(self):
+        """ """
+        # Wrong interface class
+        try:
+            field.FhirResource(
+                title=six.text_type('Organization resource'),
+                model_interface='plone.app.fhirfield.tests.NoneInterfaceClass'
+            )
+            raise AssertionError('Code should not come here! as wrong interface class is provided')
+        except WrongType as exc:
+            self.assertIn('An interface is required', str(exc))
+
+    def test_init_validation_with_wrong_dotted_path(self):
+        """ """
+        # Wrong module path
+        try:
+            field.FhirResource(
+                title=six.text_type('Organization resource'),
+                model_interface='fake.tests.NoneInterfaceClass'
+            )
+            raise AssertionError('Code should not come here! as wrong interface class is provided')
+        except Invalid as exc:
+            self.assertIn('Invalid FHIR Model Interface', str(exc))
 
     def test_pre_value_validate(self):
         """ """
@@ -196,12 +219,9 @@ class FieldIntegrationTest(unittest.TestCase):
             self.assertIn('Resource type must be `Task`', str(exc))
 
         # Wrong interface attributes
-        class IWrongInterface(IFhirResourceModel):
-            def meta():
-                pass
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model_interface=IWrongInterface
+            model_interface='plone.app.fhirfield.tests.IWrongInterface'
         )
 
         try:

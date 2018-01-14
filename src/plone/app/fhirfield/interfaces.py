@@ -44,7 +44,7 @@ class IFhirResource(IObject):
         title=_('FHIR Resource Model from fhirclient'),
         required=False
     )
-    model_interface = zs.InterfaceField(
+    model_interface = zs.DottedName(
         title=_('FHIR Model Interface'),
         required=False
     )

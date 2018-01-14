@@ -16,9 +16,11 @@ from zope.interface import Invalid
 from zope.interface.exceptions import BrokenImplementation
 from zope.interface.exceptions import BrokenMethodImplementation
 from zope.interface.exceptions import DoesNotImplement
+from zope.interface.interfaces import IInterface
 from zope.interface.verify import verifyObject
 from zope.schema import Object
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
+from zope.schema import getFields
 from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import WrongContainedType
 from zope.schema.interfaces import WrongType
@@ -101,6 +103,10 @@ class FhirResource(Object):
         if self.resource_type and self.model is not None:
             raise Invalid(_('Either `model` or `resource_type` value is acceptable! you cannot provide both!'))
 
+        ifields = getFields(IFhirResource)
+        ifields['model'].validate(self.model)
+        ifields['model_interface'].validate(self.model_interface)
+
         if self.model:
             try:
                 klass = import_string(self.model)
@@ -123,14 +129,28 @@ class FhirResource(Object):
             raise Invalid(msg)
 
         if self.model_interface:
-            if self.model_interface is not IFhirResourceModel and\
-                 not issubclass(self.model_interface, IFhirResourceModel):
+            try:
+                klass = import_string(self.model_interface)
+            except ImportError as exc:
+                msg = 'Invalid FHIR Model Interface`{0}`! Please check the module or class name.'.\
+                    format(self.model_interface)
+                if api.env.debug_mode():
+                    msg += '\nOriginal Exception: {0!s}'.format(exc)
+                raise six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
+
+            if not IInterface.providedBy(klass):
+                raise WrongType('An interface is required', klass, self.__name__)
+
+            if klass is not IFhirResourceModel and\
+                    not issubclass(klass, IFhirResourceModel):
                 msg = '`{0!r}` must be derived from {1}'.format(
-                    self.model_interface,
+                    klass,
                     IFhirResourceModel.__module__ + '.' + IFhirResourceModel.__class__.__name__
                     )
 
                 raise Invalid(msg)
+
+            self.model_interface = klass
 
     def pre_value_validate(self, fhir_json):
         """ """

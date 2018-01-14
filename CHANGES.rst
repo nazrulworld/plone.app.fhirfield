@@ -5,7 +5,7 @@ Changelog
 1.0.0a4 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- IFhirResource.model_interface field type changed to `DottedName` from `InterfaceField`.
 
 
 1.0.0a3 (2017-12-22)
