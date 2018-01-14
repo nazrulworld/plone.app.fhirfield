@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0.0a5 (unreleased)
+1.0.0a5 (2018-01-14)
 --------------------
 
 - Person fhir model added in whitelist.
