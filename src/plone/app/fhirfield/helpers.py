@@ -18,6 +18,7 @@ fhir_resource_models_map = {
     'ProcedureRequest': 'fhirclient.models.procedurerequest',
     'Questionnaire': 'fhirclient.models.questionnaire',
     'Practitioner': 'fhirclient.models.practitioner',
+    'Person': 'fhirclient.models.person',
     'QuestionnaireResponse': 'fhirclient.models.questionnaireresponse',
     'Observation': 'fhirclient.models.observation',
     'Organization': 'fhirclient.models.organization',
