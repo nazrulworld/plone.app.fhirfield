@@ -18,9 +18,9 @@ from zope.interface.exceptions import BrokenMethodImplementation
 from zope.interface.exceptions import DoesNotImplement
 from zope.interface.interfaces import IInterface
 from zope.interface.verify import verifyObject
+from zope.schema import getFields
 from zope.schema import Object
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
-from zope.schema import getFields
 from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import WrongContainedType
 from zope.schema.interfaces import WrongType

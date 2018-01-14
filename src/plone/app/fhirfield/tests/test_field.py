@@ -2,7 +2,6 @@
 from . import FHIR_FIXTURE_PATH
 from plone.app.fhirfield import field
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
-from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.value import FhirResourceValue
 from zope.interface import Invalid
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
