@@ -5,7 +5,7 @@ Changelog
 1.0.0a7 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- fix(bug) Issue-1: _RuntimeError: maximum recursion depth exceeded while calling a Python object at form view. #1:https://github.com/nazrulworld/plone.app.fhirfield/issues/1
 
 
 1.0.0a6 (2018-01-14)

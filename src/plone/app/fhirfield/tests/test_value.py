@@ -8,6 +8,7 @@ from zope.interface import implementer
 from zope.interface import Invalid
 from zope.schema.interfaces import WrongType
 
+import cPickle
 import json
 import os
 import six
@@ -138,3 +139,16 @@ class ValueIntegrationTest(unittest.TestCase):
             raise AssertionError('Code should not come here! because of validation error')
         except Invalid as exc:
             self.assertIn(' The meta attribute was not provided', str(exc))
+
+    def test_fhir_resource_value_pickling(self):
+        """ """
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        model = resource_type_str_to_fhir_model(fhir_json['resourceType'])
+        fhir_resource = model(fhir_json)
+        fhir_resource_value = value.FhirResourceValue(raw=fhir_resource)
+
+        serialized = cPickle.dumps(fhir_resource_value)
+        deserialized = cPickle.loads(serialized)
+        self.assertEqual(len(deserialized.stringify()), len(fhir_resource_value.stringify()))

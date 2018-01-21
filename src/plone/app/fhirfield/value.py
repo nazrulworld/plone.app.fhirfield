@@ -1,6 +1,7 @@
 # _*_ coding: utf-8 _*_
 from .interfaces import IFhirResourceModel
 from .interfaces import IFhirResourceValue
+from collections import OrderedDict
 from persistent import Persistent
 from plone import api
 from plone.app.fhirfield.compat import json
@@ -123,9 +124,19 @@ class FhirResourceValue(object):
         except AttributeError:
             return getattr(self._storage.raw, name)
 
+    def __getstate__(self):
+        """ """
+        odict = OrderedDict([('_storage', self._storage), ('_encoding', self._encoding)])
+        return odict
+
     def __setattr__(self, name, val):
         """This class kind of unmutable! All changes should be applied on FHIR Resource Object"""
         setattr(self._storage.raw, name, val)
+
+    def __setstate__(self, odict):
+        """ """
+        for attr, value in six.iteritems(odict):
+            object.__setattr__(self, attr, value)
 
     def __str__(self):
         """ """
