@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0.0a8 (unreleased)
+1.0.0a8 (2018-01-22)
 --------------------
 
 - fix(bug) Issue-: Empty string value raise json validation error #2:https://github.com/nazrulworld/plone.app.fhirfield/issues/2
