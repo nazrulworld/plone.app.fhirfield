@@ -65,33 +65,12 @@ class FhirResource(Object):
 
     def from_dict(self, dict_value):
         """ """
-        self.pre_value_validate(dict_value)
-        klass = None
-
-        if self.model:
-            # enforce use class from defined! this is kind of validation
-            klass = import_string(self.model)
-            if klass.resource_type != dict_value.get('resourceType'):
-                raise ConstraintNotSatisfied(
-                    'Fhir Model mismatched with provided resource type!\n'
-                    '`{0}` resource type is permitted but got `{1}`'.
-                    format(klass.resource_type, dict_value.get('resourceType'))
-                )
-
-        elif self.resource_type:
-            klass = resource_type_str_to_fhir_model(self.resource_type)
-
+        if dict_value is None:
+            value = None
         else:
-            # relay on json value for resource type
-            klass = resource_type_str_to_fhir_model(dict_value['resourceType'])
-
-        value = FhirResourceValue(
-            raw=klass(dict_value),
-            encoding='utf-8',
-        )
-
+            value = self._from_dict(dict_value)
+        # do validation now
         self.validate(value)
-
         return value
 
     def from_none(self):
@@ -166,6 +145,35 @@ class FhirResource(Object):
 
         if 'resourceType' not in fhir_dict.keys() or 'id' not in fhir_dict.keys():
             raise Invalid('Invalid FHIR resource json is provided!\n{0}'.format(fhir_json))
+
+    def _from_dict(self, dict_value):
+        """ """
+        self.pre_value_validate(dict_value)
+        klass = None
+
+        if self.model:
+            # enforce use class from defined! this is kind of validation
+            klass = import_string(self.model)
+            if klass.resource_type != dict_value.get('resourceType'):
+                raise ConstraintNotSatisfied(
+                    'Fhir Model mismatched with provided resource type!\n'
+                    '`{0}` resource type is permitted but got `{1}`'.
+                    format(klass.resource_type, dict_value.get('resourceType'))
+                )
+
+        elif self.resource_type:
+            klass = resource_type_str_to_fhir_model(self.resource_type)
+
+        else:
+            # relay on json value for resource type
+            klass = resource_type_str_to_fhir_model(dict_value['resourceType'])
+
+        value = FhirResourceValue(
+            raw=klass(dict_value),
+            encoding='utf-8',
+        )
+
+        return value
 
     def _validate(self, value):
         """ """

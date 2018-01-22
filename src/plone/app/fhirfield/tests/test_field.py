@@ -321,6 +321,17 @@ class FieldIntegrationTest(unittest.TestCase):
         except Invalid as exc:
             self.assertIn('Invalid JSON String', str(exc))
 
+    def test_fromUnicode_with_empty_str(self):
+        """ """
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            model='fhirclient.models.organization.Organization',
+            required=False
+        )
+
+        value = fhir_field.fromUnicode('')
+        self.assertIsNone(value)
+
     def test_from_none(self):
         """ """
         fhir_field = field.FhirResource(
