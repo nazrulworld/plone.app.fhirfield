@@ -108,7 +108,7 @@ class SerializerFunctionalTest(unittest.TestCase):
         json_body = {
             '@type': 'TestOrganization',
             'title': 'Test Organization xxx',
-            'id': id_
+            'id': id_,
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_body['resource'] = json.load(f)

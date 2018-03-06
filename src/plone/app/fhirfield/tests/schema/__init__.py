@@ -12,7 +12,7 @@ class ITestOrganization(model.Schema):
     """ """
     resource = FhirResource(
         title=u'Fhir Resource Field',
-        model='fhirclient.models.organization.Organization'
+        model='fhirclient.models.organization.Organization',
     )
 
 

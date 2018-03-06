@@ -40,7 +40,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
         # Deserialize to field value
         deserializer = queryMultiAdapter(
               (field, context, self.request),
-              IFieldDeserializer
+              IFieldDeserializer,
               )
         self.assertIsNotNone(deserializer)
 
@@ -125,7 +125,7 @@ class DeserializerFunctionalTest(unittest.TestCase):
         json_body = {
             '@type': 'TestOrganization',
             'title': 'Test Organization xxx',
-            'id': 'test-hospital'
+            'id': 'test-hospital',
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_body['resource'] = json.load(f)

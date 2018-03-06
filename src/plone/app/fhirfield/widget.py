@@ -60,7 +60,7 @@ class FhirResourceConverter(BaseDataConverter):
             return IFhirResource(self.field).fromUnicode(value)
 
         raise ValueError(
-            'Can not convert {0!s} to an IFhirResourceValue'.format(value)
+            'Can not convert {0!s} to an IFhirResourceValue'.format(value),
         )
 
     def toFieldValue(self, value):
@@ -75,7 +75,7 @@ class FhirResourceConverter(BaseDataConverter):
             return IFhirResource(self.field).from_none()
 
         raise ValueError(
-            'Can not convert {0!s} to an IFhirResourceValue'.format(value)
+            'Can not convert {0!s} to an IFhirResourceValue'.format(value),
         )
 
 
@@ -97,7 +97,7 @@ class FhirResourceAreaConverter(BaseDataConverter):
             return value
 
         raise ValueError(
-            'Can not convert {0:s} to unicode'.format(repr(value))
+            'Can not convert {0:s} to unicode'.format(repr(value)),
         )
 
     def toFieldValue(self, value):
@@ -112,5 +112,5 @@ class FhirResourceAreaConverter(BaseDataConverter):
             return IFhirResource(self.field).from_none()
 
         raise ValueError(
-            'Can not convert {0!r} to an IFhirResourceValue'.format(value)
+            'Can not convert {0!r} to an IFhirResourceValue'.format(value),
         )

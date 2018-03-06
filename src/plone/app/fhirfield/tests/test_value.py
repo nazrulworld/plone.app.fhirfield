@@ -58,19 +58,20 @@ class ValueIntegrationTest(unittest.TestCase):
         except WrongType:
             pass
         patch_data = [
-            {'path': '/text/fake path', 'value': 'patched!', 'Invalid Option': 'replace'}
+            {'path': '/text/fake path', 'value': 'patched!', 'Invalid Option': 'replace'},
         ]
         # Test getting original error from json patcher
         try:
             fhir_resource_value.patch(patch_data)
             raise AssertionError(
-                'Code should not come here! because wrong patch data is provided for patch and invalid format as well!'
+                'Code should not come here! because wrong patch data is'
+                ' provided for patch and invalid format as well!',
             )
         except Invalid as exc:
             self.assertIn("does not contain 'op' member", str(exc))
 
         patch_data = [
-            {'path': '/text/status', 'value': 'patched!', 'op': 'replace'}
+            {'path': '/text/status', 'value': 'patched!', 'op': 'replace'},
         ]
         fhir_resource_value.patch(patch_data)
 

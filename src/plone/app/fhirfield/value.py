@@ -149,14 +149,14 @@ class FhirResourceValue(object):
                 format(
                     self.__class__.__module__ + '.' + self.__class__.__name__,
                     self._storage.raw.__class__.__module__ + '.' + self._storage.raw.__class__.__name__,
-                    hex(id(self))
+                    hex(id(self)),
                 )
         else:
             return '<{0} object represents object of {1} at {2}>'.\
                 format(
                     self.__class__.__module__ + '.' + self.__class__.__name__,
                     None.__class__.__name__,
-                    hex(id(self))
+                    hex(id(self)),
                 )
 
     def __eq__(self, other):

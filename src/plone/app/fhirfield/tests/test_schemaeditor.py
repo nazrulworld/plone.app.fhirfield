@@ -95,8 +95,8 @@ class SchemaeditorFunctionalTest(unittest.TestCase):
         browser.open(
             '{0}/dexterity-types/testorganization/@@add-field?ajax_load={1}'.format(
                 self.portal_url,
-                time.time()
-                )
+                time.time(),
+                ),
             )
         # Make sure available in select list!
         self.assertIn('FHIR Resource Field', browser.contents)

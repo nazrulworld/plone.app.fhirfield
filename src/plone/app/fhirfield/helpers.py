@@ -27,7 +27,7 @@ fhir_resource_models_map = {
     'ActivityDefinition': 'fhirclient.models.activitydefinition',
     'DeviceRequest': 'fhirclient.models.devicerequest',
     'ValueSet': 'fhirclient.models.valueset',
-    'HealthcareService': 'fhirclient.models.healthcareservice'
+    'HealthcareService': 'fhirclient.models.healthcareservice',
 }
 
 

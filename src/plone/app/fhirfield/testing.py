@@ -57,13 +57,13 @@ PLONE_APP_FHIRFIELD_FIXTURE = PloneAppFhirfieldLayer()
 
 PLONE_APP_FHIRFIELD_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_FHIRFIELD_FIXTURE,),
-    name='PloneAppFhirfieldLayer:IntegrationTesting'
+    name='PloneAppFhirfieldLayer:IntegrationTesting',
 )
 
 
 PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_FHIRFIELD_FIXTURE, z2.ZSERVER_FIXTURE),
-    name='PloneAppFhirfieldLayer:FunctionalTesting'
+    name='PloneAppFhirfieldLayer:FunctionalTesting',
 )
 
 
@@ -71,7 +71,7 @@ PLONE_APP_FHIRFIELD_ACCEPTANCE_TESTING = FunctionalTesting(
     bases=(
         PLONE_APP_FHIRFIELD_FIXTURE,
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
-        z2.ZSERVER_FIXTURE
+        z2.ZSERVER_FIXTURE,
     ),
-    name='PloneAppFhirfieldLayer:AcceptanceTesting'
+    name='PloneAppFhirfieldLayer:AcceptanceTesting',
 )

@@ -11,23 +11,23 @@ class IFhirResourceModel(Interface):
     """ """
     resource_type = Attribute(
         'resource_type',
-        _('Resource Type')
+        _('Resource Type'),
     )
     id = Attribute(
         'id',
-        _('Logical id of this artifact.')
+        _('Logical id of this artifact.'),
     )
     implicitRules = Attribute(
         'implicitRules',
-        _('A set of rules under which this content was created.')
+        _('A set of rules under which this content was created.'),
     )
     language = Attribute(
         'language',
-        _('Language of the resource content.')
+        _('Language of the resource content.'),
     )
     meta = Attribute(
         'meta',
-        _('Metadata about the resource')
+        _('Metadata about the resource'),
     )
 
     def as_json():
@@ -38,15 +38,15 @@ class IFhirResource(IObject):
     """ """
     resource_type = zs.TextLine(
         title=_('FHIR Resource Type'),
-        required=False
+        required=False,
     )
     model = zs.DottedName(
         title=_('FHIR Resource Model from fhirclient'),
-        required=False
+        required=False,
     )
     model_interface = zs.DottedName(
         title=_('FHIR Model Interface'),
-        required=False
+        required=False,
     )
 
     def from_dict(dict_value):
@@ -59,11 +59,11 @@ class IFhirResourceValue(Interface):
     """ """
     _encoding = Attribute(
         '_encoding',
-        _('Encoding name that will be used during json generation')
+        _('Encoding name that will be used during json generation'),
     )
     _storage = Attribute(
         '_storage',
-        _('_storage to hold Fhir resource model object.')
+        _('_storage to hold Fhir resource model object.'),
     )
 
     def stringify(prettify=False):

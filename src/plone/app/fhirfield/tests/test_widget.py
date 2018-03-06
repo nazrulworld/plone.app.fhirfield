@@ -71,7 +71,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertIn(fhir_value.as_json()['resourceType'], fhir_str)
 
         try:
-            converter.toWidgetValue(('hello', 'wrong type', ))
+            converter.toWidgetValue(('hello', 'wrong type'))
             raise AssertionError('Code should not come here! As wrong types data is provided')
         except ValueError as exc:
             self.assertIn('IFhirResourceValue', str(exc))
@@ -88,7 +88,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertEqual(fhir_value, fhir_value2)
 
         try:
-            converter.toFieldValue(('hello', 'wrong type', ))
+            converter.toFieldValue(('hello', 'wrong type'))
             raise AssertionError('Code should not come here! As wrong types data is provided')
         except ValueError as exc:
             self.assertIn('IFhirResourceValue', str(exc))
@@ -118,7 +118,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertEqual(fhir_value, fhir_value2)
 
         try:
-            converter.toFieldValue(('hello', 'wrong type', ))
+            converter.toFieldValue(('hello', 'wrong type'))
             raise AssertionError('Code should not come here! As wrong types data is provided')
         except ValueError as exc:
             self.assertIn('IFhirResourceValue', str(exc))
@@ -141,7 +141,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertEqual(fhir_value_3, '')
 
         try:
-            converter.toWidgetValue(('hello', 'wrong type', ))
+            converter.toWidgetValue(('hello', 'wrong type'))
             raise AssertionError('Code should not come here! As wrong types data is provided')
         except ValueError as exc:
             self.assertIn('Can not convert', str(exc))

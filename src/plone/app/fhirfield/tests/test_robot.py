@@ -22,7 +22,7 @@ def test_suite():
         suite.addTests([
             layered(
                 robottestsuite,
-                layer=PLONE_APP_FHIRFIELD_ACCEPTANCE_TESTING
+                layer=PLONE_APP_FHIRFIELD_ACCEPTANCE_TESTING,
             ),
         ])
     return suite

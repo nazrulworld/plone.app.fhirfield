@@ -124,7 +124,7 @@ class FhirResource(Object):
                     not issubclass(klass, IFhirResourceModel):
                 msg = '`{0!r}` must be derived from {1}'.format(
                     klass,
-                    IFhirResourceModel.__module__ + '.' + IFhirResourceModel.__class__.__name__
+                    IFhirResourceModel.__module__ + '.' + IFhirResourceModel.__class__.__name__,
                     )
 
                 raise Invalid(msg)
@@ -140,7 +140,7 @@ class FhirResource(Object):
             fhir_dict = fhir_json.copy()
         else:
             raise WrongType(
-                'Only dict type data is allowed but got `{0}` type data!'.format(type(fhir_json))
+                'Only dict type data is allowed but got `{0}` type data!'.format(type(fhir_json)),
             )
 
         if 'resourceType' not in fhir_dict.keys() or 'id' not in fhir_dict.keys():
@@ -158,7 +158,7 @@ class FhirResource(Object):
                 raise ConstraintNotSatisfied(
                     'Fhir Model mismatched with provided resource type!\n'
                     '`{0}` resource type is permitted but got `{1}`'.
-                    format(klass.resource_type, dict_value.get('resourceType'))
+                    format(klass.resource_type, dict_value.get('resourceType')),
                 )
 
         elif self.resource_type:

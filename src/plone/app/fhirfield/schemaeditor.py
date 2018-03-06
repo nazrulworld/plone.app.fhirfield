@@ -18,7 +18,7 @@ if api.env.plone_version().startswith('5'):
     padbt.ALLOWED_FIELDS.append(u'plone.app.fhirfield.field.FhirResource')
     logger.info(
                 'schemaeditor: patch done! `plone.app.fhirfield.field.FhirResource` is added in whitelist\n'
-                'Location: plone.app.dexterity.browser.types.ALLOWED_FIELDS'
+                'Location: plone.app.dexterity.browser.types.ALLOWED_FIELDS',
             )
 
 

@@ -25,5 +25,5 @@ class FhirResourceDeserializer(DefaultFieldDeserializer):
             return IFhirResource(self.field).from_dict(value)
         else:
             raise ValueError(
-                'Invalid data type({0}) provided! only dict or string data type is accepted.'.format(type(value))
+                'Invalid data type({0}) provided! only dict or string data type is accepted.'.format(type(value)),
             )
