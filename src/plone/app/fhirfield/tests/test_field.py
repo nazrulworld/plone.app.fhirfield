@@ -86,7 +86,7 @@ class FieldIntegrationTest(unittest.TestCase):
             )
             raise AssertionError('Code should not come here! as should be invalid error')
         except Invalid as exc:
-            self.assertIn('FakeResource is not valid resource type', str(exc))
+            self.assertIn('FakeResource is not valid fhir resource type', str(exc))
 
         # Wrong base interface class
         try:

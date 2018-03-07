@@ -2,11 +2,10 @@
 from fhirclient.models.fhirabstractbase import FHIRValidationError
 from plone import api
 from plone.app.fhirfield.compat import _
-from plone.app.fhirfield.helpers import fhir_resource_models_map
 from plone.app.fhirfield.helpers import import_string
 from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
-from plone.app.fhirfield.helpers import resource_type_to_dotted_model_name
+from plone.app.fhirfield.helpers import search_fhir_model
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceModel
 from plone.app.fhirfield.interfaces import IFhirResourceValue
@@ -99,12 +98,8 @@ class FhirResource(Object):
                     raise Invalid(_('{0!r} must be valid model class from fhirclient.model'.format(klass)))
 
         if self.resource_type and\
-                resource_type_to_dotted_model_name(self.resource_type, True) is None:
-            msg = '{0} is not valid resource type or not supported!'.format(self.resource_type)
-            if api.env.debug_mode():
-                msg += '\nWe are currently supporting `{0!s}` resource types.'.\
-                    format(fhir_resource_models_map.keys())
-
+                search_fhir_model(self.resource_type) is None:
+            msg = '{0} is not valid fhir resource type!'.format(self.resource_type)
             raise Invalid(msg)
 
         if self.model_interface:

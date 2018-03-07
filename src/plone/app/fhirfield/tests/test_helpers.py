@@ -17,19 +17,13 @@ class HelperIntegrationTest(unittest.TestCase):
     """ """
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
-    def test_resource_type_to_dotted_model_name(self):
+    def test_search_fhir_model(self):
         """ """
-        dotted_path = helpers.resource_type_to_dotted_model_name('DeviceRequest')
-        self.assertEqual('fhirclient.models.devicerequest', dotted_path)
+        dotted_path = helpers.search_fhir_model('DeviceRequest')
+        self.assertEqual('fhirclient.models.devicerequest.DeviceRequest', dotted_path)
 
-        dotted_path = helpers.resource_type_to_dotted_model_name('FakeResource', silent=True)
+        dotted_path = helpers.search_fhir_model('FakeResource')
         self.assertIsNone(dotted_path)
-
-        try:
-            helpers.resource_type_to_dotted_model_name('FakeResource', silent=False)
-            raise AssertionError('Code should not come here! because invalid resource is provided with explicit error')
-        except KeyError:
-            pass
 
     def test_resource_type_str_to_fhir_model(self):
         """ """
@@ -95,7 +89,4 @@ class HelperIntegrationTest(unittest.TestCase):
         self.assertIsNone(value)
 
         value = helpers.parse_json_str(compat.EMPTY_STRING)
-        self.assertIsNone(value)
-
-        value = helpers.parse_json_str(None)
         self.assertIsNone(value)

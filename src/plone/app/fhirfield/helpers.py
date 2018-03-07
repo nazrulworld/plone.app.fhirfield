@@ -1,55 +1,56 @@
 # _*_ coding: utf-8 _*_
 from .compat import EMPTY_STRING
 from .compat import NO_VALUE
+from collections import defaultdict
 from importlib import import_module
+from plone.api.validation import required_parameters
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from zope.interface import Invalid
 
+import pkgutil
 import six
 import sys
 
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
-fhir_resource_models_map = {
-    'Bundle': 'fhirclient.models.bundle',
-    'Device': 'fhirclient.models.device',
-    'Patient': 'fhirclient.models.patient',
-    'Task': 'fhirclient.models.task',
-    'ProcedureRequest': 'fhirclient.models.procedurerequest',
-    'Questionnaire': 'fhirclient.models.questionnaire',
-    'Practitioner': 'fhirclient.models.practitioner',
-    'Person': 'fhirclient.models.person',
-    'QuestionnaireResponse': 'fhirclient.models.questionnaireresponse',
-    'Observation': 'fhirclient.models.observation',
-    'Organization': 'fhirclient.models.organization',
-    'ActivityDefinition': 'fhirclient.models.activitydefinition',
-    'DeviceRequest': 'fhirclient.models.devicerequest',
-    'ValueSet': 'fhirclient.models.valueset',
-    'HealthcareService': 'fhirclient.models.healthcareservice',
-}
+FHIR_RESOURCE_MODEL_CACHE = defaultdict()
 
 
-def resource_type_to_dotted_model_name(resource_type, silent=False):
-    """Simple helper function to feed dotted resource model name from models map"""
-    try:
-        return fhir_resource_models_map[resource_type]
-    except KeyError as e:
-        if not silent:
-            raise e
+@required_parameters('model_name')
+def search_fhir_model(model_name, cache=True):
+    """ """
+    global FHIR_RESOURCE_MODEL_CACHE
+    if model_name in FHIR_RESOURCE_MODEL_CACHE.keys() and cache:
+        return '{0}.{1}'.format(FHIR_RESOURCE_MODEL_CACHE[model_name], model_name)
+
+    # Trying to get from entire modules
+    from fhirclient import models
+    for importer, modname, ispkg in \
+            pkgutil.walk_packages(models.__path__, models.__name__+'.', onerror=lambda x: None):
+        if ispkg or modname.endswith('_tests'):
+            continue
+
+        mod = import_module(modname)
+        if getattr(mod, model_name, None):
+            FHIR_RESOURCE_MODEL_CACHE[model_name] = modname
+            return '{0}.{1}'.format(modname, model_name)
+
     return None
 
 
+@required_parameters('resource_type')
 def resource_type_str_to_fhir_model(resource_type):
     """ """
-    dotted_path = resource_type_to_dotted_model_name(resource_type, True)
+    dotted_path = search_fhir_model(resource_type)
     if dotted_path is None:
         raise Invalid(_('Invalid: `{0}` is not valid resource type!'.format(resource_type)))
 
-    return import_string('{0}.{1}'.format(dotted_path, resource_type))
+    return import_string(dotted_path)
 
 
+@required_parameters('dotted_path')
 def import_string(dotted_path):
     """Shameless hack from django utils, please don't mind!"""
     try:
@@ -68,6 +69,7 @@ def import_string(dotted_path):
         six.reraise(ImportError, ImportError(msg), sys.exc_info()[2])
 
 
+@required_parameters('str_val')
 def parse_json_str(str_val, encoding='utf-8'):
     """ """
     if str_val in (NO_VALUE, EMPTY_STRING, None):
