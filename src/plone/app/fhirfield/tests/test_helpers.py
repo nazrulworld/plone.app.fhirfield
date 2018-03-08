@@ -25,6 +25,14 @@ class HelperIntegrationTest(unittest.TestCase):
         dotted_path = helpers.search_fhir_model('FakeResource')
         self.assertIsNone(dotted_path)
 
+    def test_caching_of_search_fhir_model(self):
+        """ """
+        helpers.FHIR_RESOURCE_MODEL_CACHE.clear()
+        dotted_path = helpers.search_fhir_model('DeviceRequest')
+        self.assertEqual('fhirclient.models.devicerequest.DeviceRequest', dotted_path)
+
+        self.assertEqual(len(helpers.FHIR_RESOURCE_MODEL_CACHE), 1)
+
     def test_resource_type_str_to_fhir_model(self):
         """ """
         task = helpers.resource_type_str_to_fhir_model('Task')
