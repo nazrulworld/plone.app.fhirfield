@@ -28,7 +28,7 @@ def search_fhir_model(model_name, cache=True):
     # Trying to get from entire modules
     from fhirclient import models
     for importer, modname, ispkg in \
-            pkgutil.walk_packages(models.__path__, models.__name__+'.', onerror=lambda x: None):
+            pkgutil.walk_packages(models.__path__, models.__name__ + '.', onerror=lambda x: None):
         if ispkg or modname.endswith('_tests'):
             continue
 
