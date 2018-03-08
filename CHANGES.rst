@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-1.0.0a9 (unreleased)
+1.0.0a9 (2018-03-08)
 --------------------
 
 - There is no restriction/limit over fhir resources, all available models are supported.
