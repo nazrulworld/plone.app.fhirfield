@@ -25,8 +25,8 @@
 
 .. contents::
 
-Introduction (plone.app.fhirfield)
-==================================
+Background (plone.app.fhirfield)
+================================
 
 `FHIR`_ (Fast Healthcare Interoperability Resources) is the standard for Healthcare system. Our intend to implemnt `FHIR`_ based system using `Plone`_! `plone.app.fhirfield`_ will make life easier to create, manage content for `FHIR resources`_.
 
@@ -39,8 +39,48 @@ Features
 - plone.rfc822 marshaler field support
 
 
+Available Options
+=================
+
+This field has got all standard options (i.e `title`, `required`, `desciption` and so on) with additionally options for the purpose of either validation or constraint those are related to `FHIR`_.
+
+
+
+resource_type
+    Required: No
+
+    Default: None
+
+    Type: String
+
+    The name of `FHIR`_ resource can be used as constraint, meaning that we can restricted only accept certain resource. If FHIR json is provided that contains other resource type, would raise validation error.
+    Example: `FhirResource(....,resource_type='Patient')`
+
+model
+    Required: No
+
+    Default: None
+
+    Type: String + full python path (dotted) of the model class.
+
+    Like `resource_type` option, it can be used as constraint, however additionally this option enable us to use custom model class other than fhirclient's model.
+    Example: `FhirResource(....,model='fhirclient.models.patient.Patient')`
+
+model_interface
+    Required: No
+
+    Default: None
+
+    Type: String + full python path (dotted) of the model class.
+
+    Unlike `model` option, this option has more versatile goal although you can use it for single resource restriction. The advanced usecase like, the field could accept muiltiple resources types those model class implements the provided interface. For example you made a interface called `IMedicalService` and (`Organization`, `Patient`, `Practitioner`) models those are implementing `IMedicalService`. So when you provides this option value, actually three types of fhir json can now be accepted by this field.
+    Example: `FhirResource(....,model='plone.app.interfaces.IFhirResourceModel')`
+
+
+
 Roadmaps
---------
+========
+
 - indexing: we have plan to support json index like elastic search model. Ofcourse performance will be main issue. bellows are some libraries, I found. You are welcome to suggest me any better library for json search.
     - `jmespath`_
     - `jsonpath-ng`_
@@ -49,7 +89,7 @@ Roadmaps
 
 
 Installation
-------------
+============
 
 Install plone.app.fhirfield by adding it to your buildout::
 

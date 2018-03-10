@@ -2,7 +2,7 @@ Changelog
 =========
 
 1.0.0a10 (unreleased)
---------------------
+---------------------
 
 - Your changes here
 
