@@ -149,12 +149,6 @@ class FhirResource(Object):
         if self.model:
             # enforce use class from defined! this is kind of validation
             klass = import_string(self.model)
-            if klass.resource_type != dict_value.get('resourceType'):
-                raise ConstraintNotSatisfied(
-                    'Fhir Model mismatched with provided resource type!\n'
-                    '`{0}` resource type is permitted but got `{1}`'.
-                    format(klass.resource_type, dict_value.get('resourceType')),
-                )
 
         elif self.resource_type:
             klass = resource_type_str_to_fhir_model(self.resource_type)
@@ -162,6 +156,14 @@ class FhirResource(Object):
         else:
             # relay on json value for resource type
             klass = resource_type_str_to_fhir_model(dict_value['resourceType'])
+
+        # check constraint
+        if klass.resource_type != dict_value.get('resourceType'):
+                raise ConstraintNotSatisfied(
+                    'Fhir Model mismatched with provided resource type!\n'
+                    '`{0}` resource type is permitted but got `{1}`'.
+                    format(klass.resource_type, dict_value.get('resourceType')),
+                )
 
         value = FhirResourceValue(
             raw=klass(dict_value),

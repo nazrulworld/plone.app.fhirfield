@@ -380,3 +380,18 @@ class FieldIntegrationTest(unittest.TestCase):
             default=None,
         )
         self.assertEqual(str(fhir_field3.default), '')
+
+    def test_resource_type_constraint(self):
+        """Regarding to issue: #3 """
+        fhir_field = field.FhirResource(
+            title=six.text_type('Organization resource'),
+            resource_type='Organization',
+        )
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Patient.json'), 'r') as f:
+            json_dict = json.load(f)
+
+        try:
+            fhir_field.from_dict(json_dict)
+        except Invalid as e:
+            self.assertEqual(e.__class__.__name__, 'ConstraintNotSatisfied')
+            self.assertIn('Fhir Model mismatched', str(e))
