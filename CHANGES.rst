@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0a10 (unreleased)
+1.0.0a10 (2018-03-12)
 ---------------------
 
 - fix(bug) Issue-3: `resource_type` constraint don't raise exception from validator.
