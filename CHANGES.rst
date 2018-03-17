@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0.0b1 (unreleased)
----------------------
+1.0.0b1 (2018-03-17)
+--------------------
 
 - first beta version has been released.
 
