@@ -61,7 +61,9 @@ class FhirResourceValue(object):
             return None
 
     def patch(self, patch_data):
-        """:@links: https://python-json-patch.readthedocs.io/en/latest/tutorial.html#creating-a-patch"""
+        """:@links:
+        https://www.hl7.org/fhir/fhirpatch.html
+        https://python-json-patch.readthedocs.io/en/latest/tutorial.html#creating-a-patch"""
         if not isinstance(patch_data, (list, tuple)):
             raise WrongType('patch value must be list or tuple type! but got `{0}` type.'.format(type(patch_data)))
 
