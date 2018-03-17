@@ -14,12 +14,12 @@ long_description = '\n\n'.join([
 
 setup(
     name='plone.app.fhirfield',
-    version='1.0.0a11.dev0',
+    version='1.0.0b1.dev0',
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
         "Framework :: Plone",
         "Framework :: Plone :: 4.3",

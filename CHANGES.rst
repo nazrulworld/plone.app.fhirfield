@@ -1,10 +1,10 @@
 Changelog
 =========
 
-1.0.0a11 (unreleased)
+1.0.0b1 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+- first beta version has been released.
 
 
 1.0.0a10 (2018-03-12)
