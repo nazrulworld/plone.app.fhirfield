@@ -209,7 +209,7 @@ if not IS_TRAVIS:
     bases_ = (ELASTICSEARCH_SERVER_FIXTURE)
 
 PLONE_APP_FHIRFIELD_WITH_ES_INTEGRATION_TESTING = IntegrationTesting(
-    bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE),
+    bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE, ),
     name='PloneAppFhirfieldLayer:WithElasticsearchIntegrationTesting',
 )
 
