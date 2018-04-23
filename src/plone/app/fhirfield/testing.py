@@ -13,6 +13,7 @@ from plone.testing import z2
 from zope.configuration import xmlconfig
 
 import docker
+import os
 import sys
 import time
 
@@ -24,6 +25,7 @@ TEST_ZCML = """\
     xmlns="http://namespaces.zope.org/zope">
 </configure>
 """
+IS_TRAVIS = 'TRAVIS' in os.environ
 
 
 class BaseDockerImage(object):
@@ -202,8 +204,12 @@ PLONE_APP_FHIRFIELD_INTEGRATION_TESTING = IntegrationTesting(
     name='PloneAppFhirfieldLayer:IntegrationTesting',
 )
 
+bases = ()
+if not IS_TRAVIS:
+    bases_ = (ELASTICSEARCH_SERVER_FIXTURE)
+
 PLONE_APP_FHIRFIELD_WITH_ES_INTEGRATION_TESTING = IntegrationTesting(
-    bases=(ELASTICSEARCH_SERVER_FIXTURE, PLONE_APP_FHIRFIELD_FIXTURE),
+    bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE),
     name='PloneAppFhirfieldLayer:WithElasticsearchIntegrationTesting',
 )
 
