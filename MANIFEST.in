@@ -6,3 +6,4 @@ include *.rst
 include LICENSE.GPL
 exclude *.cfg
 exclude requirements.txt
+exclude Makefile
