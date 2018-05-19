@@ -181,6 +181,8 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
         import plone.app.fhirfield
         self.loadZCML(package=plone.app.fhirfield)
+        # initialize method not calling automatically
+        z2.installProduct(app, 'plone.app.fhirfield')
         # Load Custom
         xmlconfig.string(TEST_ZCML, context=configuration_context)
 
@@ -206,7 +208,7 @@ PLONE_APP_FHIRFIELD_INTEGRATION_TESTING = IntegrationTesting(
 
 bases_ = ()
 if not IS_TRAVIS:
-    bases_ = (ELASTICSEARCH_SERVER_FIXTURE)
+    bases_ = (ELASTICSEARCH_SERVER_FIXTURE, )
 
 PLONE_APP_FHIRFIELD_WITH_ES_INTEGRATION_TESTING = IntegrationTesting(
     bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE, ),
