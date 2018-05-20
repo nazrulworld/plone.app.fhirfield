@@ -27,45 +27,46 @@ class EsFhirFieldIndex(BaseIndex):
             'properties': {
                 'id': {
                     'type': 'string',
-                    'store': True
+                    'store': True,
                 },
                 'identifier': {
                     'type': 'nested',
                     'properties': {
                         'use': {
-                            'type': 'string'
+                            'type': 'string',
                         },
                         'system': {
-                            'type': 'string'
+                            'type': 'string',
                         },
                         'value': {
-                            'type': 'string'
-                        }
-                    }
+                            'type': 'string',
+                        },
+                    },
                 },
                 'resourceType': {
                     'type': 'string',
-                    'store': False
+                    'store': False,
                 },
                 'meta': {
                     'properties': {
                         'versionId': {
                             'type': 'string',
-                            'store': False
+                            'store': False,
                         },
                         'lastUpdated': {
                             'type': 'date',
-                            'store': False
-                        }
-                    }
-                }
-            }
+                            'store': False,
+                        },
+                    },
+                },
+            },
         }
 
     def get_value(self, object):
         """ """
         value = super(EsFhirFieldIndex, self).get_value(object)
         if IFhirResourceValue.providedBy(value):
+            # should be sim value based on mapping?
             value = value.stringify()
 
         return value

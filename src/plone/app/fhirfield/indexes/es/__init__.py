@@ -24,7 +24,7 @@ INDEX_MAPPING = {
     FhirOrganizationIndex: EsFhirOrganizationIndex,
     FhirPatientIndex: EsFhirPatientIndex,
     FhirPractitionerIndex: EsFhirPractitionerIndex,
-    FhirValueSetIndex: EsFhirValueSetIndex
+    FhirValueSetIndex: EsFhirValueSetIndex,
 }
 
 # Tiny patch
