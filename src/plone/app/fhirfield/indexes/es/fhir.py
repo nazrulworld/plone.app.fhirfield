@@ -5,26 +5,26 @@
 # @Version : $Id$
 # All imports here
 from collective.elasticsearch.indexes import BaseIndex
+from plone.app.fhirfield.compat import json
+from plone.app.fhirfield.interfaces import IFhirResourceValue
+
+import os
 
 
 __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 
+MAPPING_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'mapping')
+
 
 class EsFhirFieldIndex(BaseIndex):
     """ """
+    _mapping_cache = None
+
     def create_mapping(self, name):
+        """Minimal mapping for all kind of fhir models"""
         return {
             'properties': {
-                'name': {
-                    'type': 'string',
-                    'index': 'analyzed',
-                    'analyzer': 'keyword',
-                    'store': False
-                },
-                'resourceType': {
-                    'type': 'string',
-                    'store': False
-                },
                 'id': {
                     'type': 'string',
                     'store': True
@@ -42,13 +42,52 @@ class EsFhirFieldIndex(BaseIndex):
                             'type': 'string'
                         }
                     }
+                },
+                'resourceType': {
+                    'type': 'string',
+                    'store': False
+                },
+                'meta': {
+                    'properties': {
+                        'versionId': {
+                            'type': 'string',
+                            'store': False
+                        },
+                        'lastUpdated': {
+                            'type': 'date',
+                            'store': False
+                        }
+                    }
                 }
             }
         }
 
+    def get_value(self, object):
+        """ """
+        value = super(EsFhirFieldIndex, self).get_value(object)
+        if IFhirResourceValue.providedBy(value):
+            value = value.stringify()
+
+        return value
+
 
 class EsFhirOrganizationIndex(EsFhirFieldIndex):
     """ """
+
+    def create_mapping(self, name):
+        """Minimal mapping for all kind of fhir models"""
+        print name
+        return self._get_mapping()
+
+    def _get_mapping(self, cache=True):
+        """Fetch mapping from file system associated with resourceType"""
+        if not cache or self._mapping_cache is None:
+            with open(os.path.join(MAPPING_FILE_DIR, 'Organization.json'), 'r') as f:
+                contents = json.load(f)
+                # ??? do some validation ???
+                self._mapping_cache = contents['mapping']
+
+        return self._mapping_cache
 
 
 class EsFhirPatientIndex(EsFhirFieldIndex):
