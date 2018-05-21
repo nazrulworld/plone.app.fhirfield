@@ -67,7 +67,7 @@ class EsFhirFieldIndex(BaseIndex):
         value = super(EsFhirFieldIndex, self).get_value(object)
         if IFhirResourceValue.providedBy(value):
             # should be sim value based on mapping?
-            value = value.stringify()
+            value = value.as_json()
 
         return value
 

@@ -221,7 +221,6 @@ class WidgetFunctionalTest(unittest.TestCase):
         # form.widgets.IDublinCore.rights
         # form.buttons.save
         # form.buttons.cancel
-        browser.getControl(name='form.widgets.IBasic.title').value = 'hello organization'
         browser.getControl(name='form.widgets.resource').value = fhir_str
         browser.getControl(name='form.buttons.save').click()
         # There must be form error! as required title is missing so url is unchanged
@@ -230,7 +229,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         self.assertEqual(json.loads(browser.getControl(name='form.widgets.resource').value), json.loads(fhir_str))
 
         # Let's fullfill required
-        browser.getControl(name='form.widgets.IDublinCore.title').value = 'hello organization'
+        browser.getControl(name='form.widgets.IBasic.title').value = 'hello organization'
         # After solving that problem, this again value assign not need
         browser.getControl(name='form.widgets.resource').value = fhir_str
         browser.getControl(name='form.buttons.save').click()

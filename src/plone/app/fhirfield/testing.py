@@ -179,6 +179,9 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         import plone.app.z3cform
         self.loadZCML(package=plone.app.z3cform)
 
+        import collective.elasticsearch
+        self.loadZCML(package=collective.elasticsearch)
+
         import plone.app.fhirfield
         self.loadZCML(package=plone.app.fhirfield)
         # initialize method not calling automatically
@@ -191,6 +194,8 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         setRoles(portal, TEST_USER_ID, ['Manager'])
 
         applyProfile(portal, 'plone.restapi:default')
+
+        applyProfile(portal, 'collective.elasticsearch:default')
 
         applyProfile(portal, 'plone.app.fhirfield:default')
 
@@ -221,6 +226,10 @@ PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING = FunctionalTesting(
     name='PloneAppFhirfieldLayer:FunctionalTesting',
 )
 
+PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE, z2.ZSERVER_FIXTURE),
+    name='PloneAppFhirfieldLayer:WithElasticsearchFunctionalTesting',
+)
 
 PLONE_APP_FHIRFIELD_ACCEPTANCE_TESTING = FunctionalTesting(
     bases=(
