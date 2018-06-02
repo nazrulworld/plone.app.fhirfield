@@ -20,6 +20,7 @@ MAPPING_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 class EsFhirFieldIndex(BaseIndex):
     """ """
     _mapping_cache = None
+    filter_query = False
 
     def create_mapping(self, name):
         """Minimal mapping for all kind of fhir models"""
@@ -70,6 +71,24 @@ class EsFhirFieldIndex(BaseIndex):
             value = value.as_json()
 
         return value
+
+    def get_query(self, name, value):
+        value = self._normalize_query(value)
+        if value in (None, ''):
+            return
+        query = {
+            'bool': {
+                'should': []
+            }
+        }
+        should_container = query['bool']['should']
+        should_container.append(value)
+        return query
+
+    def add_prefix(self, prefix, items):
+        """Add field name as prefix """
+        container = list()
+        pass
 
 
 class EsFhirOrganizationIndex(EsFhirFieldIndex):
