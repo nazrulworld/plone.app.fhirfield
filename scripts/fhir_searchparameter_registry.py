@@ -86,7 +86,8 @@ async def parse_table_data(dom):
         for index, td in enumerate(tds):
 
             if index == 2:
-                text = list(map(lambda x: x.strip(), td.get_text().split('\n')))
+                text = \
+                    list(map(lambda x: x.strip(), td.get_text().split('\n')))
                 item.append(text)
             elif index == 3:
                 text = list(map(lambda x: x.strip(), td.get_text().split('|')))

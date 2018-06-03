@@ -97,7 +97,8 @@ def cmd(func: typing.Callable[[], typing.Any]) -> typing.Callable:
 
         for param in inspect.signature(func).parameters.values():
 
-            if param.kind.name in ('POSITIONAL_ONLY', 'POSITIONAL_OR_KEYWORD', 'KEYWORD_ONLY'):
+            if param.kind.name in \
+                ('POSITIONAL_ONLY', 'POSITIONAL_OR_KEYWORD', 'KEYWORD_ONLY'):
                 fn_args.append(param.name)
 
         for i, a in enumerate(fn_args):

@@ -23,6 +23,7 @@ __author__ = 'Md Nazrul Islam<email2nazrul@zitelab.dk>'
 TEST_ZCML = """\
 <configure
     xmlns="http://namespaces.zope.org/zope">
+    <include package="plone.app.fhirfield.tests.fhir_rest_service" />
 </configure>
 """
 IS_TRAVIS = 'TRAVIS' in os.environ

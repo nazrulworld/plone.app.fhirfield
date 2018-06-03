@@ -8,6 +8,7 @@ from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from zope.interface import Invalid
 
+import os
 import pkgutil
 import six
 import sys
@@ -16,6 +17,18 @@ import sys
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 FHIR_RESOURCE_MODEL_CACHE = defaultdict()
+
+FHIR_STATIC_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'browser',
+    'static',
+    'FHIR')
+
+with open(os.path.join(FHIR_STATIC_DIR, 'HL7',
+                       'search',
+                       'FHIR-Search-Parameter-Registry-searchable.json')) as f:
+
+    FHIR_SEARCH_PARAMETER_REGISTRY = json.load(f)
 
 
 @required_parameters('model_name')
