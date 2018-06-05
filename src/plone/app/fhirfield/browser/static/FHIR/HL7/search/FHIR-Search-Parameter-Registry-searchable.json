@@ -2,7 +2,7 @@
     "meta":{
         "lastUpdated":null,
         "versionId":"3.0.1",
-        "lastUpdate":1527925400.3616259098
+        "lastUpdate":1528228094.4604358673
     },
     "searchable":{
         "_content":[
@@ -56,139 +56,554 @@
         "address":[
             "string",
             [
-                "RelatedPerson.address"
+                "Practitioner.address",
+                "Person.address",
+                "Location.address",
+                "Patient.address",
+                "RelatedPerson.address",
+                "Organization.address",
+                "AuditEvent.agent.network.address"
             ]
         ],
         "address-city":[
             "string",
             [
-                "RelatedPerson.address.city"
+                "Practitioner.address.city",
+                "Location.address.city",
+                "RelatedPerson.address.city",
+                "Organization.address.city",
+                "Person.address.city",
+                "Patient.address.city"
             ]
         ],
         "address-country":[
             "string",
             [
-                "RelatedPerson.address.country"
+                "RelatedPerson.address.country",
+                "Patient.address.country",
+                "Person.address.country",
+                "Practitioner.address.country",
+                "Organization.address.country",
+                "Location.address.country"
             ]
         ],
         "address-postalcode":[
             "string",
             [
-                "RelatedPerson.address.postalCode"
+                "RelatedPerson.address.postalCode",
+                "Practitioner.address.postalCode",
+                "Location.address.postalCode",
+                "Person.address.postalCode",
+                "Organization.address.postalCode",
+                "Patient.address.postalCode"
             ]
         ],
         "address-state":[
             "string",
             [
-                "RelatedPerson.address.state"
+                "Patient.address.state",
+                "Organization.address.state",
+                "Person.address.state",
+                "RelatedPerson.address.state",
+                "Practitioner.address.state",
+                "Location.address.state"
             ]
         ],
         "address-use":[
             "token",
             [
-                "RelatedPerson.address.use"
+                "Person.address.use",
+                "Location.address.use",
+                "Patient.address.use",
+                "Practitioner.address.use",
+                "RelatedPerson.address.use",
+                "Organization.address.use"
             ]
         ],
         "birthdate":[
             "date",
             [
+                "Person.birthDate",
+                "Patient.birthDate",
                 "RelatedPerson.birthDate"
             ]
         ],
         "code":[
             "token",
             [
-                "Task.code"
+                "CompartmentDefinition.code",
+                "DeviceRequest.code.as(CodeableConcept)",
+                "Questionnaire.item.code",
+                "FamilyMemberHistory.condition.code",
+                "Substance.code",
+                "MedicationAdministration.medication.as(CodeableConcept)",
+                "Substance.ingredient.substance.as(CodeableConcept)",
+                "Group.code",
+                "DataElement.element.code",
+                "OperationDefinition.code",
+                "Condition.code",
+                "Observation.code",
+                "Medication.code",
+                "AllergyIntolerance.code",
+                "MedicationDispense.medication.as(CodeableConcept)",
+                "Procedure.code",
+                "AllergyIntolerance.reaction.substance",
+                "BodySite.code",
+                "MessageHeader.response.code",
+                "SearchParameter.code",
+                "Basic.code",
+                "Task.code",
+                "ProcedureRequest.code",
+                "ChargeItem.code",
+                "List.code",
+                "CodeSystem.concept.code",
+                "MedicationStatement.medication.as(CodeableConcept)",
+                "DiagnosticReport.code",
+                "MedicationRequest.medication.as(CodeableConcept)"
             ]
         ],
         "date":[
             "date",
             [
-                "ValueSet.date"
+                "EpisodeOfCare.period",
+                "Media.occurrence",
+                "ResearchSubject.period",
+                "MedicationRequest.dosageInstruction.timing.event",
+                "StructureDefinition.date",
+                "AdverseEvent.date",
+                "ClinicalImpression.date",
+                "Observation.effective",
+                "Composition.date",
+                "AuditEvent.recorded",
+                "ImmunizationRecommendation.recommendation.date",
+                "NamingSystem.date",
+                "ConceptMap.date",
+                "Appointment.start",
+                "ValueSet.date",
+                "Consent.dateTime",
+                "ActivityDefinition.date",
+                "AllergyIntolerance.assertedDate",
+                "Procedure.performed",
+                "OperationDefinition.date",
+                "SupplyRequest.authoredOn",
+                "Schedule.planningHorizon",
+                "ServiceDefinition.date",
+                "Library.date",
+                "DetectedIssue.date",
+                "List.date",
+                "CapabilityStatement.date",
+                "RiskAssessment.occurrence.as(DateTime)",
+                "ImplementationGuide.date",
+                "Questionnaire.date",
+                "PractitionerRole.period",
+                "StructureMap.date",
+                "MessageDefinition.date",
+                "CarePlan.period",
+                "Measure.date",
+                "SearchParameter.date",
+                "ResearchStudy.period",
+                "TestScript.date",
+                "PlanDefinition.date",
+                "Immunization.date",
+                "GraphDefinition.date",
+                "CodeSystem.date",
+                "Flag.period",
+                "DataElement.date",
+                "FamilyMemberHistory.date",
+                "CareTeam.period",
+                "Encounter.period",
+                "ExpansionProfile.date",
+                "CompartmentDefinition.date",
+                "DiagnosticReport.effective"
             ]
         ],
         "email":[
             "token",
             [
-                "RelatedPerson.telecom.where(system='email')"
+                "RelatedPerson.telecom.where(system='email')",
+                "PractitionerRole.telecom.where(system='email')",
+                "Practitioner.telecom.where(system='email')",
+                "Person.telecom.where(system='email')",
+                "Patient.telecom.where(system='email')"
             ]
         ],
         "encounter":[
             "reference",
             [
-                "VisionPrescription.encounter"
+                "CareTeam.context",
+                "Condition.context",
+                "List.encounter",
+                "RiskAssessment.context",
+                "Composition.encounter",
+                "VisionPrescription.encounter",
+                "CarePlan.context",
+                "CommunicationRequest.context",
+                "DeviceRequest.context",
+                "ExplanationOfBenefit.item.encounter",
+                "ProcedureRequest.context",
+                "Flag.encounter",
+                "DiagnosticReport.context",
+                "NutritionOrder.encounter",
+                "Observation.context",
+                "RequestGroup.context",
+                "Procedure.context",
+                "Claim.item.encounter",
+                "DocumentReference.context.encounter",
+                "Communication.context",
+                "ReferralRequest.context"
             ]
         ],
         "family":[
             "string",
             [
+                "Patient.name.family",
                 "Practitioner.name.family"
             ]
         ],
         "gender":[
             "token",
             [
+                "Person.gender",
+                "FamilyMemberHistory.gender",
+                "Practitioner.gender",
+                "Patient.gender",
                 "RelatedPerson.gender"
             ]
         ],
         "given":[
             "string",
             [
-                "Practitioner.name.given"
+                "Practitioner.name.given",
+                "Patient.name.given"
             ]
         ],
         "identifier":[
             "token",
             [
-                "VisionPrescription.identifier"
+                "Appointment.identifier",
+                "Device.identifier",
+                "ChargeItem.identifier",
+                "Consent.identifier",
+                "Immunization.identifier",
+                "Observation.identifier",
+                "ValueSet.identifier",
+                "MessageDefinition.identifier",
+                "Endpoint.identifier",
+                "MedicationAdministration.identifier",
+                "DocumentReference.masterIdentifier",
+                "ActivityDefinition.identifier",
+                "DeviceRequest.identifier",
+                "List.identifier",
+                "ResearchStudy.identifier",
+                "TestScript.identifier",
+                "Organization.identifier",
+                "SupplyRequest.identifier",
+                "RiskAssessment.identifier",
+                "DocumentManifest.identifier",
+                "DeviceUseStatement.identifier",
+                "Person.identifier",
+                "StructureDefinition.identifier",
+                "ClinicalImpression.identifier",
+                "EligibilityRequest.identifier",
+                "Patient.identifier",
+                "Coverage.identifier",
+                "Questionnaire.identifier",
+                "TestReport.identifier",
+                "Flag.identifier",
+                "GuidanceResponse.identifier",
+                "DeviceMetric.identifier",
+                "Bundle.identifier",
+                "DocumentManifest.masterIdentifier",
+                "PaymentReconciliation.identifier",
+                "MedicationRequest.identifier",
+                "EligibilityResponse.identifier",
+                "ProcessRequest.identifier",
+                "ImmunizationRecommendation.identifier",
+                "Location.identifier",
+                "Group.identifier",
+                "ResearchSubject.identifier",
+                "MeasureReport.identifier",
+                "Substance.identifier",
+                "CodeSystem.identifier",
+                "Procedure.identifier",
+                "ClaimResponse.identifier",
+                "ServiceDefinition.identifier",
+                "RequestGroup.identifier",
+                "Communication.identifier",
+                "MedicationStatement.identifier",
+                "ImagingStudy.identifier",
+                "ProcedureRequest.identifier",
+                "Media.identifier",
+                "Schedule.identifier",
+                "NutritionOrder.identifier",
+                "PlanDefinition.identifier",
+                "PaymentNotice.identifier",
+                "EpisodeOfCare.identifier",
+                "Goal.identifier",
+                "CarePlan.identifier",
+                "AppointmentResponse.identifier",
+                "ConceptMap.identifier",
+                "BodySite.identifier",
+                "Condition.identifier",
+                "Claim.identifier",
+                "ProcessResponse.identifier",
+                "ReferralRequest.identifier",
+                "PractitionerRole.identifier",
+                "StructureMap.identifier",
+                "Contract.identifier",
+                "Measure.identifier",
+                "Sequence.identifier",
+                "EnrollmentRequest.identifier",
+                "ImagingManifest.identifier",
+                "FamilyMemberHistory.identifier",
+                "DiagnosticReport.identifier",
+                "CareTeam.identifier",
+                "DeviceComponent.identifier",
+                "AllergyIntolerance.identifier",
+                "Slot.identifier",
+                "EnrollmentResponse.identifier",
+                "Basic.identifier",
+                "Library.identifier",
+                "SupplyDelivery.identifier",
+                "Account.identifier",
+                "HealthcareService.identifier",
+                "Practitioner.identifier",
+                "CommunicationRequest.identifier",
+                "ExpansionProfile.identifier",
+                "Encounter.identifier",
+                "RelatedPerson.identifier",
+                "Specimen.identifier",
+                "Composition.identifier",
+                "ExplanationOfBenefit.identifier",
+                "QuestionnaireResponse.identifier",
+                "VisionPrescription.identifier",
+                "Task.identifier",
+                "DataElement.identifier",
+                "MedicationDispense.identifier",
+                "DetectedIssue.identifier",
+                "DocumentReference.identifier"
             ]
         ],
         "medication":[
             "reference",
             [
+                "MedicationRequest.medication.as(Reference)",
+                "MedicationDispense.medication.as(Reference)",
+                "MedicationAdministration.medication.as(Reference)",
                 "MedicationStatement.medication.as(Reference)"
             ]
         ],
         "patient":[
             "reference",
             [
-                "VisionPrescription.patient"
+                "ImagingStudy.patient",
+                "MeasureReport.patient",
+                "Composition.subject",
+                "ClinicalImpression.subject",
+                "Task.for",
+                "ImagingManifest.patient",
+                "DetectedIssue.patient",
+                "ImmunizationRecommendation.patient",
+                "Specimen.subject",
+                "DeviceUseStatement.subject",
+                "NutritionOrder.patient",
+                "Sequence.patient",
+                "Consent.patient",
+                "MedicationRequest.subject",
+                "Encounter.subject",
+                "ReferralRequest.subject",
+                "VisionPrescription.patient",
+                "AllergyIntolerance.patient",
+                "Account.subject",
+                "Appointment.participant.actor",
+                "Procedure.subject",
+                "ResearchSubject.individual",
+                "Goal.subject",
+                "CareTeam.subject",
+                "CarePlan.subject",
+                "FamilyMemberHistory.patient",
+                "DiagnosticReport.subject",
+                "ProcedureRequest.subject",
+                "Basic.subject",
+                "ChargeItem.subject",
+                "SupplyDelivery.patient",
+                "QuestionnaireResponse.subject",
+                "DocumentManifest.subject",
+                "Observation.subject",
+                "GuidanceResponse.subject",
+                "AuditEvent.entity.reference",
+                "DocumentReference.subject",
+                "EligibilityRequest.patient",
+                "Device.patient",
+                "RequestGroup.subject",
+                "Media.subject",
+                "ExplanationOfBenefit.patient",
+                "MedicationStatement.subject",
+                "Condition.subject",
+                "DeviceRequest.subject",
+                "Communication.subject",
+                "ClaimResponse.patient",
+                "AuditEvent.agent.reference",
+                "EpisodeOfCare.patient",
+                "Person.link.target",
+                "Contract.subject",
+                "Provenance.target",
+                "AppointmentResponse.actor",
+                "Immunization.patient",
+                "Claim.patient",
+                "RelatedPerson.patient",
+                "CommunicationRequest.subject",
+                "BodySite.patient",
+                "List.subject",
+                "MedicationDispense.subject",
+                "EnrollmentRequest.subject",
+                "MedicationAdministration.subject",
+                "Flag.subject",
+                "RiskAssessment.subject"
             ]
         ],
         "phone":[
             "token",
             [
-                "RelatedPerson.telecom.where(system='phone')"
+                "Practitioner.telecom.where(system='phone')",
+                "Patient.telecom.where(system='phone')",
+                "PractitionerRole.telecom.where(system='phone')",
+                "RelatedPerson.telecom.where(system='phone')",
+                "Person.telecom.where(system='phone')"
             ]
         ],
         "phonetic":[
             "string",
             [
+                "Practitioner.name",
+                "Person.name",
+                "Organization.name",
+                "Patient.name",
                 "RelatedPerson.name"
             ]
         ],
         "prescription":[
             "reference",
             [
+                "MedicationAdministration.prescription",
                 "MedicationDispense.authorizingPrescription"
             ]
         ],
         "status":[
             "token",
             [
-                "ValueSet.status"
+                "CapabilityStatement.status",
+                "ResearchSubject.status",
+                "EpisodeOfCare.status",
+                "Questionnaire.status",
+                "List.status",
+                "TestScript.status",
+                "DataElement.status",
+                "Library.status",
+                "PlanDefinition.status",
+                "Task.status",
+                "ImmunizationRecommendation.recommendation.forecastStatus",
+                "Endpoint.status",
+                "Location.status",
+                "Consent.status",
+                "ResearchStudy.status",
+                "Immunization.status",
+                "Slot.status",
+                "GraphDefinition.status",
+                "MedicationDispense.status",
+                "Goal.status",
+                "Appointment.status",
+                "Communication.status",
+                "ReferralRequest.status",
+                "MessageDefinition.status",
+                "NamingSystem.status",
+                "NutritionOrder.status",
+                "CompartmentDefinition.status",
+                "MedicationRequest.status",
+                "ActivityDefinition.status",
+                "ClinicalImpression.status",
+                "Procedure.status",
+                "Specimen.status",
+                "Medication.status",
+                "MedicationStatement.status",
+                "StructureMap.status",
+                "SupplyDelivery.status",
+                "StructureDefinition.status",
+                "SupplyRequest.status",
+                "ValueSet.status",
+                "Composition.status",
+                "DocumentManifest.status",
+                "CodeSystem.status",
+                "Device.status",
+                "DeviceRequest.status",
+                "Account.status",
+                "DocumentReference.status",
+                "Substance.status",
+                "ProcedureRequest.status",
+                "CarePlan.status",
+                "MeasureReport.status",
+                "ImplementationGuide.status",
+                "Observation.status",
+                "ExpansionProfile.status",
+                "FamilyMemberHistory.status",
+                "SearchParameter.status",
+                "Subscription.status",
+                "Measure.status",
+                "CommunicationRequest.status",
+                "ServiceDefinition.status",
+                "ConceptMap.status",
+                "RequestGroup.status",
+                "OperationDefinition.status",
+                "DiagnosticReport.status",
+                "QuestionnaireResponse.status",
+                "Encounter.status",
+                "CareTeam.status",
+                "MedicationAdministration.status"
             ]
         ],
         "telecom":[
             "token",
             [
-                "RelatedPerson.telecom"
+                "RelatedPerson.telecom",
+                "Person.telecom",
+                "PractitionerRole.telecom",
+                "Patient.telecom",
+                "NamingSystem.contact.telecom",
+                "Practitioner.telecom"
             ]
         ],
         "type":[
             "token",
             [
-                "Subscription.channel.type"
+                "Specimen.type",
+                "DeviceMetric.type",
+                "Media.type",
+                "OperationDefinition.type",
+                "HealthcareService.type",
+                "DeviceComponent.type",
+                "Location.type",
+                "AuditEvent.type",
+                "Coverage.type",
+                "Account.type",
+                "DocumentManifest.type",
+                "Sequence.type",
+                "StructureDefinition.type",
+                "DocumentReference.type",
+                "Composition.type",
+                "Schedule.serviceType",
+                "Group.type",
+                "ReferralRequest.type",
+                "MedicationDispense.type",
+                "Organization.type",
+                "SearchParameter.type",
+                "EpisodeOfCare.type",
+                "Subscription.channel.type",
+                "Bundle.type",
+                "AdverseEvent.type",
+                "AllergyIntolerance.type",
+                "Device.type",
+                "Encounter.type",
+                "NamingSystem.type"
             ]
         ],
         "balance":[
@@ -200,127 +615,392 @@
         "name":[
             "string",
             [
-                "ValueSet.name"
+                "Person.name",
+                "TestScript.name",
+                "ServiceDefinition.name",
+                "NamingSystem.name",
+                "Practitioner.name",
+                "CodeSystem.name",
+                "GraphDefinition.name",
+                "Account.name",
+                "Location.name",
+                "PlanDefinition.name",
+                "Patient.name",
+                "SearchParameter.name",
+                "Questionnaire.name",
+                "StructureDefinition.name",
+                "RelatedPerson.name",
+                "Endpoint.name",
+                "ValueSet.name",
+                "OperationDefinition.name",
+                "CapabilityStatement.name",
+                "ConceptMap.name",
+                "HealthcareService.name",
+                "Organization.name",
+                "ImplementationGuide.name",
+                "Measure.name",
+                "ExpansionProfile.name",
+                "CompartmentDefinition.name",
+                "Organization.alias",
+                "DataElement.name",
+                "Library.name",
+                "Location.alias",
+                "ActivityDefinition.name",
+                "MessageDefinition.name",
+                "StructureMap.name"
             ]
         ],
         "owner":[
             "reference",
             [
+                "Account.owner",
                 "Task.owner"
             ]
         ],
         "period":[
             "date",
             [
-                "Task.executionPeriod"
+                "Account.period",
+                "DocumentReference.context.period",
+                "Task.executionPeriod",
+                "Composition.event.period",
+                "NamingSystem.uniqueId.period",
+                "Consent.period"
             ]
         ],
         "subject":[
             "reference",
             [
-                "Task.for"
+                "ClinicalImpression.subject",
+                "Composition.subject",
+                "Task.for",
+                "Specimen.subject",
+                "DeviceUseStatement.subject",
+                "MedicationRequest.subject",
+                "Encounter.subject",
+                "ReferralRequest.subject",
+                "AdverseEvent.subject",
+                "Account.subject",
+                "Procedure.subject",
+                "Goal.subject",
+                "CareTeam.subject",
+                "CarePlan.subject",
+                "ChargeItem.subject",
+                "DiagnosticReport.subject",
+                "Basic.subject",
+                "ProcedureRequest.subject",
+                "QuestionnaireResponse.subject",
+                "DocumentManifest.subject",
+                "Observation.subject",
+                "GuidanceResponse.subject",
+                "DocumentReference.subject",
+                "RequestGroup.subject",
+                "Media.subject",
+                "MedicationStatement.subject",
+                "Condition.subject",
+                "DeviceRequest.subject",
+                "Communication.subject",
+                "Contract.subject",
+                "CommunicationRequest.subject",
+                "List.subject",
+                "EnrollmentRequest.subject",
+                "MedicationDispense.subject",
+                "MedicationAdministration.subject",
+                "Flag.subject",
+                "RiskAssessment.subject"
             ]
         ],
         "composed-of":[
             "reference",
             [
-                "ServiceDefinition.relatedArtifact.where(type='composed-of').resource"
+                "Library.relatedArtifact.where(type='composed-of').resource",
+                "ServiceDefinition.relatedArtifact.where(type='composed-of').resource",
+                "ActivityDefinition.relatedArtifact.where(type='composed-of').resource",
+                "Measure.relatedArtifact.where(type='composed-of').resource",
+                "PlanDefinition.relatedArtifact.where(type='composed-of').resource"
             ]
         ],
         "depends-on":[
             "reference",
             [
-                "ServiceDefinition.relatedArtifact.where(type='depends-on').resource"
+                "ActivityDefinition.library",
+                "ServiceDefinition.relatedArtifact.where(type='depends-on').resource",
+                "Measure.library",
+                "PlanDefinition.relatedArtifact.where(type='depends-on').resource",
+                "Library.relatedArtifact.where(type='depends-on').resource",
+                "ActivityDefinition.relatedArtifact.where(type='depends-on').resource",
+                "Measure.relatedArtifact.where(type='depends-on').resource",
+                "PlanDefinition.library"
             ]
         ],
         "derived-from":[
             "reference",
             [
-                "ServiceDefinition.relatedArtifact.where(type='derived-from').resource"
+                "ActivityDefinition.relatedArtifact.where(type='derived-from').resource",
+                "Measure.relatedArtifact.where(type='derived-from').resource",
+                "ServiceDefinition.relatedArtifact.where(type='derived-from').resource",
+                "Library.relatedArtifact.where(type='derived-from').resource",
+                "PlanDefinition.relatedArtifact.where(type='derived-from').resource",
+                "SearchParameter.derivedFrom"
             ]
         ],
         "description":[
             "string",
             [
-                "ValueSet.description"
+                "CapabilityStatement.description",
+                "OperationDefinition.description",
+                "DocumentManifest.description",
+                "DocumentReference.description",
+                "SearchParameter.description",
+                "GraphDefinition.description",
+                "Measure.description",
+                "StructureMap.description",
+                "ValueSet.description",
+                "ConceptMap.description",
+                "StructureDefinition.description",
+                "CodeSystem.description",
+                "ActivityDefinition.description",
+                "TestScript.description",
+                "PlanDefinition.description",
+                "MessageDefinition.description",
+                "NamingSystem.description",
+                "Library.description",
+                "DataElement.element.definition",
+                "ServiceDefinition.description",
+                "Questionnaire.description",
+                "ImplementationGuide.description",
+                "CompartmentDefinition.description",
+                "ExpansionProfile.description"
             ]
         ],
         "effective":[
             "date",
             [
-                "ServiceDefinition.effectivePeriod"
+                "ServiceDefinition.effectivePeriod",
+                "Measure.effectivePeriod",
+                "Questionnaire.effectivePeriod",
+                "PlanDefinition.effectivePeriod",
+                "MedicationStatement.effective",
+                "ActivityDefinition.effectivePeriod",
+                "Library.effectivePeriod"
             ]
         ],
         "jurisdiction":[
             "token",
             [
-                "ValueSet.jurisdiction"
+                "ExpansionProfile.jurisdiction",
+                "CapabilityStatement.jurisdiction",
+                "CodeSystem.jurisdiction",
+                "StructureMap.jurisdiction",
+                "OperationDefinition.jurisdiction",
+                "Questionnaire.jurisdiction",
+                "SearchParameter.jurisdiction",
+                "ConceptMap.jurisdiction",
+                "ResearchStudy.jurisdiction",
+                "Library.jurisdiction",
+                "MessageDefinition.jurisdiction",
+                "StructureDefinition.jurisdiction",
+                "TestScript.jurisdiction",
+                "ValueSet.jurisdiction",
+                "GraphDefinition.jurisdiction",
+                "ActivityDefinition.jurisdiction",
+                "ServiceDefinition.jurisdiction",
+                "NamingSystem.jurisdiction",
+                "PlanDefinition.jurisdiction",
+                "Measure.jurisdiction",
+                "CompartmentDefinition.jurisdiction",
+                "DataElement.jurisdiction",
+                "ImplementationGuide.jurisdiction"
             ]
         ],
         "predecessor":[
             "reference",
             [
-                "ServiceDefinition.relatedArtifact.where(type='predecessor').resource"
+                "ServiceDefinition.relatedArtifact.where(type='predecessor').resource",
+                "ActivityDefinition.relatedArtifact.where(type='predecessor').resource",
+                "Measure.relatedArtifact.where(type='predecessor').resource",
+                "PlanDefinition.relatedArtifact.where(type='predecessor').resource",
+                "Library.relatedArtifact.where(type='predecessor').resource"
             ]
         ],
         "publisher":[
             "string",
             [
-                "ValueSet.publisher"
+                "NamingSystem.publisher",
+                "DataElement.publisher",
+                "ValueSet.publisher",
+                "ImplementationGuide.publisher",
+                "ConceptMap.publisher",
+                "Library.publisher",
+                "OperationDefinition.publisher",
+                "PlanDefinition.publisher",
+                "MessageDefinition.publisher",
+                "ServiceDefinition.publisher",
+                "SearchParameter.publisher",
+                "StructureDefinition.publisher",
+                "StructureMap.publisher",
+                "CompartmentDefinition.publisher",
+                "Measure.publisher",
+                "ExpansionProfile.publisher",
+                "CapabilityStatement.publisher",
+                "Questionnaire.publisher",
+                "TestScript.publisher",
+                "ActivityDefinition.publisher",
+                "GraphDefinition.publisher",
+                "CodeSystem.publisher"
             ]
         ],
         "successor":[
             "reference",
             [
-                "ServiceDefinition.relatedArtifact.where(type='successor').resource"
+                "Library.relatedArtifact.where(type='successor').resource",
+                "ActivityDefinition.relatedArtifact.where(type='successor').resource",
+                "ServiceDefinition.relatedArtifact.where(type='successor').resource",
+                "Measure.relatedArtifact.where(type='successor').resource",
+                "PlanDefinition.relatedArtifact.where(type='successor').resource"
             ]
         ],
         "title":[
             "string",
             [
-                "ValueSet.title"
+                "Questionnaire.title",
+                "Library.title",
+                "ConceptMap.title",
+                "TestScript.title",
+                "ActivityDefinition.title",
+                "Measure.title",
+                "PlanDefinition.title",
+                "ServiceDefinition.title",
+                "StructureMap.title",
+                "MessageDefinition.title",
+                "ResearchStudy.title",
+                "ValueSet.title",
+                "List.title",
+                "StructureDefinition.title",
+                "Composition.title",
+                "CapabilityStatement.title",
+                "DataElement.title",
+                "CodeSystem.title",
+                "CompartmentDefinition.title"
             ]
         ],
         "topic":[
             "token",
             [
-                "ServiceDefinition.topic"
+                "PlanDefinition.topic",
+                "Library.topic",
+                "ServiceDefinition.topic",
+                "ActivityDefinition.topic",
+                "Measure.topic"
             ]
         ],
         "url":[
             "uri",
             [
-                "ValueSet.url"
+                "ActivityDefinition.url",
+                "OperationDefinition.url",
+                "CompartmentDefinition.url",
+                "ImplementationGuide.url",
+                "Measure.url",
+                "GraphDefinition.url",
+                "TestScript.url",
+                "MessageDefinition.url",
+                "PlanDefinition.url",
+                "SearchParameter.url",
+                "ConceptMap.url",
+                "Library.url",
+                "ValueSet.url",
+                "Device.url",
+                "ServiceDefinition.url",
+                "StructureMap.url",
+                "ExpansionProfile.url",
+                "StructureDefinition.url",
+                "CapabilityStatement.url",
+                "Questionnaire.url",
+                "Subscription.channel.endpoint",
+                "DataElement.url",
+                "CodeSystem.url"
             ]
         ],
         "version":[
             "token",
             [
-                "ValueSet.version"
+                "ConceptMap.version",
+                "MessageDefinition.version",
+                "Questionnaire.version",
+                "ActivityDefinition.version",
+                "ServiceDefinition.version",
+                "DataElement.version",
+                "ExpansionProfile.version",
+                "GraphDefinition.version",
+                "Measure.version",
+                "SearchParameter.version",
+                "TestScript.version",
+                "CapabilityStatement.version",
+                "StructureMap.version",
+                "ImplementationGuide.version",
+                "PlanDefinition.version",
+                "OperationDefinition.version",
+                "ValueSet.version",
+                "Library.version",
+                "CodeSystem.version",
+                "StructureDefinition.version"
             ]
         ],
         "category":[
             "token",
             [
-                "SupplyRequest.category"
+                "Consent.category",
+                "Observation.category",
+                "DetectedIssue.category",
+                "HealthcareService.category",
+                "MedicationRequest.category",
+                "CareTeam.category",
+                "ResearchStudy.category",
+                "Goal.category",
+                "Communication.category",
+                "DiagnosticReport.category",
+                "MessageDefinition.category",
+                "Procedure.category",
+                "DeviceMetric.category",
+                "MedicationStatement.category",
+                "Substance.category",
+                "Condition.category",
+                "AdverseEvent.category",
+                "AllergyIntolerance.category",
+                "CommunicationRequest.category",
+                "SupplyRequest.category",
+                "CarePlan.category"
             ]
         ],
         "location":[
             "reference",
             [
-                "Provenance.location"
+                "Provenance.location",
+                "HealthcareService.location",
+                "AppointmentResponse.actor",
+                "Appointment.participant.actor",
+                "Procedure.location",
+                "Encounter.location.location",
+                "Device.location",
+                "Immunization.location",
+                "PractitionerRole.location",
+                "DocumentReference.content.attachment.url",
+                "AdverseEvent.location"
             ]
         ],
         "reaction":[
             "reference",
             [
-                "Immunization.reaction.detail"
+                "Immunization.reaction.detail",
+                "AdverseEvent.reaction"
             ]
         ],
         "recorder":[
             "reference",
             [
-                "AllergyIntolerance.recorder"
+                "AllergyIntolerance.recorder",
+                "AdverseEvent.recorder"
             ]
         ],
         "seriousness":[
@@ -330,8 +1010,9 @@
             ]
         ],
         "study":[
-            "uri",
+            "reference",
             [
+                "AdverseEvent.study",
                 "ImagingStudy.uid"
             ]
         ],
@@ -344,13 +1025,15 @@
         "asserter":[
             "reference",
             [
-                "Condition.asserter"
+                "Condition.asserter",
+                "AllergyIntolerance.asserter"
             ]
         ],
         "clinical-status":[
             "token",
             [
-                "Condition.clinicalStatus"
+                "Condition.clinicalStatus",
+                "AllergyIntolerance.clinicalStatus"
             ]
         ],
         "criticality":[
@@ -386,19 +1069,25 @@
         "severity":[
             "token",
             [
-                "Condition.severity"
+                "Condition.severity",
+                "AllergyIntolerance.reaction.severity"
             ]
         ],
         "verification-status":[
             "token",
             [
+                "AllergyIntolerance.verificationStatus",
                 "Condition.verificationStatus"
             ]
         ],
         "actor":[
             "reference",
             [
-                "Schedule.actor"
+                "AppointmentResponse.actor",
+                "Appointment.participant.actor",
+                "Schedule.actor",
+                "Consent.actor.reference",
+                "Consent.except.actor.reference"
             ]
         ],
         "appointment-type":[
@@ -410,18 +1099,26 @@
         "incomingreferral":[
             "reference",
             [
+                "Encounter.incomingReferral",
+                "Appointment.incomingReferral",
                 "EpisodeOfCare.referralRequest"
             ]
         ],
         "part-status":[
             "token",
             [
-                "AppointmentResponse.participantStatus"
+                "AppointmentResponse.participantStatus",
+                "Appointment.participant.status"
             ]
         ],
         "practitioner":[
             "reference",
             [
+                "Person.link.target",
+                "Encounter.participant.individual",
+                "AppointmentResponse.actor",
+                "Appointment.participant.actor",
+                "Immunization.practitioner.actor",
                 "PractitionerRole.practitioner"
             ]
         ],
@@ -434,18 +1131,25 @@
         "appointment":[
             "reference",
             [
+                "AppointmentResponse.appointment",
                 "Encounter.appointment"
             ]
         ],
         "action":[
             "token",
             [
-                "ProcessRequest.action"
+                "Consent.except.action",
+                "ProcessRequest.action",
+                "Consent.action",
+                "AuditEvent.action",
+                "ClinicalImpression.action"
             ]
         ],
         "agent":[
             "reference",
             [
+                "AuditEvent.agent.reference",
+                "Contract.agent.actor",
                 "Provenance.agent.who"
             ]
         ],
@@ -458,7 +1162,8 @@
         "agent-role":[
             "token",
             [
-                "Provenance.agent.role"
+                "Provenance.agent.role",
+                "AuditEvent.agent.role"
             ]
         ],
         "altid":[
@@ -476,6 +1181,7 @@
         "entity-id":[
             "token",
             [
+                "AuditEvent.entity.identifier",
                 "Provenance.entity.what.as(Identifier)"
             ]
         ],
@@ -500,7 +1206,10 @@
         "outcome":[
             "token",
             [
-                "PaymentReconciliation.outcome"
+                "EligibilityResponse.outcome",
+                "PaymentReconciliation.outcome",
+                "ClaimResponse.outcome",
+                "AuditEvent.outcome"
             ]
         ],
         "policy":[
@@ -510,21 +1219,34 @@
             ]
         ],
         "site":[
-            "reference",
+            "token",
             [
-                "ResearchStudy.site"
+                "AuditEvent.source.site",
+                "ResearchStudy.site",
+                "Media.bodySite"
             ]
         ],
         "source":[
-            "reference",
+            "token",
             [
-                "QuestionnaireResponse.source"
+                "AuditEvent.source.identifier",
+                "QuestionnaireResponse.source",
+                "DeviceComponent.source",
+                "MedicationStatement.informationSource",
+                "Linkage.item.resource",
+                "DeviceMetric.source",
+                "ConceptMap.source.as(Reference)",
+                "List.source",
+                "MessageHeader.source.name",
+                "DocumentManifest.source",
+                "Consent.source"
             ]
         ],
         "subtype":[
             "token",
             [
-                "Media.subtype"
+                "Media.subtype",
+                "AuditEvent.subtype"
             ]
         ],
         "user":[
@@ -536,13 +1258,33 @@
         "author":[
             "reference",
             [
-                "RequestGroup.author"
+                "Composition.author",
+                "DocumentManifest.author",
+                "Flag.author",
+                "Linkage.author",
+                "QuestionnaireResponse.author",
+                "DetectedIssue.author",
+                "DocumentReference.author",
+                "RequestGroup.author",
+                "MessageHeader.author",
+                "Basic.author",
+                "ImagingManifest.author"
             ]
         ],
         "created":[
             "date",
             [
-                "PaymentReconciliation.created"
+                "PaymentReconciliation.created",
+                "DocumentReference.created",
+                "ExplanationOfBenefit.created",
+                "ClaimResponse.created",
+                "Basic.created",
+                "DocumentManifest.created",
+                "Media.content.creation",
+                "PaymentNotice.created",
+                "EligibilityResponse.created",
+                "Claim.created",
+                "EligibilityRequest.created"
             ]
         ],
         "contenttype":[
@@ -566,7 +1308,10 @@
         "event":[
             "token",
             [
-                "MessageHeader.event"
+                "MessageDefinition.event",
+                "MessageHeader.event",
+                "CapabilityStatement.messaging.event.code",
+                "DocumentReference.context.event"
             ]
         ],
         "fhirversion":[
@@ -578,6 +1323,7 @@
         "format":[
             "token",
             [
+                "CapabilityStatement.format",
                 "DocumentReference.content.format"
             ]
         ],
@@ -594,9 +1340,11 @@
             ]
         ],
         "resource":[
-            "reference",
+            "token",
             [
-                "ImplementationGuide.package.resource.source"
+                "CompartmentDefinition.resource.code",
+                "ImplementationGuide.package.resource.source",
+                "CapabilityStatement.rest.resource.type"
             ]
         ],
         "resource-profile":[
@@ -644,31 +1392,74 @@
         "based-on":[
             "reference",
             [
-                "Task.basedOn"
+                "Media.basedOn",
+                "Procedure.basedOn",
+                "DiagnosticReport.basedOn",
+                "DeviceRequest.basedOn",
+                "CarePlan.basedOn",
+                "Communication.basedOn",
+                "ReferralRequest.basedOn",
+                "Task.basedOn",
+                "ProcedureRequest.basedOn",
+                "CommunicationRequest.basedOn",
+                "QuestionnaireResponse.basedOn",
+                "Observation.basedOn"
             ]
         ],
         "care-team":[
             "reference",
             [
-                "ExplanationOfBenefit.careTeam.provider"
+                "Claim.careTeam.provider",
+                "ExplanationOfBenefit.careTeam.provider",
+                "CarePlan.careTeam"
             ]
         ],
         "condition":[
             "reference",
             [
-                "RiskAssessment.condition"
+                "RiskAssessment.condition",
+                "CarePlan.addresses",
+                "EpisodeOfCare.diagnosis.condition"
             ]
         ],
         "context":[
             "reference",
             [
-                "Task.context"
+                "CareTeam.context",
+                "Condition.context",
+                "CarePlan.context",
+                "CommunicationRequest.context",
+                "Task.context",
+                "ProcedureRequest.context",
+                "ChargeItem.context",
+                "DiagnosticReport.context",
+                "Composition.event.code",
+                "Observation.context",
+                "QuestionnaireResponse.context",
+                "RequestGroup.context",
+                "MedicationStatement.context",
+                "Procedure.context",
+                "MedicationDispense.context",
+                "ImagingStudy.context",
+                "Communication.context",
+                "ClinicalImpression.context",
+                "MedicationRequest.context",
+                "Media.context",
+                "MedicationAdministration.context",
+                "ReferralRequest.context"
             ]
         ],
         "definition":[
             "reference",
             [
-                "RequestGroup.definition"
+                "Procedure.definition",
+                "FamilyMemberHistory.definition",
+                "Communication.definition",
+                "ProcedureRequest.definition",
+                "CarePlan.definition",
+                "RequestGroup.definition",
+                "ReferralRequest.definition",
+                "DeviceRequest.definition"
             ]
         ],
         "goal":[
@@ -680,31 +1471,58 @@
         "intent":[
             "token",
             [
-                "Task.intent"
+                "DeviceRequest.intent",
+                "RequestGroup.intent",
+                "CarePlan.intent",
+                "ReferralRequest.intent",
+                "Task.intent",
+                "ProcedureRequest.intent",
+                "MedicationRequest.intent"
             ]
         ],
         "part-of":[
             "reference",
             [
+                "Encounter.partOf",
+                "CarePlan.partOf",
+                "Communication.partOf",
+                "MedicationStatement.partOf",
+                "Procedure.partOf",
                 "Task.partOf"
             ]
         ],
         "performer":[
-            "token",
+            "reference",
             [
-                "Task.performerType"
+                "Observation.performer",
+                "MedicationAdministration.performer.actor",
+                "ImagingStudy.series.performer",
+                "DiagnosticReport.performer.actor",
+                "Procedure.performer.actor",
+                "CarePlan.activity.detail.performer",
+                "Task.performerType",
+                "MedicationDispense.performer.actor",
+                "DeviceRequest.performer",
+                "ProcedureRequest.performer",
+                "RiskAssessment.performer"
             ]
         ],
         "replaces":[
             "reference",
             [
+                "CommunicationRequest.replaces",
+                "CarePlan.replaces",
+                "ProcedureRequest.replaces",
                 "ReferralRequest.replaces"
             ]
         ],
         "participant":[
-            "uri",
+            "reference",
             [
-                "TestReport.participant.uri"
+                "RequestGroup.action.participant",
+                "TestReport.participant.uri",
+                "Encounter.participant.individual",
+                "CareTeam.participant.member"
             ]
         ],
         "account":[
@@ -722,7 +1540,11 @@
         "enterer":[
             "reference",
             [
-                "MessageHeader.enterer"
+                "ExplanationOfBenefit.enterer",
+                "EligibilityRequest.enterer",
+                "Claim.enterer",
+                "MessageHeader.enterer",
+                "ChargeItem.enterer"
             ]
         ],
         "factor-override":[
@@ -734,6 +1556,8 @@
         "occurrence":[
             "date",
             [
+                "ChargeItem.occurrence",
+                "CommunicationRequest.occurrence.as(DateTime)",
                 "ProcedureRequest.occurrence"
             ]
         ],
@@ -764,6 +1588,7 @@
         "quantity":[
             "quantity",
             [
+                "ChargeItem.quantity",
                 "Substance.instance.quantity"
             ]
         ],
@@ -774,45 +1599,82 @@
             ]
         ],
         "service":[
-            "token",
+            "reference",
             [
-                "ReferralRequest.serviceRequested"
+                "ReferralRequest.serviceRequested",
+                "PractitionerRole.healthcareService",
+                "ChargeItem.service"
             ]
         ],
         "facility":[
             "reference",
             [
-                "ExplanationOfBenefit.facility"
+                "ExplanationOfBenefit.facility",
+                "EligibilityRequest.facility",
+                "DocumentReference.context.facilityType",
+                "Claim.facility"
             ]
         ],
         "insurer":[
             "reference",
             [
-                "EligibilityResponse.insurer"
+                "EligibilityResponse.insurer",
+                "Claim.insurer",
+                "ClaimResponse.insurer"
             ]
         ],
         "organization":[
             "reference",
             [
-                "Task.requester.onBehalfOf"
+                "Endpoint.managingOrganization",
+                "Device.owner",
+                "Location.managingOrganization",
+                "PaymentNotice.organization",
+                "PaymentReconciliation.organization",
+                "ProcessResponse.organization",
+                "Task.requester.onBehalfOf",
+                "PractitionerRole.organization",
+                "EnrollmentResponse.organization",
+                "ProcessRequest.organization",
+                "Person.managingOrganization",
+                "EpisodeOfCare.managingOrganization",
+                "Consent.organization",
+                "EnrollmentRequest.organization",
+                "ExplanationOfBenefit.organization",
+                "HealthcareService.providedBy",
+                "Patient.managingOrganization",
+                "Claim.organization",
+                "EligibilityRequest.organization"
             ]
         ],
         "payee":[
             "reference",
             [
-                "ExplanationOfBenefit.payee.party"
+                "ExplanationOfBenefit.payee.party",
+                "Claim.payee.party"
             ]
         ],
         "priority":[
             "token",
             [
-                "Task.priority"
+                "CommunicationRequest.priority",
+                "ReferralRequest.priority",
+                "ProcedureRequest.priority",
+                "Claim.priority",
+                "Task.priority",
+                "RequestGroup.priority",
+                "MedicationRequest.priority"
             ]
         ],
         "provider":[
             "reference",
             [
-                "ProcessRequest.provider"
+                "NutritionOrder.orderer",
+                "ProcessRequest.provider",
+                "Claim.provider",
+                "EligibilityRequest.provider",
+                "ExplanationOfBenefit.provider",
+                "PaymentNotice.provider"
             ]
         ],
         "use":[
@@ -824,7 +1686,10 @@
         "disposition":[
             "string",
             [
-                "PaymentReconciliation.disposition"
+                "PaymentReconciliation.disposition",
+                "EligibilityResponse.disposition",
+                "ClaimResponse.disposition",
+                "ExplanationOfBenefit.disposition"
             ]
         ],
         "payment-date":[
@@ -836,13 +1701,22 @@
         "request":[
             "reference",
             [
-                "ProcessResponse.request"
+                "EligibilityResponse.request",
+                "ClaimResponse.request",
+                "ProcessResponse.request",
+                "GuidanceResponse.requestId",
+                "PaymentNotice.request",
+                "PaymentReconciliation.request",
+                "EnrollmentResponse.request"
             ]
         ],
         "request-provider":[
             "reference",
             [
-                "ProcessResponse.requestProvider"
+                "EligibilityResponse.requestProvider",
+                "ClaimResponse.requestProvider",
+                "ProcessResponse.requestProvider",
+                "PaymentReconciliation.requestProvider"
             ]
         ],
         "assessor":[
@@ -890,19 +1764,23 @@
         "language":[
             "token",
             [
-                "Patient.communication.language"
+                "Patient.communication.language",
+                "CodeSystem.concept.designation.language",
+                "DocumentReference.content.attachment.language"
             ]
         ],
         "system":[
-            "token",
+            "uri",
             [
-                "OperationDefinition.system"
+                "OperationDefinition.system",
+                "CodeSystem.url"
             ]
         ],
         "medium":[
             "token",
             [
-                "CommunicationRequest.medium"
+                "CommunicationRequest.medium",
+                "Communication.medium"
             ]
         ],
         "received":[
@@ -914,12 +1792,17 @@
         "recipient":[
             "reference",
             [
+                "Communication.recipient",
+                "DocumentManifest.recipient",
+                "CommunicationRequest.recipient",
                 "ReferralRequest.recipient"
             ]
         ],
         "sender":[
             "reference",
             [
+                "Communication.sender",
+                "CommunicationRequest.sender",
                 "MessageHeader.sender"
             ]
         ],
@@ -932,18 +1815,31 @@
         "authored":[
             "date",
             [
-                "RequestGroup.authoredOn"
+                "ProcedureRequest.authoredOn",
+                "CommunicationRequest.authoredOn",
+                "RequestGroup.authoredOn",
+                "QuestionnaireResponse.authored"
             ]
         ],
         "group-identifier":[
             "token",
             [
-                "Task.groupIdentifier"
+                "RequestGroup.groupIdentifier",
+                "CommunicationRequest.groupIdentifier",
+                "Task.groupIdentifier",
+                "ReferralRequest.groupIdentifier",
+                "DeviceRequest.groupIdentifier"
             ]
         ],
         "requester":[
             "reference",
             [
+                "ReferralRequest.requester.agent",
+                "DeviceRequest.requester.agent",
+                "CommunicationRequest.requester.agent",
+                "ProcedureRequest.requester.agent",
+                "SupplyRequest.requester.agent",
+                "MedicationRequest.requester.agent",
                 "Task.requester.agent"
             ]
         ],
@@ -956,7 +1852,10 @@
         "class":[
             "token",
             [
-                "Encounter.class"
+                "Encounter.class",
+                "Composition.class",
+                "Coverage.grouping.class",
+                "DocumentReference.class"
             ]
         ],
         "confidentiality":[
@@ -974,13 +1873,17 @@
         "related-id":[
             "token",
             [
-                "DocumentReference.context.related.identifier"
+                "DocumentReference.context.related.identifier",
+                "DocumentManifest.related.identifier",
+                "Composition.relatesTo.target.as(Identifier)"
             ]
         ],
         "related-ref":[
             "reference",
             [
-                "DocumentReference.context.related.ref"
+                "Composition.relatesTo.target.as(Reference)",
+                "DocumentReference.context.related.ref",
+                "DocumentManifest.related.ref"
             ]
         ],
         "section":[
@@ -1020,15 +1923,19 @@
             ]
         ],
         "source-uri":[
-            "uri",
+            "reference",
             [
-                "MessageHeader.source.endpoint"
+                "MessageHeader.source.endpoint",
+                "ConceptMap.source.as(Uri)"
             ]
         ],
         "target":[
-            "token",
+            "reference",
             [
-                "SearchParameter.target"
+                "ConceptMap.target.as(Reference)",
+                "MessageHeader.destination.target",
+                "SearchParameter.target",
+                "Provenance.target"
             ]
         ],
         "target-code":[
@@ -1052,7 +1959,6 @@
         "abatement-age":[
             "quantity",
             [
-                "Condition.abatement.as(Age)",
                 "Condition.abatement.as(Range)",
                 "Condition.abatement.as(Age)"
             ]
@@ -1060,19 +1966,19 @@
         "abatement-boolean":[
             "token",
             [
+                "Condition.abatement.is(Range)",
                 "Condition.abatement.as(boolean)",
+                "Condition.abatement.is(string)",
                 "Condition.abatement.is(dateTime)",
                 "Condition.abatement.is(Age)",
-                "Condition.abatement.is(Period)",
-                "Condition.abatement.is(Range)",
-                "Condition.abatement.is(string)"
+                "Condition.abatement.is(Period)"
             ]
         ],
         "abatement-date":[
             "date",
             [
-                "Condition.abatement.as(dateTime)",
-                "Condition.abatement.as(Period)"
+                "Condition.abatement.as(Period)",
+                "Condition.abatement.as(dateTime)"
             ]
         ],
         "abatement-string":[
@@ -1090,7 +1996,8 @@
         "body-site":[
             "token",
             [
-                "ProcedureRequest.bodySite"
+                "ProcedureRequest.bodySite",
+                "Condition.bodySite"
             ]
         ],
         "evidence":[
@@ -1147,14 +2054,16 @@
         "purpose":[
             "token",
             [
-                "Consent.purpose",
-                "Consent.except.purpose"
+                "Consent.except.purpose",
+                "Consent.purpose"
             ]
         ],
         "securitylabel":[
             "token",
             [
-                "DocumentReference.securityLabel"
+                "Consent.securityLabel",
+                "DocumentReference.securityLabel",
+                "Consent.except.securityLabel"
             ]
         ],
         "authority":[
@@ -1172,7 +2081,9 @@
         "issued":[
             "date",
             [
-                "TestReport.issued"
+                "TestReport.issued",
+                "Contract.issued",
+                "DiagnosticReport.issued"
             ]
         ],
         "signer":[
@@ -1281,14 +2192,16 @@
             "string",
             [
                 "Device.udi.name",
-                "Device.type.text",
-                "Device.type.coding.display"
+                "Device.type.coding.display",
+                "Device.type.text"
             ]
         ],
         "manufacturer":[
-            "reference",
+            "string",
             [
-                "Medication.manufacturer"
+                "Medication.manufacturer",
+                "Device.manufacturer",
+                "Immunization.manufacturer"
             ]
         ],
         "model":[
@@ -1313,26 +2226,35 @@
         "parent":[
             "reference",
             [
-                "Specimen.parent"
+                "DeviceComponent.parent",
+                "QuestionnaireResponse.parent",
+                "Specimen.parent",
+                "DeviceMetric.parent"
             ]
         ],
         "authored-on":[
             "date",
             [
-                "Task.authoredOn"
+                "Task.authoredOn",
+                "ReferralRequest.authoredOn",
+                "DeviceRequest.authoredOn"
             ]
         ],
         "device":[
             "reference",
             [
+                "DeviceRequest.code.as(Reference)",
+                "DeviceUseStatement.device",
+                "MedicationAdministration.device",
+                "Media.device",
                 "Observation.device"
             ]
         ],
         "event-date":[
             "date",
             [
-                "DeviceRequest.occurrence.as(DateTime)",
-                "DeviceRequest.occurrence.as(Period)"
+                "DeviceRequest.occurrence.as(Period)",
+                "DeviceRequest.occurrence.as(DateTime)"
             ]
         ],
         "priorrequest":[
@@ -1342,9 +2264,10 @@
             ]
         ],
         "diagnosis":[
-            "reference",
+            "token",
             [
-                "Encounter.diagnosis.condition"
+                "Encounter.diagnosis.condition",
+                "DiagnosticReport.codedDiagnosis"
             ]
         ],
         "image":[
@@ -1354,15 +2277,18 @@
             ]
         ],
         "result":[
-            "token",
+            "reference",
             [
+                "DiagnosticReport.result",
                 "TestReport.result"
             ]
         ],
         "specimen":[
             "reference",
             [
-                "ProcedureRequest.specimen"
+                "DiagnosticReport.specimen",
+                "ProcedureRequest.specimen",
+                "Observation.specimen"
             ]
         ],
         "content-ref":[
@@ -1402,8 +2328,9 @@
             ]
         ],
         "relationship":[
-            "token",
+            "composite",
             [
+                "DocumentReference.relatesTo",
                 "FamilyMemberHistory.relationship"
             ]
         ],
@@ -1416,7 +2343,9 @@
         "request-organization":[
             "reference",
             [
-                "ProcessResponse.requestOrganization"
+                "ProcessResponse.requestOrganization",
+                "EligibilityResponse.requestOrganization",
+                "PaymentReconciliation.requestOrganization"
             ]
         ],
         "episodeofcare":[
@@ -1446,7 +2375,9 @@
         "reason":[
             "token",
             [
-                "Immunization.explanation.reason"
+                "Immunization.explanation.reason",
+                "Encounter.reason",
+                "ImagingStudy.reason"
             ]
         ],
         "service-provider":[
@@ -1504,9 +2435,12 @@
             ]
         ],
         "start":[
-            "date",
+            "token",
             [
-                "Slot.start"
+                "Slot.start",
+                "Sequence.referenceSeq.windowStart",
+                "GraphDefinition.start",
+                "Provenance.period.start"
             ]
         ],
         "actual":[
@@ -1518,7 +2452,8 @@
         "characteristic":[
             "token",
             [
-                "HealthcareService.characteristic"
+                "HealthcareService.characteristic",
+                "Group.characteristic.code"
             ]
         ],
         "characteristic-value":[
@@ -1540,20 +2475,34 @@
             ]
         ],
         "value":[
-            "string",
+            "token",
             [
+                "Group.characteristic.value",
                 "NamingSystem.uniqueId.value"
             ]
         ],
         "active":[
             "token",
             [
-                "Schedule.active"
+                "Schedule.active",
+                "HealthcareService.active",
+                "Organization.active",
+                "Practitioner.active",
+                "RelatedPerson.active",
+                "PractitionerRole.active",
+                "Patient.active"
             ]
         ],
         "endpoint":[
             "reference",
             [
+                "ImagingManifest.study.endpoint",
+                "ImagingStudy.endpoint",
+                "ImagingStudy.series.endpoint",
+                "HealthcareService.endpoint",
+                "ImagingManifest.study.series.endpoint",
+                "Organization.endpoint",
+                "Location.endpoint",
                 "PractitionerRole.endpoint"
             ]
         ],
@@ -1584,7 +2533,8 @@
         "accession":[
             "token",
             [
-                "Specimen.accessionIdentifier"
+                "Specimen.accessionIdentifier",
+                "ImagingStudy.accession"
             ]
         ],
         "basedon":[
@@ -1596,6 +2546,7 @@
         "bodysite":[
             "token",
             [
+                "ImagingStudy.series.bodySite",
                 "Specimen.collection.bodySite"
             ]
         ],
@@ -1632,7 +2583,8 @@
         "dose-sequence":[
             "number",
             [
-                "ImmunizationRecommendation.recommendation.protocol.doseSequence"
+                "ImmunizationRecommendation.recommendation.protocol.doseSequence",
+                "Immunization.vaccinationProtocol.doseSequence"
             ]
         ],
         "lot-number":[
@@ -1656,7 +2608,8 @@
         "reason-not-given":[
             "token",
             [
-                "MedicationAdministration.reasonNotGiven"
+                "MedicationAdministration.reasonNotGiven",
+                "Immunization.explanation.reasonNotGiven"
             ]
         ],
         "vaccine-code":[
@@ -1704,12 +2657,14 @@
         "experimental":[
             "token",
             [
+                "ImplementationGuide.experimental",
                 "StructureDefinition.experimental"
             ]
         ],
         "item":[
             "reference",
             [
+                "Linkage.item.resource",
                 "List.entry.item"
             ]
         ],
@@ -1746,7 +2701,9 @@
         "partof":[
             "reference",
             [
-                "ResearchStudy.partOf"
+                "ResearchStudy.partOf",
+                "Organization.partOf",
+                "Location.partOf"
             ]
         ],
         "operator":[
@@ -1764,7 +2721,8 @@
         "container":[
             "token",
             [
-                "Specimen.container.type"
+                "Specimen.container.type",
+                "Medication.package.container"
             ]
         ],
         "form":[
@@ -1822,15 +2780,18 @@
             ]
         ],
         "destination":[
-            "string",
+            "reference",
             [
-                "MessageHeader.destination.name"
+                "MessageHeader.destination.name",
+                "MedicationDispense.destination"
             ]
         ],
         "receiver":[
             "reference",
             [
-                "SupplyDelivery.receiver"
+                "MedicationDispense.receiver",
+                "SupplyDelivery.receiver",
+                "MessageHeader.receiver"
             ]
         ],
         "responsibleparty":[
@@ -1864,9 +2825,12 @@
             ]
         ],
         "focus":[
-            "reference",
+            "token",
             [
-                "Task.focus"
+                "ResearchStudy.focus",
+                "Task.focus",
+                "MessageDefinition.focus.code",
+                "MessageHeader.focus"
             ]
         ],
         "destination-uri":[
@@ -1882,9 +2846,10 @@
             ]
         ],
         "responsible":[
-            "string",
+            "reference",
             [
-                "NamingSystem.responsible"
+                "NamingSystem.responsible",
+                "MessageHeader.responsible"
             ]
         ],
         "timestamp":[
@@ -1894,8 +2859,9 @@
             ]
         ],
         "contact":[
-            "token",
+            "string",
             [
+                "NamingSystem.contact.name",
                 "Subscription.contact"
             ]
         ],
@@ -1908,7 +2874,9 @@
         "kind":[
             "token",
             [
-                "StructureDefinition.kind"
+                "NamingSystem.kind",
+                "StructureDefinition.kind",
+                "OperationDefinition.kind"
             ]
         ],
         "replaced-by":[
@@ -1995,22 +2963,22 @@
         "combo-data-absent-reason":[
             "token",
             [
-                "Observation.dataAbsentReason",
-                "Observation.component.dataAbsentReason"
+                "Observation.component.dataAbsentReason",
+                "Observation.dataAbsentReason"
             ]
         ],
         "combo-value-concept":[
             "token",
             [
-                "Observation.value.as(CodeableConcept)",
-                "Observation.component.value.as(CodeableConcept)"
+                "Observation.component.value.as(CodeableConcept)",
+                "Observation.value.as(CodeableConcept)"
             ]
         ],
         "combo-value-quantity":[
             "quantity",
             [
-                "Observation.value.as(Quantity)",
-                "Observation.component.value.as(Quantity)"
+                "Observation.component.value.as(Quantity)",
+                "Observation.value.as(Quantity)"
             ]
         ],
         "component-code":[
@@ -2058,6 +3026,7 @@
         "method":[
             "token",
             [
+                "Observation.method",
                 "RiskAssessment.method"
             ]
         ],
@@ -2105,8 +3074,10 @@
             ]
         ],
         "base":[
-            "uri",
+            "reference",
             [
+                "SearchParameter.base",
+                "OperationDefinition.base",
                 "StructureDefinition.baseDefinition"
             ]
         ],
@@ -2155,7 +3126,8 @@
         "link":[
             "reference",
             [
-                "Person.link.target"
+                "Person.link.target",
+                "Patient.link.other"
             ]
         ],
         "payment-status":[
@@ -2197,7 +3169,8 @@
         "specialty":[
             "token",
             [
-                "ReferralRequest.specialty"
+                "ReferralRequest.specialty",
+                "PractitionerRole.specialty"
             ]
         ],
         "performer-type":[
@@ -2213,8 +3186,9 @@
             ]
         ],
         "end":[
-            "number",
+            "date",
             [
+                "Provenance.period.end",
                 "Sequence.referenceSeq.windowEnd"
             ]
         ],
@@ -2251,6 +3225,7 @@
         "keyword":[
             "token",
             [
+                "ResearchStudy.keyword",
                 "StructureDefinition.keyword"
             ]
         ],
@@ -2372,8 +3347,8 @@
         "path":[
             "token",
             [
-                "StructureDefinition.snapshot.element.path",
-                "StructureDefinition.differential.element.path"
+                "StructureDefinition.differential.element.path",
+                "StructureDefinition.snapshot.element.path"
             ]
         ],
         "valueset":[
@@ -2421,6 +3396,7 @@
         "supplier":[
             "reference",
             [
+                "SupplyDelivery.supplier",
                 "SupplyRequest.supplier"
             ]
         ],
