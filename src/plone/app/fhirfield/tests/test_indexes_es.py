@@ -63,7 +63,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertIn('FhirOrganizationIndex',
                       self.admin_browser.contents)
-        self.assertIn('resource',
+        self.assertIn('organization_resource',
                       self.admin_browser.contents)
 
     def test_content_object_index(self):
@@ -81,7 +81,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertIn('testorganization/view', self.admin_browser.url)
 
         # Let's check one item should be for resource item
-        self.admin_browser.open(self.portal_catalog_url + '/Indexes/resource/manage_main')
+        self.admin_browser.open(self.portal_catalog_url + '/Indexes/organization_resource/manage_main')
 
         self.assertIn('Objects indexed: 1', self.admin_browser.contents)
         self.assertIn('Distinct values: 1', self.admin_browser.contents)
@@ -120,7 +120,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         for indexing, querying"""
         # first we making sure to transfer handler
         self.admin_browser.open(self.portal_url + '/@@elastic-controlpanel')
-        self.admin_browser.getControl(name='form.widgets.es_only_indexes').value = 'Description\nSearchableText\nTitle\nresource'
+        self.admin_browser.getControl(name='form.widgets.es_only_indexes').value = 'Description\nSearchableText\nTitle\norganization_resource'
         self.admin_browser.getControl(name='form.widgets.enabled:list').value = [True]
         self.admin_browser.getControl(name='form.buttons.save').click()
 
@@ -159,13 +159,13 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         resource_query = [
                             # {"match": {"resource.name": "Burgers University Medical Center"}},
-                            {"match": {"resource.name": "Hamid Patuary University"}},
+                            {"match": {"organization_resource.name": "Hamid Patuary University"}},
                             {"nested": {
-                                "path": "resource.identifier",
+                                "path": "organization_resource.identifier",
                                 "query": {
                                     "bool": {
                                         "must": [
-                                            {"match": {"resource.identifier.system": "urn:oid:2.16.840.1.113883.2.4.6.1"}}
+                                            {"match": {"organization_resource.identifier.system": "urn:oid:2.16.840.1.113883.2.4.6.1"}}
                                         ]
                                     }
                                 }
@@ -175,10 +175,9 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         res = portal_catalog.unrestrictedSearchResults(resource=resource_query)
         print res
         resource_query = [
-            {"range": {"resource.meta.lastUpdated": {"lt": DateTime().ISO8601()}}}
+            {"range": {"organization_resource.meta.lastUpdated": {"lt": DateTime().ISO8601()}}}
         ]
         res = portal_catalog.unrestrictedSearchResults(resource=resource_query)
-        import pdb;pdb.set_trace()
 
     def tearDown(self):
         """ """
