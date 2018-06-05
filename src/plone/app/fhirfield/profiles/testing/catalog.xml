@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
- <index name="resource" meta_type="FhirOrganizationIndex">
+ <index name="organization_resource" meta_type="FhirOrganizationIndex">
   <indexed_attr value="resource"/>
+ </index>
+ <index name="patient_resource" meta_type="FhirPatientIndex">
+  <indexed_attr value="patient_resource"/>
  </index>
 </object>
