@@ -97,8 +97,9 @@ def cmd(func: typing.Callable[[], typing.Any]) -> typing.Callable:
 
         for param in inspect.signature(func).parameters.values():
 
-            if param.kind.name in \
-                ('POSITIONAL_ONLY', 'POSITIONAL_OR_KEYWORD', 'KEYWORD_ONLY'):
+            if param.kind.name in ('POSITIONAL_ONLY',
+                                   'POSITIONAL_OR_KEYWORD',
+                                   'KEYWORD_ONLY'):
                 fn_args.append(param.name)
 
         for i, a in enumerate(fn_args):
@@ -118,7 +119,9 @@ async def run_cmd(func: typing.Callable[[], typing.Any], args: []) -> int:
 
         func = globals().get(func)
 
-        if callable(func) or inspect.isfunction(func) or inspect.ismethod(func):
+        if callable(func) or \
+                inspect.isfunction(func) or \
+                inspect.ismethod(func):
             out = await func(**args)
 
     elif isinstance(func, (tuple, list)):

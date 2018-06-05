@@ -120,10 +120,19 @@ async def main(destination_dir, output_stream, offline, verbosity_level):
     searchable_data['searchable'] = dict()
     # format-> key: value: [Type, Paths]
 
-    for rows in table_data.values():
-        for row in rows:
-            searchable_data['searchable'][row[0]] = \
-                len(row) == 4 and [row[1], row[3]] or [row[1]]
+    for group in table_data.keys():
+        for row in table_data.get(group):
+            if row[0] in searchable_data['searchable'].keys():
+                if len(row) == 4 and \
+                        len(searchable_data['searchable'][row[0]]) == 2:
+                    searchable_data['searchable'][row[0]][1].update(row[3])
+                elif len(row) == 4 and \
+                        len(searchable_data['searchable'][row[0]]) == 1:
+                    searchable_data['searchable'][row[0]].\
+                        insert(1, set(row[3]))
+            else:
+                searchable_data['searchable'][row[0]] = \
+                    len(row) == 4 and [row[1], set(row[3])] or [row[1]]
 
     original_jsonize_data = defaultdict()
     original_jsonize_data['meta'] = dict(lastUpdate=None, versionId=None)
