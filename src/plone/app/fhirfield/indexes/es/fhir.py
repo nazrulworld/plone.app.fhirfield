@@ -6,6 +6,7 @@
 # All imports here
 from collective.elasticsearch.indexes import BaseIndex
 from plone.app.fhirfield.compat import json
+from plone.app.fhirfield.helpers import build_elasticsearch_query
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 
 import os
@@ -20,6 +21,7 @@ MAPPING_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 class EsFhirFieldIndex(BaseIndex):
     """ """
     _mapping_cache = None
+    _resource_type = 'Resource'
     filter_query = False
 
     def create_mapping(self, name):
@@ -73,30 +75,41 @@ class EsFhirFieldIndex(BaseIndex):
         return value
 
     def get_query(self, name, value):
+        """Only prepared fhir query is acceptable
+        other query is building here"""
         value = self._normalize_query(value)
         if value in (None, ''):
             return
-        query = {
-            'bool': {
-                'should': []
-            }
-        }
-        should_container = query['bool']['should']
-        should_container.append(value)
-        return query
 
-    def add_prefix(self, prefix, items):
-        """Add field name as prefix """
-        container = list()
-        pass
+        if value.get('query'):
+            query = {
+                'bool': value.get('query')
+            }
+            # need query validation???
+            return query
+
+        params = None
+
+        if value.get('params'):
+            params = value.get('params')
+
+        resource_type = value.pop('resource_type', self._resource_type)
+        if params is None:
+            params = value
+
+        query = build_elasticsearch_query(params,
+                                          field_name=name,
+                                          resource_type=resource_type)
+
+        return {'bool': query}
 
 
 class EsFhirOrganizationIndex(EsFhirFieldIndex):
     """ """
+    _resource_type = 'Organization'
 
     def create_mapping(self, name):
         """Minimal mapping for all kind of fhir models"""
-        print name
         return self._get_mapping()
 
     def _get_mapping(self, cache=True):
@@ -112,11 +125,14 @@ class EsFhirOrganizationIndex(EsFhirFieldIndex):
 
 class EsFhirPatientIndex(EsFhirFieldIndex):
     """ """
+    _resource_type = 'Patient'
 
 
 class EsFhirPractitionerIndex(EsFhirFieldIndex):
     """ """
+    _resource_type = 'Practitioner'
 
 
 class EsFhirValueSetIndex(EsFhirFieldIndex):
     """ """
+    _resource_type = 'ValueSet'

@@ -157,27 +157,9 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-objects.html
         # https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html
         portal_catalog = api.portal.get_tool('portal_catalog')
-        resource_query = [
-                            # {"match": {"resource.name": "Burgers University Medical Center"}},
-                            {"match": {"organization_resource.name": "Hamid Patuary University"}},
-                            {"nested": {
-                                "path": "organization_resource.identifier",
-                                "query": {
-                                    "bool": {
-                                        "must": [
-                                            {"match": {"organization_resource.identifier.system": "urn:oid:2.16.840.1.113883.2.4.6.1"}}
-                                        ]
-                                    }
-                                }
-                            }
-                            }
-                        ]
-        res = portal_catalog.unrestrictedSearchResults(resource=resource_query)
-        print res
-        resource_query = [
-            {"range": {"organization_resource.meta.lastUpdated": {"lt": DateTime().ISO8601()}}}
-        ]
-        res = portal_catalog.unrestrictedSearchResults(resource=resource_query)
+        res = portal_catalog.unrestrictedSearchResults(organization_resource={'_id': 'f001'})
+
+        self.assertEqual(len(res), 1)
 
     def tearDown(self):
         """ """

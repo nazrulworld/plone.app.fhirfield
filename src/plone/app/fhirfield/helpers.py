@@ -42,6 +42,13 @@ with open(os.path.join(FHIR_STATIC_DIR, 'HL7',
     FHIR_SEARCH_PARAMETER_SEARCHABLE = json.load(f)['searchable']
     FHIR_SEARCH_PARAMETER_SEARCHABLE_KEYS = FHIR_SEARCH_PARAMETER_SEARCHABLE.keys()
 
+FSPR_KEYS_BY_GROUP = dict()
+
+for group, rows in FHIR_SEARCH_PARAMETER_REGISTRY.items():
+    FSPR_KEYS_BY_GROUP[group] = list()
+    for row in rows[1:]:
+        FSPR_KEYS_BY_GROUP[group].append(row[0])
+
 
 @required_parameters('model_name')
 def search_fhir_model(model_name, cache=True):
@@ -156,14 +163,14 @@ class ElasticsearchQueryBuilder(object):
         """
         for field, value in self.params.items():
             """ """
-            if field in FHIR_SEARCH_PARAMETER_REGISTRY.\
-                    get('Resource').keys():
+            if field in FSPR_KEYS_BY_GROUP.\
+                    get('Resource'):
                 self.build_resource_parameters(field)
-            elif field in FHIR_SEARCH_PARAMETER_REGISTRY.\
-                    get('Common Search Parameters').keys():
+            elif field in FSPR_KEYS_BY_GROUP.\
+                    get('Common Search Parameters'):
                 self.build_common_search_parameters(field)
-            elif field in FHIR_SEARCH_PARAMETER_REGISTRY.\
-                    get(self.resource_type).keys():
+            elif field in FSPR_KEYS_BY_GROUP.\
+                    get(self.resource_type):
                 # TODO: build_${resource_type}
                 pass
 
@@ -229,9 +236,13 @@ class ElasticsearchQueryBuilder(object):
 
 def build_elasticsearch_query(params,
                               field_name,
-                              resource_type=None, handling='strict'):
+                              resource_type=None,
+                              handling='strict'):
     """This is the helper method for making elasticsearch compatiable query from
     HL7 FHIR search standard request params"""
-    builder = ElasticsearchQueryBuilder(params, field_name, resource_type)
+    builder = ElasticsearchQueryBuilder(params,
+                                        field_name,
+                                        resource_type,
+                                        handling)
 
     return builder.build()
