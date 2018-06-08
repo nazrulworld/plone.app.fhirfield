@@ -61,10 +61,10 @@ class EsFhirFieldIndex(BaseIndex):
                             'format': 'date_time_no_millis||date_optional_time',
                             'store': False,
                         },
-                        "profile": {
-                            "type": "string",
-                            "store": False
-                        }
+                        'profile': {
+                            'type': 'string',
+                            'store': False,
+                        },
                     },
                 },
             },
@@ -88,7 +88,7 @@ class EsFhirFieldIndex(BaseIndex):
 
         if value.get('query'):
             query = {
-                'bool': value.get('query')
+                'bool': value.get('query'),
             }
             # need query validation???
             return query

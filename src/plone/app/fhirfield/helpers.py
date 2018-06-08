@@ -198,7 +198,7 @@ class ElasticsearchQueryBuilder(object):
                 'match':
                 {
                     param[3][0].replace('Resource', self.field_name): self.params.get(field),
-                }
+                },
             }
             # ??? _tag,_security,_query
             self.query_tree['must'].append(q)
@@ -227,18 +227,18 @@ class ElasticsearchQueryBuilder(object):
                         'range': {
                             path: {
                                 FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
-                                FSPR_VALUE_PRIFIXES_MAP.get('le'): value
-                            }
-                        }
+                                FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
+                            },
+                        },
                     }
 
             elif prefix in ('le', 'lt', 'ge', 'gt'):
                 q = {
                         'range': {
                             path: {
-                                FSPR_VALUE_PRIFIXES_MAP.get(prefix): value
-                            }
-                        }
+                                FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
+                            },
+                        },
                     }
             if timezone:
                 q['range'][path]['time_zone'] = timezone
