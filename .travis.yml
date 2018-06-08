@@ -8,6 +8,7 @@ cache:
   directories:
     - $HOME/buildout-cache
 env:
+  - ES_VERSION=2.4.6 ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
   matrix:
     - PLONE_VERSION=4.3.x  QA=true
     - PLONE_VERSION=5.0.x  QA=true
@@ -26,9 +27,13 @@ before_install:
   - bin/pip install -U pip
   - bin/pip install -r requirements.txt
 install:
+  - wget ${ES_DOWNLOAD_URL}
+  - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
+  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
   - sed -ie "s#plone-x.x.x.cfg#plone-$PLONE_VERSION.cfg#" travis.cfg
   - bin/buildout -N -t 3 -c travis.cfg
 script:
+  - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
   - bin/code-analysis
   - bin/test
 after_success:
@@ -43,6 +48,3 @@ matrix:
 notifications:
   email:
     - connect2nazrul@gmail.com
-
-services:
-  - elasticsearch
