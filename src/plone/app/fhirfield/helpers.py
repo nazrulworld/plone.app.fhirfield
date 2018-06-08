@@ -49,6 +49,16 @@ for group, rows in FHIR_SEARCH_PARAMETER_REGISTRY.items():
     for row in rows[1:]:
         FSPR_KEYS_BY_GROUP[group].append(row[0])
 
+FSPR_VALUE_PRIFIXES_MAP = {'eq': None,
+                           'ne': None,
+                           'gt': 'gt',
+                           'lt': 'lt',
+                           'ge': 'gte',
+                           'le': 'lte',
+                           'sa': None,
+                           'eb': None,
+                           'ap': None}
+
 
 @required_parameters('model_name')
 def search_fhir_model(model_name, cache=True):
@@ -141,15 +151,15 @@ class ElasticsearchQueryBuilder(object):
         if handling == 'strict' and len(unwanted) > 0:
             raise Invalid(
                 _('Unwanted params ${params} are found, those are not '
-                  'supported as FHIR search parameter'),
-                mapping={'params': str(unwanted)})
+                  'supported as FHIR search parameter',
+                  mapping={'params': str(unwanted)}))
 
         self.field_name = field_name
         self.resource_type = resource_type
         self.handling = handling
         self.query_tree = dict(should=list(),
                                must=list(),
-                               must_not=dict(),
+                               must_not=list(),
                                filter=dict(),)
 
         self.validate(params)
@@ -182,7 +192,7 @@ class ElasticsearchQueryBuilder(object):
             field,
             FHIR_SEARCH_PARAMETER_REGISTRY.get('Resource'))
 
-        if param[1] in ('token', 'uri',):
+        if param[1] == 'token':
 
             q = {
                 'match':
@@ -190,16 +200,61 @@ class ElasticsearchQueryBuilder(object):
                     param[3][0].replace('Resource', self.field_name): self.params.get(field)
                 }
             }
+            # ??? _tag,_security,_query
             self.query_tree['must'].append(q)
+
         elif param[1] == 'date':
+
             value = self.params.get(field)
-            value = DateTime(value).ISO8601()
-            q = {
-                'match':
-                {
-                    param[3][0].replace('Resource', self.field_name): value
-                }
-            }
+            prefix = 'eq'
+            path = param[3][0].replace('Resource', self.field_name)
+
+            if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
+                prefix = value[0:2]
+                value = value[2:]
+            _iso8601 = DateTime(value).ISO8601()
+
+            if '+' in _iso8601:
+                parts = _iso8601.split('+')
+                timezone = '+{0!s}'.format(parts[1])
+                value = parts[0]
+            else:
+                timezone = None
+                value = _iso8601
+
+            if prefix in ('eq', 'ne'):
+                q = {
+                        'range': {
+                            path: {
+                                FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
+                                FSPR_VALUE_PRIFIXES_MAP.get('le'): value
+                            }
+                        }
+                    }
+
+            elif prefix in ('le', 'lt', 'ge', 'gt'):
+                q = {
+                        'range': {
+                            path: {
+                                FSPR_VALUE_PRIFIXES_MAP.get(prefix): value
+                            }
+                        }
+                    }
+            if timezone:
+                q['range'][path]['time_zone'] = timezone
+
+            if prefix == 'ne':
+                self.query_tree['must_not'].append(q)
+            else:
+                self.query_tree['must'].append(q)
+
+        elif param[1] == 'uri':
+
+            value = self.params.get(field)
+            q = {param[3][0].replace('Resource', self.field_name): [value]}
+            q = dict(terms=q)
+            q = dict(query=q)
+            q = dict(match=q)
             self.query_tree['must'].append(q)
 
     def build_common_search_parameters(self, field):

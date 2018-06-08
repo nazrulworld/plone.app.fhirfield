@@ -118,15 +118,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
     def test_catalog_search_raw_es_query(self):
         """We will need to make sure that elastic server is taking responsibilities
         for indexing, querying"""
-        # first we making sure to transfer handler
-        self.admin_browser.open(self.portal_url + '/@@elastic-controlpanel')
-        self.admin_browser.getControl(name='form.widgets.es_only_indexes').value = 'Description\nSearchableText\nTitle\norganization_resource'
-        self.admin_browser.getControl(name='form.widgets.enabled:list').value = [True]
-        self.admin_browser.getControl(name='form.buttons.save').click()
-
-        form = self.admin_browser.getForm(action=self.portal_catalog_url + '/@@elastic-convert')
-        form.getControl(name='convert').click()
-
+        self.convert_to_elasticsearch(['organization_resource'])
         self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
@@ -160,6 +152,68 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         res = portal_catalog.unrestrictedSearchResults(organization_resource={'_id': 'f001'})
 
         self.assertEqual(len(res), 1)
+
+    def convert_to_elasticsearch(self, indexes=list()):
+        """ """
+        default_indexes = ['Description', 'SearchableText', 'Title']
+        if indexes:
+            default_indexes.extend(indexes)
+        # first we making sure to transfer handler
+        self.admin_browser.open(self.portal_url + '/@@elastic-controlpanel')
+        self.admin_browser.getControl(name='form.widgets.es_only_indexes').value = '\n'.join(default_indexes)
+        self.admin_browser.getControl(name='form.widgets.enabled:list').value = [True]
+        self.admin_browser.getControl(name='form.buttons.save').click()
+
+        form = self.admin_browser.getForm(action=self.portal_catalog_url + '/@@elastic-convert')
+        form.getControl(name='convert').click()
+
+    def test_catalogsearch__lastupdated(self):
+        """ """
+        self.convert_to_elasticsearch(['organization_resource'])
+        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            self.admin_browser.getControl(name='form.widgets.resource').value = f.read()
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+
+        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Hamid Patuary University'
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            json_value = json.load(f)
+            json_value['id'] = 'f002'
+            json_value['meta']['lastUpdated'] = '2015-05-28T05:35:56+00:00'
+            json_value['name'] = 'Hamid Patuary University'
+            self.admin_browser.getControl(name='form.widgets.resource').value = json.dumps(json_value)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+
+        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Call trun University'
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            json_value = json.load(f)
+            json_value['id'] = 'f003'
+            json_value['meta']['lastUpdated'] = DateTime().ISO8601()
+            json_value['name'] = 'Call trun University'
+            self.admin_browser.getControl(name='form.widgets.resource').value = json.dumps(json_value)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        # ************ FIXTURES ARE LOADED **************
+        # test:1 equal to
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            organization_resource={'_lastUpdated': '2010-05-28T05:35:56+00:00'})
+
+        # result should contains only item
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].getObject().resource.id, 'f001')
+
+        result = portal_catalog.unrestrictedSearchResults(
+            organization_resource={'_lastUpdated': '2015-05-28T05:35:56+00:00'})
+        # result should contains two items
+        self.assertEqual(len(result), 2)
 
     def tearDown(self):
         """ """

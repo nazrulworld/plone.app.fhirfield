@@ -58,8 +58,13 @@ class EsFhirFieldIndex(BaseIndex):
                         },
                         'lastUpdated': {
                             'type': 'date',
+                            'format': 'yyyy-MM-dd||strict_date_time_no_millis',
                             'store': False,
                         },
+                        "profile": {
+                            "type": "string",
+                            "store": False
+                        }
                     },
                 },
             },

@@ -98,3 +98,94 @@ class HelperIntegrationTest(unittest.TestCase):
 
         value = helpers.parse_json_str(compat.EMPTY_STRING)
         self.assertIsNone(value)
+
+
+class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
+    """ """
+    layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
+
+    def test_build_resource_date_type(self):
+        """ """
+        # test:1 exact
+        params = {'_lastUpdated': '2011-09-17'}
+
+        builder = helpers.ElasticsearchQueryBuilder(params,
+                                                    'resource',
+                                                    'Organization')
+        compare = [{'range': {'resource.meta.lastUpdated': '2011-09-17T00:00:00'}}]
+        query = builder.build()
+
+        self.assertEqual(len(query['must']), 1)
+        self.assertEqual(query['must'], compare)
+
+        # test:2 not equal
+        params = {'_lastUpdated': 'ne2011-09-17'}
+
+        builder = helpers.ElasticsearchQueryBuilder(params,
+                                                    'resource',
+                                                    'Organization')
+        compare = [{'match': {'resource.meta.lastUpdated': '2011-09-17T00:00:00'}}]
+        query = builder.build()
+
+        self.assertEqual(len(query['must']), 0)
+        self.assertEqual(len(query['must_not']), 1)
+        self.assertEqual(query['must_not'], compare)
+
+        # test:3 less than
+        params = {'_lastUpdated': 'lt2011-09-17'}
+
+        builder = helpers.ElasticsearchQueryBuilder(params,
+                                                    'resource',
+                                                    'Organization')
+        compare = [{'range': {
+            'resource.meta.lastUpdated': {'lt': '2011-09-17T00:00:00'}}}]
+
+        query = builder.build()
+
+        self.assertEqual(len(query['must']), 1)
+        self.assertEqual(query['must'], compare)
+
+        # test:4 greater than
+        params = {'_lastUpdated': 'gt2011-09-17'}
+
+        builder = helpers.ElasticsearchQueryBuilder(params,
+                                                    'resource',
+                                                    'Organization')
+        compare = [{'range': {
+            'resource.meta.lastUpdated': {'gt': '2011-09-17T00:00:00'}}}]
+
+        query = builder.build()
+
+        self.assertEqual(len(query['must']), 1)
+        self.assertEqual(query['must'], compare)
+
+        # test:4 less than or equal
+        params = {'_lastUpdated': 'le2011-09-17'}
+
+        builder = helpers.ElasticsearchQueryBuilder(params,
+                                                    'resource',
+                                                    'Organization')
+        compare = [{'range': {
+            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00'}}}]
+
+        query = builder.build()
+
+        self.assertEqual(len(query['must']), 1)
+        self.assertEqual(query['must'], compare)
+
+        # test:5 greater than or equal
+        params = {'_lastUpdated': 'ge2011-09-17'}
+
+        builder = helpers.ElasticsearchQueryBuilder(params,
+                                                    'resource',
+                                                    'Organization')
+        compare = [{'range': {
+            'resource.meta.lastUpdated': {'gte': '2011-09-17T00:00:00'}}}]
+
+        query = builder.build()
+
+        self.assertEqual(len(query['must']), 1)
+        self.assertEqual(query['must'], compare)
+
+    def test_build_resource_profile(self):
+        """ """
