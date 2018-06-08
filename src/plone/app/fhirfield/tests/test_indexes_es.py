@@ -147,6 +147,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # should two indexes now
         self.assertEqual(number_of_index, 2)
         # Let's search
+        time.sleep(1)
         # https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-objects.html
         # https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html
         portal_catalog = api.portal.get_tool('portal_catalog')
@@ -205,7 +206,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertIn('Item created', self.admin_browser.contents)
 
         # ES indexes to be ready
-        time.sleep(3)
+        time.sleep(1)
 
     def test_catalogsearch__lastupdated(self):
         """ """

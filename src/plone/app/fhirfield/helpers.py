@@ -160,7 +160,7 @@ class ElasticsearchQueryBuilder(object):
         self.query_tree = dict(should=list(),
                                must=list(),
                                must_not=list(),
-                               filter=dict(),)
+                               filter=list())
 
         self.validate(params)
         self.params = params
@@ -181,7 +181,7 @@ class ElasticsearchQueryBuilder(object):
                 self.build_common_search_parameters(field)
             elif field in FSPR_KEYS_BY_GROUP.\
                     get(self.resource_type):
-                # TODO: build_${resource_type}
+                # xxx build_${resource_type}
                 pass
 
         return self.query_tree.copy()
@@ -197,7 +197,7 @@ class ElasticsearchQueryBuilder(object):
             q = {
                 'match':
                 {
-                    param[3][0].replace('Resource', self.field_name): self.params.get(field)
+                    param[3][0].replace('Resource', self.field_name): self.params.get(field),
                 }
             }
             # ??? _tag,_security,_query
