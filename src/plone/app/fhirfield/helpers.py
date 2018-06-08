@@ -247,14 +247,11 @@ class ElasticsearchQueryBuilder(object):
                 self.query_tree['must_not'].append(q)
             else:
                 self.query_tree['must'].append(q)
-
         elif param[1] == 'uri':
 
+            path = param[3][0].replace('Resource', self.field_name)
             value = self.params.get(field)
-            q = {param[3][0].replace('Resource', self.field_name): [value]}
-            q = dict(terms=q)
-            q = dict(query=q)
-            q = dict(match=q)
+            q = {'term': {path: value}}
             self.query_tree['must'].append(q)
 
     def build_common_search_parameters(self, field):

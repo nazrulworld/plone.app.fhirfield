@@ -18,6 +18,7 @@ from plone.testing import z2
 import json
 import os
 import six
+import time
 import unittest
 
 
@@ -167,7 +168,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         form = self.admin_browser.getForm(action=self.portal_catalog_url + '/@@elastic-convert')
         form.getControl(name='convert').click()
 
-    def test_catalogsearch__lastupdated(self):
+    def load_contents(self):
         """ """
         self.convert_to_elasticsearch(['organization_resource'])
         self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
@@ -185,6 +186,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             json_value = json.load(f)
             json_value['id'] = 'f002'
             json_value['meta']['lastUpdated'] = '2015-05-28T05:35:56+00:00'
+            json_value['meta']['profile'] = ['http://hl7.org/fhir/Organization']
             json_value['name'] = 'Hamid Patuary University'
             self.admin_browser.getControl(name='form.widgets.resource').value = json.dumps(json_value)
         self.admin_browser.getControl(name='form.buttons.save').click()
@@ -196,10 +198,18 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             json_value = json.load(f)
             json_value['id'] = 'f003'
             json_value['meta']['lastUpdated'] = DateTime().ISO8601()
+            json_value['meta']['profile'] = ['http://hl7.org/fhir/Meta', 'urn:oid:002.160']
             json_value['name'] = 'Call trun University'
             self.admin_browser.getControl(name='form.widgets.resource').value = json.dumps(json_value)
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
+
+        # ES indexes to be ready
+        time.sleep(3)
+
+    def test_catalogsearch__lastupdated(self):
+        """ """
+        self.load_contents()
         # ************ FIXTURES ARE LOADED **************
         # test:1 equal to
         portal_catalog = api.portal.get_tool('portal_catalog')
@@ -210,10 +220,48 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].getObject().resource.id, 'f001')
 
+        # test:2 not equal to
         result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': '2015-05-28T05:35:56+00:00'})
+            organization_resource={'_lastUpdated': 'ne2015-05-28T05:35:56+00:00'})
         # result should contains two items
         self.assertEqual(len(result), 2)
+
+        # test:3 less than
+        result = portal_catalog.unrestrictedSearchResults(
+            organization_resource={'_lastUpdated': 'lt' + DateTime().ISO8601()})
+        # result should contains three items, all are less than current time
+        self.assertEqual(len(result), 3)
+
+        # test:4 less than or equal to
+        result = portal_catalog.unrestrictedSearchResults(
+            organization_resource={'_lastUpdated': 'le2015-05-28T05:35:56+00:00'})
+        # result should contains two items, 2010-05-28T05:35:56+00:00 + 2015-05-28T05:35:56+00:00
+        self.assertEqual(len(result), 2)
+
+        # test:5 greater than
+        result = portal_catalog.unrestrictedSearchResults(
+            organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'})
+        # result should contains only item
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].getObject().resource.id, 'f003')
+
+        # test:6 greater than or equal to
+        result = portal_catalog.unrestrictedSearchResults(
+            organization_resource={'_lastUpdated': 'ge2015-05-28T05:35:56+00:00'})
+        # result should contains only item
+        self.assertEqual(len(result), 2)
+
+    def _test_catalogsearch__profile(self):
+        """ """
+        self.load_contents()
+        # test:1 URI
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            organization_resource={'_profile': 'http://hl7.org/fhir/Organization'})
+
+        # result should contains two items
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].getObject().resource.id, 'f001')
 
     def tearDown(self):
         """ """

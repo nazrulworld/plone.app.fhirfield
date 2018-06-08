@@ -58,7 +58,7 @@ class EsFhirFieldIndex(BaseIndex):
                         },
                         'lastUpdated': {
                             'type': 'date',
-                            'format': 'yyyy-MM-dd||strict_date_time_no_millis',
+                            'format': 'date_time_no_millis||date_optional_time',
                             'store': False,
                         },
                         "profile": {

@@ -112,7 +112,9 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'range': {'resource.meta.lastUpdated': '2011-09-17T00:00:00'}}]
+        compare = [{'range': {
+            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00',
+                                          'gte': '2011-09-17T00:00:00'}}}]
         query = builder.build()
 
         self.assertEqual(len(query['must']), 1)
@@ -124,7 +126,9 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'match': {'resource.meta.lastUpdated': '2011-09-17T00:00:00'}}]
+        compare = [{'range': {
+            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00',
+                                          'gte': '2011-09-17T00:00:00'}}}]
         query = builder.build()
 
         self.assertEqual(len(query['must']), 0)
