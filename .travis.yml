@@ -28,7 +28,7 @@ before_install:
   - bin/pip install -U pip
   - bin/pip install -r requirements.txt
 install:
-  - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-2.4.6.tar.gz
+  - wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.6/elasticsearch-2.4.6.tar.gz
   - tar -xzf elasticsearch-2.4.6.tar.gz
   - ./elasticsearch-2.4.6/bin/elasticsearch &
   - sed -ie "s#plone-x.x.x.cfg#plone-$PLONE_VERSION.cfg#" travis.cfg
