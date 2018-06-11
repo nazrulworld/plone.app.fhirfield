@@ -298,3 +298,14 @@ def build_elasticsearch_query(params,
                                         handling)
 
     return builder.build()
+
+
+class ElasticsearchSortQueryBuilder(object):
+    """https://elasticsearch-py.readthedocs.io/en/master/api.html#elasticsearch.Elasticsearch.search
+    """
+
+    def __init__(self,
+                 params,
+                 field_name,
+                 resource_type):
+        pass

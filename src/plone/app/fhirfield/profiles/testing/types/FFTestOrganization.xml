@@ -1,36 +1,35 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="Patient"
+    name="FFTestOrganization"
     meta_type="Dexterity FTI"
     i18n:domain="plone.app.fhirfield">
 
   <!-- Basic properties -->
   <property
       i18n:translate=""
-      name="title">Patient</property>
+      name="title">Fhir Resource Organization</property>
   <property
       i18n:translate=""
-      name="description">FHIR Patient Resource</property>
+      name="description">FHIR Resourcees</property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">patient</property>
+  <property name="factory">FFTestOrganization</property>
   <property name="icon_expr"></property>
   <property name="link_target"></property>
 
   <!-- Hierarchy control -->
-  <property name="allowed_content_types">
-    <element value="QuestionnaireResponse"/>
-    <element value="Task"/>
+  <property name="allowed_content_types" purge="False">
+    <element value="FFTestPatient"/>
   </property>
   <property name="filter_content_types">True</property>
-  <property name="global_allow">False</property>
+  <property name="global_allow">True</property>
 
   <!-- Schema, class and security -->
   <property name="add_permission">cmf.ManagePortal</property>
-  <property name="klass">plone.app.fhirfield.tests.schema.Patient</property>
+  <property name="klass">plone.app.fhirfield.tests.schema.FFTestOrganization</property>
   <property name="model_file"></property>
   <property name="model_source"></property>
-  <property name="schema">plone.app.fhirfield.tests.schema.IPatient</property>
+  <property name="schema">plone.app.fhirfield.tests.schema.IFFTestOrganization</property>
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
@@ -38,7 +37,7 @@
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++Patient</property>
+  <property name="add_view_expr">string:${folder_url}/++add++FFTestOrganization</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>

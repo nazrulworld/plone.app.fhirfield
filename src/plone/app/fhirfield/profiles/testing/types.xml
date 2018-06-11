@@ -4,4 +4,11 @@
   <!--<object name="example_ct" meta_type="Dexterity FTI"/>-->
   <object meta_type="Dexterity FTI" name="TestOrganization"/>
   <object meta_type="Dexterity FTI" name="Patient"/>
+  <object meta_type="Dexterity FTI" name="FFTestOrganization"/>
+  <object meta_type="Dexterity FTI" name="FFTestPatient"/>
+  <object meta_type="Dexterity FTI" name="FFTestQuestionnaire"/>
+  <object meta_type="Dexterity FTI" name="FFTestValueSet"/>
+  <object meta_type="Dexterity FTI" name="FFTestQuestionnaireResponse"/>
+  <object meta_type="Dexterity FTI" name="FFTestPatient"/>
+  <object meta_type="Dexterity FTI" name="FFTestTask"/>
 </object>

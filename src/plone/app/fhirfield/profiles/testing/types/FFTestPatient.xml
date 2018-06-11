@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="Patient"
+    name="FFTestPatient"
     meta_type="Dexterity FTI"
     i18n:domain="plone.app.fhirfield">
 
@@ -13,24 +13,24 @@
       name="description">FHIR Patient Resource</property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">patient</property>
+  <property name="factory">FFTestPatient</property>
   <property name="icon_expr"></property>
   <property name="link_target"></property>
 
   <!-- Hierarchy control -->
   <property name="allowed_content_types">
-    <element value="QuestionnaireResponse"/>
-    <element value="Task"/>
+    <element value="FFTestQuestionnaireResponse"/>
+    <element value="FFTestTask"/>
   </property>
   <property name="filter_content_types">True</property>
   <property name="global_allow">False</property>
 
   <!-- Schema, class and security -->
   <property name="add_permission">cmf.ManagePortal</property>
-  <property name="klass">plone.app.fhirfield.tests.schema.Patient</property>
+  <property name="klass">plone.app.fhirfield.tests.schema.FFTestPatient</property>
   <property name="model_file"></property>
   <property name="model_source"></property>
-  <property name="schema">plone.app.fhirfield.tests.schema.IPatient</property>
+  <property name="schema">plone.app.fhirfield.tests.schema.IFFTestPatient</property>
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
@@ -38,7 +38,7 @@
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++Patient</property>
+  <property name="add_view_expr">string:${folder_url}/++add++FFTestPatient</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>
