@@ -16,46 +16,14 @@ def initialize(context):
     log = logging.getLogger('plone.app.fhirfield')
 
     # Registering Pluggable indexes for FHIR
-    from plone.app.fhirfield.indexes.PluginIndexes import FHIRIndex
+    from plone.app.fhirfield.indexes.PluginIndexes import REGISTRABLE_CLASSES
 
-    context.registerClass(FHIRIndex.FhirFieldIndex,
-                          permission='Add Pluggable Index',
-                          constructors=(FHIRIndex.manage_addFhirFieldIndexForm,
-                                        FHIRIndex.manage_addFhirFieldIndex),
-                          icon='indexes/PluginIndexes/index.gif',
-                          visibility=None)
-    log.info('`FhirFieldIndex`  pluggable index has been registered')
+    for index, form, action in REGISTRABLE_CLASSES:
 
-    context.registerClass(FHIRIndex.FhirOrganizationIndex,
-                          permission='Add Pluggable Index',
-                          constructors=(FHIRIndex.manage_addFhirOrganizationIndexForm,
-                                        FHIRIndex.manage_addFhirOrganizationIndex),
-                          icon='indexes/PluginIndexes/index.gif',
-                          visibility=None)
-
-    log.info('`FhirOrganizationIndex` pluggable index has been registered')
-
-    context.registerClass(FHIRIndex.FhirPatientIndex,
-                          permission='Add Pluggable Index',
-                          constructors=(FHIRIndex.manage_addFhirPatientIndexForm,
-                                        FHIRIndex.manage_addFhirPatientIndex),
-                          icon='indexes/PluginIndexes/index.gif',
-                          visibility=None)
-
-    log.info('`FhirPatientIndex` pluggable index has been registered')
-
-    context.registerClass(FHIRIndex.FhirPractitionerIndex,
-                          permission='Add Pluggable Index',
-                          constructors=(FHIRIndex.manage_addFhirPractitionerIndexForm,
-                                        FHIRIndex.manage_addFhirPractitionerIndex),
-                          icon='indexes/PluginIndexes/index.gif',
-                          visibility=None)
-    log.info('`FhirPractitionerIndex` pluggable index has been registered')
-
-    context.registerClass(FHIRIndex.FhirValueSetIndex,
-                          permission='Add Pluggable Index',
-                          constructors=(FHIRIndex.manage_addFhirValueSetIndexForm,
-                                        FHIRIndex.manage_addFhirValueSetIndex),
-                          icon='indexes/PluginIndexes/index.gif',
-                          visibility=None)
-    log.info('`FhirValueSetIndex` pluggable index has been registered')
+        context.registerClass(index,
+                              permission='Add Pluggable Index',
+                              constructors=(form, action),
+                              icon='indexes/PluginIndexes/index.gif',
+                              visibility=None)
+        log.info('`{0}`  pluggable index has been registered'.
+                 format(index.__name__))

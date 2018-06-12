@@ -6,7 +6,7 @@
       <description>Patient FHIR Resource.</description>
       <required>True</required>
       <title>Patient</title>
-      <model>fhirclient.models.organization.Organization</model>
+      <model>fhirclient.models.patient.Patient</model>
       <model_interface>plone.app.fhirfield.interfaces.IFhirResourceModel</model_interface>
     </field>
   </schema>

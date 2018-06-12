@@ -22,19 +22,6 @@ class TestOrganization(Container):
     """ """
 
 
-class IPatient(model.Schema):
-    """ """
-    patient_resource = FhirResource(
-        title=u'Fhir Patient Field',
-        model='fhirclient.models.patient.Patient',
-    )
-
-
-@implementer(IPatient)
-class Patient(Container):
-    """ """
-
-
 class IFFTestOrganization(model.Schema):
     """ """
     organization_resource = FhirResource(
