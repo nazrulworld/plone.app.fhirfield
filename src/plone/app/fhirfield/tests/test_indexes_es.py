@@ -10,7 +10,7 @@ from . import FHIR_FIXTURE_PATH
 from collective.elasticsearch.es import ElasticSearchCatalog
 from DateTime import DateTime
 from plone import api
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING
+from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING  # noqa: E501
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
@@ -70,16 +70,16 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
     def test_content_object_index(self):
         """Test indexes added for newly inserted indexes"""
 
-        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            self.admin_browser.getControl(name='form.widgets.resource').value = f.read()
+            self.admin_browser.getControl(name='form.widgets.organization_resource').value = f.read()
 
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
-        self.assertIn('testorganization/view', self.admin_browser.url)
+        self.assertIn('fftestorganization/view', self.admin_browser.url)
 
         # Let's check one item should be for resource item
         self.admin_browser.open(self.portal_catalog_url + '/Indexes/organization_resource/manage_main')
@@ -100,12 +100,12 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         form = self.admin_browser.getForm(action=self.portal_catalog_url + '/@@elastic-convert')
         form.getControl(name='convert').click()
 
-        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            self.admin_browser.getControl(name='form.widgets.resource').value = f.read()
+            self.admin_browser.getControl(name='form.widgets.organization_resource').value = f.read()
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
@@ -120,22 +120,22 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         """We will need to make sure that elastic server is taking responsibilities
         for indexing, querying"""
         self.convert_to_elasticsearch(['organization_resource'])
-        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            self.admin_browser.getControl(name='form.widgets.resource').value = f.read()
+            self.admin_browser.getControl(name='form.widgets.organization_resource').value = f.read()
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Hamid Patuary University'
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_value = json.load(f)
             json_value['id'] = 'f002'
             json_value['name'] = 'Hamid Patuary University'
-            self.admin_browser.getControl(name='form.widgets.resource').value = json.dumps(json_value)
+            self.admin_browser.getControl(name='form.widgets.organization_resource').value = json.dumps(json_value)
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
@@ -172,16 +172,16 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
     def load_contents(self):
         """ """
         self.convert_to_elasticsearch(['organization_resource'])
-        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            self.admin_browser.getControl(name='form.widgets.resource').value = f.read()
+            self.admin_browser.getControl(name='form.widgets.organization_resource').value = f.read()
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Hamid Patuary University'
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_value = json.load(f)
@@ -189,11 +189,11 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             json_value['meta']['lastUpdated'] = '2015-05-28T05:35:56+00:00'
             json_value['meta']['profile'] = ['http://hl7.org/fhir/Organization']
             json_value['name'] = 'Hamid Patuary University'
-            self.admin_browser.getControl(name='form.widgets.resource').value = json.dumps(json_value)
+            self.admin_browser.getControl(name='form.widgets.organization_resource').value = json.dumps(json_value)
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++TestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Call trun University'
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_value = json.load(f)
@@ -201,7 +201,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             json_value['meta']['lastUpdated'] = DateTime().ISO8601()
             json_value['meta']['profile'] = ['http://hl7.org/fhir/Meta', 'urn:oid:002.160']
             json_value['name'] = 'Call trun University'
-            self.admin_browser.getControl(name='form.widgets.resource').value = json.dumps(json_value)
+            self.admin_browser.getControl(name='form.widgets.organization_resource').value = json.dumps(json_value)
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
@@ -219,7 +219,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         # result should contains only item
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].getObject().resource.id, 'f001')
+        self.assertEqual(result[0].getObject().organization_resource.id, 'f001')
 
         # test:2 not equal to
         result = portal_catalog.unrestrictedSearchResults(
@@ -244,7 +244,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'})
         # result should contains only item
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].getObject().resource.id, 'f003')
+        self.assertEqual(result[0].getObject().organization_resource.id, 'f003')
 
         # test:6 greater than or equal to
         result = portal_catalog.unrestrictedSearchResults(

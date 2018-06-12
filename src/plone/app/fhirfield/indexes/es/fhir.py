@@ -141,3 +141,18 @@ class EsFhirPractitionerIndex(EsFhirFieldIndex):
 class EsFhirValueSetIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'ValueSet'
+
+
+class EsFhirTaskIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'Task'
+
+
+class EsFhirQuestionnaireIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'Questionnaire'
+
+
+class EsFhirQuestionnaireResponseIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'QuestionnaireResponse'
