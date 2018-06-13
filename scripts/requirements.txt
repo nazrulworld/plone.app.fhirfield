@@ -4,3 +4,4 @@ cchardet
 beautifulsoup4
 ujson
 lxml
+tqdm
