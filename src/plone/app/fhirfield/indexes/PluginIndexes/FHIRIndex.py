@@ -98,6 +98,27 @@ def manage_addFhirPractitionerIndex(self,
 manage_addFhirPractitionerIndexForm = DTMLFile('dtml/addFhirPractitionerIndexForm', globals())  # noqa: E305
 
 
+class FhirRelatedPersonIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirRelatedPersonIndex'
+
+
+def manage_addFhirRelatedPersonIndex(self,
+                                     id,
+                                     extra=None,
+                                     REQUEST=None,
+                                     RESPONSE=None,
+                                     URL3=None):
+    """Add a fhir Related Person index"""
+    return self.manage_addIndex(id,
+                                'FhirRelatedPersonIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+manage_addFhirRelatedPersonIndexForm = DTMLFile('dtml/addFhirRelatedPersonIndexForm', globals())  # noqa: E305
+
+
 class FhirValueSetIndex(FhirFieldIndex):
     """ """
     meta_type = 'FhirValueSetIndex'
@@ -211,4 +232,7 @@ REGISTRABLE_CLASSES = [
     (FhirValueSetIndex,
      manage_addFhirValueSetIndexForm,
      manage_addFhirValueSetIndex),
+    (FhirRelatedPersonIndex,
+     manage_addFhirRelatedPersonIndexForm,
+     manage_addFhirRelatedPersonIndex)
 ]

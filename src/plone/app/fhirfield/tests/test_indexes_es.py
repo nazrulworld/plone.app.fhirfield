@@ -252,14 +252,13 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # result should contains only item
         self.assertEqual(len(result), 2)
 
-    def _test_catalogsearch__profile(self):
+    def offtest_catalogsearch__profile(self):
         """ """
         self.load_contents()
         # test:1 URI
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
             organization_resource={'_profile': 'http://hl7.org/fhir/Organization'})
-
         # result should contains two items
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0].getObject().resource.id, 'f001')

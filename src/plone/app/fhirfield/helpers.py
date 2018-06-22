@@ -251,7 +251,7 @@ class ElasticsearchQueryBuilder(object):
 
             path = param[3][0].replace('Resource', self.field_name)
             value = self.params.get(field)
-            q = {'term': {path: value}}
+            q = {'terms': {path: [value], 'minimum_should_match': 1}}
             self.query_tree['must'].append(q)
 
     def build_common_search_parameters(self, field):
@@ -308,4 +308,16 @@ class ElasticsearchSortQueryBuilder(object):
                  params,
                  field_name,
                  resource_type):
-        pass
+        """ """
+        self.sort_on = params.pop('_sort', None)
+        self.sort_order = 'asc'
+        if self.sort_on:
+            self.sort_on = self.sort_on.split(',')
+
+            for index, item in enumerate(self.sort_on):
+                if item.startswith('-'):
+                    self.sort_order = 'desc'
+                    self.sort_on[index] = item[1:]
+
+    def build(self):
+        """ """

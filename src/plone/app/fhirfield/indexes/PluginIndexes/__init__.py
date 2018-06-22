@@ -10,6 +10,7 @@ from .FHIRIndex import FhirPatientIndex  # noqa: F401
 from .FHIRIndex import FhirPractitionerIndex  # noqa: F401
 from .FHIRIndex import FhirQuestionnaireIndex  # noqa: F401
 from .FHIRIndex import FhirQuestionnaireResponseIndex  # noqa: F401
+from .FHIRIndex import FhirRelatedPersonIndex  # noqa: F401
 from .FHIRIndex import FhirTaskIndex  # noqa: F401
 from .FHIRIndex import FhirValueSetIndex  # noqa: F401
 from .FHIRIndex import REGISTRABLE_CLASSES  # noqa: F401

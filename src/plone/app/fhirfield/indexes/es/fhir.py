@@ -138,6 +138,11 @@ class EsFhirPractitionerIndex(EsFhirFieldIndex):
     _resource_type = 'Practitioner'
 
 
+class EsFhirRelatedPersonIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'RelatedPerson'
+
+
 class EsFhirValueSetIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'ValueSet'

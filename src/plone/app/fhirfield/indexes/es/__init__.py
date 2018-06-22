@@ -10,6 +10,7 @@ from .fhir import EsFhirPatientIndex
 from .fhir import EsFhirPractitionerIndex
 from .fhir import EsFhirQuestionnaireIndex
 from .fhir import EsFhirQuestionnaireResponseIndex
+from .fhir import EsFhirRelatedPersonIndex
 from .fhir import EsFhirTaskIndex
 from .fhir import EsFhirValueSetIndex
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
@@ -18,7 +19,8 @@ from plone.app.fhirfield.indexes.PluginIndexes import FhirOrganizationIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirPatientIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirPractitionerIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirQuestionnaireIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirQuestionnaireResponseIndex
+from plone.app.fhirfield.indexes.PluginIndexes import FhirQuestionnaireResponseIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirRelatedPersonIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirTaskIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirValueSetIndex
 
@@ -30,6 +32,7 @@ INDEX_MAPPING = {
     FhirOrganizationIndex: EsFhirOrganizationIndex,
     FhirPatientIndex: EsFhirPatientIndex,
     FhirPractitionerIndex: EsFhirPractitionerIndex,
+    FhirRelatedPersonIndex: EsFhirRelatedPersonIndex,
     FhirValueSetIndex: EsFhirValueSetIndex,
     FhirTaskIndex: EsFhirTaskIndex,
     FhirQuestionnaireIndex: EsFhirQuestionnaireIndex,
