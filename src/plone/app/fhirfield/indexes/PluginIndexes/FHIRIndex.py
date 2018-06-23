@@ -56,6 +56,27 @@ def manage_addFhirOrganizationIndex(self,
 manage_addFhirOrganizationIndexForm = DTMLFile('dtml/addFhirOrganizationIndexForm', globals())  # noqa: E305
 
 
+class FhirHealthcareServiceIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirHealthcareServiceIndex'
+
+
+def manage_addFhirHealthcareServiceIndex(self,
+                                         id,
+                                         extra=None,
+                                         REQUEST=None,
+                                         RESPONSE=None,
+                                         URL3=None):
+    """Add a fhir field index"""
+    return self.manage_addIndex(id,
+                                'FhirHealthcareServiceIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+manage_addFhirHealthcareServiceIndexForm = DTMLFile('dtml/addFhirHealthcareServiceIndexForm', globals())  # noqa: E305
+
+
 class FhirPatientIndex(FhirFieldIndex):
     """ """
     meta_type = 'FhirPatientIndex'
@@ -206,6 +227,78 @@ manage_addFhirQuestionnaireResponseIndexForm = \
     DTMLFile('dtml/addFhirQuestionnaireResponseIndexForm', globals())  # noqa: E305
 
 
+class FhirActivityDefinitionIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirActivityDefinitionIndex'
+
+
+def manage_addFhirActivityDefinitionIndex(self,
+                                          id,
+                                          extra=None,
+                                          REQUEST=None,
+                                          RESPONSE=None,
+                                          URL3=None):
+    """Add a fhir ActivityDefinition index"""
+    return self.manage_addIndex(id,
+                                'FhirActivityDefinitionIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirActivityDefinitionIndexForm = \
+    DTMLFile('dtml/addFhirActivityDefinitionIndexForm', globals())  # noqa: E305
+
+
+class FhirObservationIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirObservationIndex'
+
+
+def manage_addFhirObservationIndex(self,
+                                   id,
+                                   extra=None,
+                                   REQUEST=None,
+                                   RESPONSE=None,
+                                   URL3=None):
+    """Add a fhir Observation index"""
+    return self.manage_addIndex(id,
+                                'FhirObservationIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirObservationIndexForm = \
+    DTMLFile('dtml/addFhirObservationIndexForm', globals())  # noqa: E305
+
+
+class FhirProcedureRequestIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirProcedureRequestIndex'
+
+
+def manage_addFhirProcedureRequestIndex(self,
+                                        id,
+                                        extra=None,
+                                        REQUEST=None,
+                                        RESPONSE=None,
+                                        URL3=None):
+    """Add a fhir ProcedureRequest index"""
+    return self.manage_addIndex(id,
+                                'FhirProcedureRequestIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirProcedureRequestIndexForm = \
+    DTMLFile('dtml/addFhirProcedureRequestIndexForm', globals())  # noqa: E305
+
+
 REGISTRABLE_CLASSES = [
     # index, form, action
     (FhirFieldIndex,
@@ -214,6 +307,9 @@ REGISTRABLE_CLASSES = [
     (FhirOrganizationIndex,
      manage_addFhirOrganizationIndexForm,
      manage_addFhirOrganizationIndex),
+    (FhirHealthcareServiceIndex,
+     manage_addFhirHealthcareServiceIndexForm,
+     manage_addFhirHealthcareServiceIndex),
     (FhirPatientIndex,
      manage_addFhirPatientIndexForm,
      manage_addFhirPatientIndex),
@@ -234,5 +330,14 @@ REGISTRABLE_CLASSES = [
      manage_addFhirValueSetIndex),
     (FhirRelatedPersonIndex,
      manage_addFhirRelatedPersonIndexForm,
-     manage_addFhirRelatedPersonIndex)
+     manage_addFhirRelatedPersonIndex),
+    (FhirActivityDefinitionIndex,
+     manage_addFhirActivityDefinitionIndexForm,
+     manage_addFhirActivityDefinitionIndex),
+    (FhirObservationIndex,
+     manage_addFhirObservationIndexForm,
+     manage_addFhirObservationIndex),
+    (FhirProcedureRequestIndex,
+     manage_addFhirProcedureRequestIndexForm,
+     manage_addFhirProcedureRequestIndex)
 ]

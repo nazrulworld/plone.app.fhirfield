@@ -161,3 +161,23 @@ class EsFhirQuestionnaireIndex(EsFhirFieldIndex):
 class EsFhirQuestionnaireResponseIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'QuestionnaireResponse'
+
+
+class EsFhirActivityDefinitionIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'ActivityDefinition'
+
+
+class EsFhirHealthcareServiceIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'HealthcareService'
+
+
+class EsFhirObservationIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'Observation'
+
+
+class EsFhirProcedureRequestIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'ProcedureRequest'
