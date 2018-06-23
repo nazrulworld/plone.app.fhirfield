@@ -48,7 +48,7 @@ INDEX_MAPPING = {
     FhirActivityDefinitionIndex: EsFhirActivityDefinitionIndex,
     FhirObservationIndex: EsFhirObservationIndex,
     FhirHealthcareServiceIndex: EsFhirHealthcareServiceIndex,
-    FhirProcedureRequestIndex: EsFhirProcedureRequestIndex
+    FhirProcedureRequestIndex: EsFhirProcedureRequestIndex,
 }
 
 # Tiny patch

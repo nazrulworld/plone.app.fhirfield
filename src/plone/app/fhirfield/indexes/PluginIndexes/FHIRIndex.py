@@ -339,5 +339,5 @@ REGISTRABLE_CLASSES = [
      manage_addFhirObservationIndex),
     (FhirProcedureRequestIndex,
      manage_addFhirProcedureRequestIndexForm,
-     manage_addFhirProcedureRequestIndex)
+     manage_addFhirProcedureRequestIndex),
 ]
