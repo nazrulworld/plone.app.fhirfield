@@ -299,6 +299,54 @@ manage_addFhirProcedureRequestIndexForm = \
     DTMLFile('dtml/addFhirProcedureRequestIndexForm', globals())  # noqa: E305
 
 
+class FhirDeviceRequestIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirDeviceRequestIndex'
+
+
+def manage_addFhirDeviceRequestIndex(self,
+                                     id,
+                                     extra=None,
+                                     REQUEST=None,
+                                     RESPONSE=None,
+                                     URL3=None):
+    """Add a fhir DeviceRequest index"""
+    return self.manage_addIndex(id,
+                                'FhirDeviceRequestIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirDeviceRequestIndexForm = \
+    DTMLFile('dtml/addFhirDeviceRequestIndexForm', globals())  # noqa: E305
+
+
+class FhirDeviceIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirDeviceIndex'
+
+
+def manage_addFhirDeviceIndex(self,
+                              id,
+                              extra=None,
+                              REQUEST=None,
+                              RESPONSE=None,
+                              URL3=None):
+    """Add a fhir Device index"""
+    return self.manage_addIndex(id,
+                                'FhirDeviceIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirDeviceIndexForm = \
+    DTMLFile('dtml/addFhirDeviceIndexForm', globals())  # noqa: E305
+
+
 REGISTRABLE_CLASSES = [
     # index, form, action
     (FhirFieldIndex,
@@ -340,4 +388,10 @@ REGISTRABLE_CLASSES = [
     (FhirProcedureRequestIndex,
      manage_addFhirProcedureRequestIndexForm,
      manage_addFhirProcedureRequestIndex),
+    (FhirDeviceRequestIndex,
+     manage_addFhirDeviceRequestIndexForm,
+     manage_addFhirDeviceRequestIndex),
+    (FhirDeviceIndex,
+     manage_addFhirDeviceIndexForm,
+     manage_addFhirDeviceIndex),
 ]

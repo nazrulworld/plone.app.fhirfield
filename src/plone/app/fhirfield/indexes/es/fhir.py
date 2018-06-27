@@ -181,3 +181,13 @@ class EsFhirObservationIndex(EsFhirFieldIndex):
 class EsFhirProcedureRequestIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'ProcedureRequest'
+
+
+class EsFhirDeviceIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'Device'
+
+
+class EsFhirDeviceRequestIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'DeviceRequest'

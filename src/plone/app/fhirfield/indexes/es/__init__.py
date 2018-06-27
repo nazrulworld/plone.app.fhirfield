@@ -5,6 +5,8 @@
 # @Version : $Id$
 # All imports here
 from .fhir import EsFhirActivityDefinitionIndex
+from .fhir import EsFhirDeviceIndex
+from .fhir import EsFhirDeviceRequestIndex
 from .fhir import EsFhirFieldIndex
 from .fhir import EsFhirHealthcareServiceIndex
 from .fhir import EsFhirObservationIndex
@@ -19,6 +21,8 @@ from .fhir import EsFhirTaskIndex
 from .fhir import EsFhirValueSetIndex
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
 from plone.app.fhirfield.indexes.PluginIndexes import FhirActivityDefinitionIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceRequestIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirFieldIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirHealthcareServiceIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirObservationIndex
@@ -49,6 +53,8 @@ INDEX_MAPPING = {
     FhirObservationIndex: EsFhirObservationIndex,
     FhirHealthcareServiceIndex: EsFhirHealthcareServiceIndex,
     FhirProcedureRequestIndex: EsFhirProcedureRequestIndex,
+    FhirDeviceIndex: EsFhirDeviceIndex,
+    FhirDeviceRequestIndex: EsFhirDeviceRequestIndex,
 }
 
 # Tiny patch
