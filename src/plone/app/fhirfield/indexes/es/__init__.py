@@ -5,6 +5,7 @@
 # @Version : $Id$
 # All imports here
 from .fhir import EsFhirActivityDefinitionIndex
+from .fhir import EsFhirCarePlanIndex
 from .fhir import EsFhirDeviceIndex
 from .fhir import EsFhirDeviceRequestIndex
 from .fhir import EsFhirFieldIndex
@@ -12,6 +13,7 @@ from .fhir import EsFhirHealthcareServiceIndex
 from .fhir import EsFhirObservationIndex
 from .fhir import EsFhirOrganizationIndex
 from .fhir import EsFhirPatientIndex
+from .fhir import EsFhirPlanDefinitionIndex
 from .fhir import EsFhirPractitionerIndex
 from .fhir import EsFhirProcedureRequestIndex
 from .fhir import EsFhirQuestionnaireIndex
@@ -21,6 +23,7 @@ from .fhir import EsFhirTaskIndex
 from .fhir import EsFhirValueSetIndex
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
 from plone.app.fhirfield.indexes.PluginIndexes import FhirActivityDefinitionIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirCarePlanIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceRequestIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirFieldIndex
@@ -28,6 +31,7 @@ from plone.app.fhirfield.indexes.PluginIndexes import FhirHealthcareServiceIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirObservationIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirOrganizationIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirPatientIndex
+from plone.app.fhirfield.indexes.PluginIndexes import FhirPlanDefinitionIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirPractitionerIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirProcedureRequestIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirQuestionnaireIndex
@@ -55,6 +59,8 @@ INDEX_MAPPING = {
     FhirProcedureRequestIndex: EsFhirProcedureRequestIndex,
     FhirDeviceIndex: EsFhirDeviceIndex,
     FhirDeviceRequestIndex: EsFhirDeviceRequestIndex,
+    FhirCarePlanIndex: EsFhirCarePlanIndex,
+    FhirPlanDefinitionIndex: EsFhirPlanDefinitionIndex,
 }
 
 # Tiny patch

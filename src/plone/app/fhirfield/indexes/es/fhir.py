@@ -191,3 +191,13 @@ class EsFhirDeviceIndex(EsFhirFieldIndex):
 class EsFhirDeviceRequestIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'DeviceRequest'
+
+
+class EsFhirCarePlanIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'CarePlan'
+
+
+class EsFhirPlanDefinitionIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'PlanDefinition'

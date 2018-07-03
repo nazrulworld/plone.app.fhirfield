@@ -347,6 +347,54 @@ manage_addFhirDeviceIndexForm = \
     DTMLFile('dtml/addFhirDeviceIndexForm', globals())  # noqa: E305
 
 
+class FhirCarePlanIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirCarePlanIndex'
+
+
+def manage_addFhirCarePlanIndex(self,
+                                id,
+                                extra=None,
+                                REQUEST=None,
+                                RESPONSE=None,
+                                URL3=None):
+    """Add a fhir CarePlan index"""
+    return self.manage_addIndex(id,
+                                'FhirCarePlanIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirCarePlanIndexForm = \
+    DTMLFile('dtml/addFhirCarePlanIndexForm', globals())  # noqa: E305
+
+
+class FhirPlanDefinitionIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirPlanDefinitionIndex'
+
+
+def manage_addFhirPlanDefinitionIndex(self,
+                                      id,
+                                      extra=None,
+                                      REQUEST=None,
+                                      RESPONSE=None,
+                                      URL3=None):
+    """Add a fhir PlanDefinition index"""
+    return self.manage_addIndex(id,
+                                'FhirPlanDefinitionIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirPlanDefinitionIndexForm = \
+    DTMLFile('dtml/addFhirPlanDefinitionIndexForm', globals())  # noqa: E305
+
+
 REGISTRABLE_CLASSES = [
     # index, form, action
     (FhirFieldIndex,
@@ -394,4 +442,10 @@ REGISTRABLE_CLASSES = [
     (FhirDeviceIndex,
      manage_addFhirDeviceIndexForm,
      manage_addFhirDeviceIndex),
+    (FhirCarePlanIndex,
+     manage_addFhirCarePlanIndexForm,
+     manage_addFhirCarePlanIndex),
+    (FhirPlanDefinitionIndex,
+     manage_addFhirPlanDefinitionIndexForm,
+     manage_addFhirPlanDefinitionIndex),
 ]
