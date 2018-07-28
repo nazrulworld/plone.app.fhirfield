@@ -108,19 +108,21 @@ class EsFhirFieldIndex(BaseIndex):
 
         return {'bool': query}
 
-
-class EsFhirOrganizationIndex(EsFhirFieldIndex):
-    """ """
-    _resource_type = 'Organization'
-
-    def create_mapping(self, name):
-        """Minimal mapping for all kind of fhir models"""
-        return self._get_mapping()
-
-    def _get_mapping(self, cache=True):
+    def get_mapping_from_file(self, filename=None, cache=True):
         """Fetch mapping from file system associated with resourceType"""
+        if filename is None:
+            filename = os.path.join(
+                MAPPING_FILE_DIR,
+                self._resource_type + '.json')
+
+        if os.path.sep not in filename:
+            # only file name is provided, need add full path
+            filename = os.path.join(
+                MAPPING_FILE_DIR,
+                filename)
+
         if not cache or self._mapping_cache is None:
-            with open(os.path.join(MAPPING_FILE_DIR, 'Organization.json'), 'r') as f:
+            with open(filename, 'r') as f:
                 contents = json.load(f)
                 # ??? do some validation ???
                 self._mapping_cache = contents['mapping']
@@ -128,9 +130,22 @@ class EsFhirOrganizationIndex(EsFhirFieldIndex):
         return self._mapping_cache
 
 
+class EsFhirOrganizationIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'Organization'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
+
 class EsFhirPatientIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'Patient'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirPractitionerIndex(EsFhirFieldIndex):
@@ -147,20 +162,36 @@ class EsFhirValueSetIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'ValueSet'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirTaskIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'Task'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirQuestionnaireIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'Questionnaire'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirQuestionnaireResponseIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'QuestionnaireResponse'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirActivityDefinitionIndex(EsFhirFieldIndex):
@@ -177,20 +208,36 @@ class EsFhirObservationIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'Observation'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirProcedureRequestIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'ProcedureRequest'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirDeviceIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'Device'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirDeviceRequestIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'DeviceRequest'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirCarePlanIndex(EsFhirFieldIndex):

@@ -1,8 +1,8 @@
 {
     "resourceType": "Organization",
     "meta": {
-        "lastUpdated": null,
-        "versionId": null
+        "lastUpdated": "2018-07-28T15:36:33.302Z",
+        "versionId": "1.0.0"
     },
     "mapping": {
         "properties": {

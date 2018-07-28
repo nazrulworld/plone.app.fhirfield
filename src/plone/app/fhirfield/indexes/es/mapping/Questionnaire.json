@@ -1,5 +1,5 @@
 {
-    "resourceType": "Patient",
+    "resourceType": "Questionnaire",
     "meta": {
         "lastUpdated": "2018-07-28T15:36:33.302Z",
         "versionId": "1.0.0"
@@ -28,7 +28,7 @@
                 "type": "string",
                 "store": false
             },
-            "gender": {
+            "status": {
                 "type": "string",
                 "store": false
             },
@@ -49,12 +49,26 @@
                     }
                 }
             },
-            "birthDate": {
-                "type": "date",
+            "name": {
+                "type": "string",
+                "index": "analyzed",
+                "analyzer": "keyword",
                 "store": false
             },
-            "active": {
-                "type": "boolean",
+            "title": {
+                "type": "string",
+                "index": "analyzed",
+                "analyzer": "keyword",
+                "store": false
+            },
+            "approvalDate": {
+                "type": "date",
+                "format": "date_time_no_millis||date_optional_time",
+                "store": false
+            },
+            "lastReviewDate": {
+                "type": "date",
+                "format": "date_time_no_millis||date_optional_time",
                 "store": false
             }
         }

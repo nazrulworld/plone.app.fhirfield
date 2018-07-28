@@ -1,5 +1,5 @@
 {
-    "resourceType": "Patient",
+    "resourceType": "DeviceRequest",
     "meta": {
         "lastUpdated": "2018-07-28T15:36:33.302Z",
         "versionId": "1.0.0"
@@ -28,7 +28,7 @@
                 "type": "string",
                 "store": false
             },
-            "gender": {
+            "status": {
                 "type": "string",
                 "store": false
             },
@@ -49,13 +49,21 @@
                     }
                 }
             },
-            "birthDate": {
-                "type": "date",
-                "store": false
+            "subject": {
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "store": false
+                    }
+                }
             },
-            "active": {
-                "type": "boolean",
-                "store": false
+            "performer": {
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "store": false
+                    }
+                }
             }
         }
     }
