@@ -10,4 +10,7 @@
   <object meta_type="Dexterity FTI" name="FFTestQuestionnaireResponse"/>
   <object meta_type="Dexterity FTI" name="FFTestPatient"/>
   <object meta_type="Dexterity FTI" name="FFTestTask"/>
+  <object meta_type="Dexterity FTI" name="FFTestProcedureRequest"/>
+  <object meta_type="Dexterity FTI" name="FFTestDevice"/>
+  <object meta_type="Dexterity FTI" name="FFTestDeviceRequest"/>
 </object>

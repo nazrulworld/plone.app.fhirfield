@@ -87,6 +87,45 @@ class FFTestTask(Container):
     """ """
 
 
+class IFFTestProcedureRequest(model.Schema):
+    """ """
+    procedurerequest_resource = FhirResource(
+        title=u'Fhir ProcedureRequest Field',
+        model='fhirclient.models.procedurerequest.ProcedureRequest',
+    )
+
+
+@implementer(IFFTestProcedureRequest)
+class FFTestProcedureRequest(Item):
+    """ """
+
+
+class IFFTestDevice(model.Schema):
+    """ """
+    device_resource = FhirResource(
+        title=u'Fhir Device Field',
+        model='fhirclient.models.device.Device',
+    )
+
+
+@implementer(IFFTestDevice)
+class FFTestDevice(Item):
+    """ """
+
+
+class IFFTestDeviceRequest(model.Schema):
+    """ """
+    task_resource = FhirResource(
+        title=u'Fhir DeviceRequest Field',
+        model='fhirclient.models.devicerequest.DeviceRequest',
+    )
+
+
+@implementer(IFFTestDeviceRequest)
+class FFTestDeviceRequest(Item):
+    """ """
+
+
 class IFFTestValueSet(model.Schema):
     """ """
     valueset_resource = FhirResource(
