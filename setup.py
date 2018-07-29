@@ -19,6 +19,9 @@ install_requires = [
     'fhirclient',
     'jsonpatch'
 ]
+elasticsearch_requires = [
+    'collective.elasticsearch>=2.0.1'
+]
 test_requires = [
     'plone.restapi',
     'plone.schemaeditor',
@@ -29,9 +32,7 @@ test_requires = [
     'plone.app.robotframework[debug]',
     'collective.MockMailHost',
     'Products.contentmigration',
-    'docker',
-    'jmespath',
-    'collective.elasticsearch',
+    'docker'
 ]
 
 setup(
@@ -70,7 +71,8 @@ setup(
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
-        'test': test_requires,
+        'test': test_requires + elasticsearch_requires,
+        'elasticsearch': elasticsearch_requires
     },
     entry_points="""
     [z3c.autoinclude.plugin]

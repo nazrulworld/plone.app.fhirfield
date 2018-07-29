@@ -4,8 +4,12 @@ Changelog
 1.0.0b2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+New Features:
 
+- supports for elasticsearch has been added. Now many basic `fhir search <https://www.hl7.org/fhir/search.html>`_ are possible to be queried.
+- upto 22 FHIR fields indexes (`FhirActivityDefinitionIndex`, `FhirAppointmentIndex`, `FhirCarePlanIndex`, `FhirDeviceIndex`, `FhirDeviceRequestIndex`, `FhirHealthcareServiceIndex`, `FhirMedicationAdministrationIndex`, `FhirMedicationDispenseIndex`, `FhirMedicationRequestIndex`, `FhirMedicationStatementIndex`, `FhirObservationIndex`, `FhirOrganizationIndex`, `FhirPatientIndex`, `FhirPlanDefinitionIndex`, `FhirPractitionerIndex`, `FhirProcedureRequestIndex`, `FhirQuestionnaireIndex`, `FhirQuestionnaireResponseIndex`, `FhirRelatedPersonIndex`, `FhirTaskIndex`, `FhirValueSetIndex`)
+- Mappings for all available fhir indexes are created.
+- `elasticsearch` option is now available for setup.py
 
 1.0.0b1 (2018-03-17)
 --------------------

@@ -58,6 +58,7 @@ Features
 - Widget: z3cform support
 - plone.supermodel support
 - plone.rfc822 marshaler field support
+- elasticsearch based catalog search
 
 
 Available Field's Options
@@ -174,14 +175,139 @@ This package provides some useful functions those could be usable in your codeba
         >>> task_model_class = resource_type_str_to_fhir_model('Task')
 
 
-Roadmaps
-========
+Available Catalog PluginIndexes
+===============================
 
-- indexing: we have plan to support json index like elastic search model. Ofcourse performance will be main issue. bellows are some libraries, I found. You are welcome to suggest me any better library for json search.
-    - `jmespath`_
-    - `jsonpath-ng`_
-    - `jsonpath-rw`_
-- elastic search support
+Bellows are fhirfield based catalog indexes are available.
+
+
+1. `FhirActivityDefinitionIndex`
+    - Resource Type: ActivityDefinition
+    - Has Mapping: yes
+
+2. `FhirAppointmentIndex`
+    - Resource Type: Appointment
+    - Has Mapping: yes
+
+3. `FhirCarePlanIndex`
+    - Resource Type: CarePlan
+    - Has Mapping: yes
+
+4. `FhirDeviceIndex`
+    - Resource Type: Device
+    - Has Mapping: yes
+
+5. `FhirDeviceRequestIndex`
+    - Resource Type: DeviceRequest
+    - Has Mapping: yes
+
+6. `FhirHealthcareServiceIndex`
+    - Resource Type: HealthcareService
+    - Has Mapping: yes
+
+7. `FhirMedicationAdministrationIndex`
+    - Resource Type: MedicationAdministration
+    - Has Mapping: yes
+
+8. `FhirMedicationDispenseIndex`
+    - Resource Type: MedicationDispense
+    - Has Mapping: yes
+
+9. `FhirMedicationRequestIndex`
+    - Resource Type: MedicationRequest
+    - Has Mapping: yes
+
+10. `FhirMedicationStatementIndex`
+     - Resource Type: MedicationStatement
+     - Has Mapping: yes
+
+11. `FhirObservationIndex`
+     - Resource Type: Observation
+     - Has Mapping: yes
+
+12. `FhirOrganizationIndex`
+     - Resource Type: Organization
+     - Has Mapping: yes
+
+13. `FhirPatientIndex`
+     - Resource Type: Patient
+     - Has Mapping: yes
+
+14. `FhirPlanDefinitionIndex`
+     - Resource Type: PlanDefinition
+     - Has Mapping: yes
+
+15. `FhirPractitionerIndex`
+     - Resource Type: Practitioner
+     - Has Mapping: yes
+
+16. `FhirProcedureRequestIndex`
+     - Resource Type: ProcedureRequest
+     - Has Mapping: yes
+
+17. `FhirQuestionnaireIndex`
+     - Resource Type: Questionnaire
+     - Has Mapping: yes
+
+18. `FhirQuestionnaireResponseIndex`
+     - Resource Type: QuestionnaireResponse
+     - Has Mapping: yes
+
+19. `FhirRelatedPersonIndex`
+     - Resource Type: RelatedPerson
+     - Has Mapping: yes
+
+20. `FhirTaskIndex`
+     - Resource Type: Task
+     - Has Mapping: yes
+
+21. `FhirValueSetIndex`
+     - Resource Type: ValueSet
+     - Has Mapping: yes
+
+22. `FhirFieldIndex`:
+     - Resource Type: any valid fhir resource
+     - Has Mapping: minimal (id, identifier, meta)
+
+
+Example usages::
+
+    <?xml version="1.0"?>
+    <object name="portal_catalog" meta_type="Plone Catalog Tool">
+        <index name="organization_resource" meta_type="FhirOrganizationIndex">
+            <indexed_attr value="organization_resource"/>
+        </index>
+    </object>
+
+elasticsearch setup
+===================
+
+If your intent to use elasticsearch based indexing and query, this section for you! you can `find more details here <http://collectiveelasticsearch.readthedocs.io/en/latest/>`_
+
+server setup
+------------
+
+server version is restricted to `2.4.x`, means we cannot use latest version of elasticsearch. i.e 5.6.x
+
+- `Download from here <https://www.elastic.co/downloads/past-releases/elasticsearch-2-4-6>`_ and install according to documentation.
+- For development you could use docker container. The Makefile is available, `~$ make run-es`
+
+
+collective.elasticsearch setup
+------------------------------
+
+Full configuration `guide could be found here <http://collectiveelasticsearch.readthedocs.io/en/latest/config.html#basic-configuration>`_. Simple steps are described bellow.
+
+1. **create catalog/indexes**: First you will need add indexes for each fhirfield used in your project. each resource type has it's own Meta Index. `example is here <https://github.com/nazrulworld/plone.app.fhirfield/blob/master/src/plone/app/fhirfield/profiles/testing/catalog.xml>`_
+
+2. Install `collective.elasticsearch` addon from plone control panel.
+
+3. Convert your Indexes to elasticsearch. Go To `{portal url}/@@elastic-controlpanel`
+
+4. In the settings form's `Indexes for which all searches are done through ElasticSearch` section add your all indexes those you mentioned into catalog.xml file, also add `portal_type`
+
+5. Now save and again `Convert Catalog`.
+
 
 
 Installation
@@ -194,7 +320,7 @@ Install plone.app.fhirfield by adding it to your buildout::
     ...
 
     eggs =
-        plone.app.fhirfield
+        plone.app.fhirfield [elasticsearch]
 
 
 and then running ``bin/buildout``
