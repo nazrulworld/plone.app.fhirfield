@@ -5,11 +5,16 @@
 # @Version : $Id$
 # All imports here
 from .fhir import EsFhirActivityDefinitionIndex
+from .fhir import EsFhirAppointmentIndex
 from .fhir import EsFhirCarePlanIndex
 from .fhir import EsFhirDeviceIndex
 from .fhir import EsFhirDeviceRequestIndex
 from .fhir import EsFhirFieldIndex
 from .fhir import EsFhirHealthcareServiceIndex
+from .fhir import EsFhirMedicationAdministrationIndex
+from .fhir import EsFhirMedicationDispenseIndex
+from .fhir import EsFhirMedicationRequestIndex
+from .fhir import EsFhirMedicationStatementIndex
 from .fhir import EsFhirObservationIndex
 from .fhir import EsFhirOrganizationIndex
 from .fhir import EsFhirPatientIndex
@@ -23,11 +28,16 @@ from .fhir import EsFhirTaskIndex
 from .fhir import EsFhirValueSetIndex
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
 from plone.app.fhirfield.indexes.PluginIndexes import FhirActivityDefinitionIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirAppointmentIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirCarePlanIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceRequestIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirFieldIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirHealthcareServiceIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirMedicationAdministrationIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirMedicationDispenseIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirMedicationRequestIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes import FhirMedicationStatementIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirObservationIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirOrganizationIndex
 from plone.app.fhirfield.indexes.PluginIndexes import FhirPatientIndex
@@ -61,6 +71,11 @@ INDEX_MAPPING = {
     FhirDeviceRequestIndex: EsFhirDeviceRequestIndex,
     FhirCarePlanIndex: EsFhirCarePlanIndex,
     FhirPlanDefinitionIndex: EsFhirPlanDefinitionIndex,
+    FhirAppointmentIndex: EsFhirAppointmentIndex,
+    FhirMedicationAdministrationIndex: EsFhirMedicationAdministrationIndex,
+    FhirMedicationRequestIndex: EsFhirMedicationRequestIndex,
+    FhirMedicationStatementIndex: EsFhirMedicationStatementIndex,
+    FhirMedicationDispenseIndex: EsFhirMedicationDispenseIndex,
 }
 
 # Tiny patch

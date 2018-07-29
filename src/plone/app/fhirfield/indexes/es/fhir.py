@@ -248,3 +248,28 @@ class EsFhirCarePlanIndex(EsFhirFieldIndex):
 class EsFhirPlanDefinitionIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'PlanDefinition'
+
+
+class EsFhirAppointmentIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'Appointment'
+
+
+class EsFhirMedicationAdministrationIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'MedicationAdministration'
+
+
+class EsFhirMedicationRequestIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'MedicationRequest'
+
+
+class EsFhirMedicationStatementIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'MedicationStatement'
+
+
+class EsFhirMedicationDispenseIndex(EsFhirFieldIndex):
+    """ """
+    _resource_type = 'MedicationDispense'

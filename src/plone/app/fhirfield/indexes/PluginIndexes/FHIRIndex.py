@@ -395,57 +395,192 @@ manage_addFhirPlanDefinitionIndexForm = \
     DTMLFile('dtml/addFhirPlanDefinitionIndexForm', globals())  # noqa: E305
 
 
+class FhirAppointmentIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirAppointmentIndex'
+
+
+def manage_addFhirAppointmentIndex(self,
+                                   id,
+                                   extra=None,
+                                   REQUEST=None,
+                                   RESPONSE=None,
+                                   URL3=None):
+    """Add a fhir Appointment index"""
+    return self.manage_addIndex(id,
+                                'FhirAppointmentIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirAppointmentIndexForm = \
+    DTMLFile('dtml/addFhirAppointmentIndexForm', globals())  # noqa: E305
+
+
+class FhirMedicationRequestIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirMedicationRequestIndex'
+
+
+def manage_addFhirMedicationRequestIndex(self,
+                                         id,
+                                         extra=None,
+                                         REQUEST=None,
+                                         RESPONSE=None,
+                                         URL3=None):
+    """Add a fhir MedicationRequest index"""
+    return self.manage_addIndex(id,
+                                'FhirMedicationRequestIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirMedicationRequestIndexForm = \
+    DTMLFile('dtml/addFhirMedicationRequestIndexForm', globals())  # noqa: E305
+
+
+class FhirMedicationDispenseIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirMedicationDispenseIndex'
+
+
+def manage_addFhirMedicationDispenseIndex(self,
+                                          id,
+                                          extra=None,
+                                          REQUEST=None,
+                                          RESPONSE=None,
+                                          URL3=None):
+    """Add a fhir MedicationDispense index"""
+    return self.manage_addIndex(id,
+                                'FhirMedicationDispenseIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirMedicationDispenseIndexForm = \
+    DTMLFile('dtml/addFhirMedicationDispenseIndexForm', globals())  # noqa: E305
+
+
+class FhirMedicationAdministrationIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirMedicationAdministrationIndex'
+
+
+def manage_addFhirMedicationAdministrationIndex(self,
+                                                id,
+                                                extra=None,
+                                                REQUEST=None,
+                                                RESPONSE=None,
+                                                URL3=None):
+    """Add a fhir MedicationAdministration index"""
+    return self.manage_addIndex(id,
+                                'FhirMedicationAdministrationIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirMedicationAdministrationIndexForm = \
+    DTMLFile('dtml/addFhirMedicationAdministrationIndexForm', globals())  # noqa: E305,E501
+
+
+class FhirMedicationStatementIndex(FhirFieldIndex):
+    """ """
+    meta_type = 'FhirMedicationStatementIndex'
+
+
+def manage_addFhirMedicationStatementIndex(self,
+                                           id,
+                                           extra=None,
+                                           REQUEST=None,
+                                           RESPONSE=None,
+                                           URL3=None):
+    """Add a fhir MedicationStatement index"""
+    return self.manage_addIndex(id,
+                                'FhirMedicationStatementIndex',
+                                extra=extra,
+                                REQUEST=REQUEST,
+                                RESPONSE=RESPONSE,
+                                URL1=URL3)
+
+
+manage_addFhirMedicationStatementIndexForm = \
+    DTMLFile('dtml/addFhirMedicationStatementIndexForm', globals())  # noqa: E305,E501
+
+
 REGISTRABLE_CLASSES = [
     # index, form, action
     (FhirFieldIndex,
-     manage_addFhirFieldIndexForm,
-     manage_addFhirFieldIndex),
+        manage_addFhirFieldIndexForm,
+        manage_addFhirFieldIndex),
     (FhirOrganizationIndex,
-     manage_addFhirOrganizationIndexForm,
-     manage_addFhirOrganizationIndex),
+        manage_addFhirOrganizationIndexForm,
+        manage_addFhirOrganizationIndex),
     (FhirHealthcareServiceIndex,
-     manage_addFhirHealthcareServiceIndexForm,
-     manage_addFhirHealthcareServiceIndex),
+        manage_addFhirHealthcareServiceIndexForm,
+        manage_addFhirHealthcareServiceIndex),
     (FhirPatientIndex,
-     manage_addFhirPatientIndexForm,
-     manage_addFhirPatientIndex),
+        manage_addFhirPatientIndexForm,
+        manage_addFhirPatientIndex),
     (FhirPractitionerIndex,
-     manage_addFhirPractitionerIndexForm,
-     manage_addFhirPractitionerIndex),
+        manage_addFhirPractitionerIndexForm,
+        manage_addFhirPractitionerIndex),
     (FhirQuestionnaireIndex,
-     manage_addFhirQuestionnaireIndexForm,
-     manage_addFhirQuestionnaireIndex),
+        manage_addFhirQuestionnaireIndexForm,
+        manage_addFhirQuestionnaireIndex),
     (FhirQuestionnaireResponseIndex,
-     manage_addFhirQuestionnaireResponseIndexForm,
-     manage_addFhirQuestionnaireResponseIndex),
+        manage_addFhirQuestionnaireResponseIndexForm,
+        manage_addFhirQuestionnaireResponseIndex),
     (FhirTaskIndex,
-     manage_addFhirTaskIndexForm,
-     manage_addFhirTaskIndex),
+        manage_addFhirTaskIndexForm,
+        manage_addFhirTaskIndex),
     (FhirValueSetIndex,
-     manage_addFhirValueSetIndexForm,
-     manage_addFhirValueSetIndex),
+        manage_addFhirValueSetIndexForm,
+        manage_addFhirValueSetIndex),
     (FhirRelatedPersonIndex,
-     manage_addFhirRelatedPersonIndexForm,
-     manage_addFhirRelatedPersonIndex),
+        manage_addFhirRelatedPersonIndexForm,
+        manage_addFhirRelatedPersonIndex),
     (FhirActivityDefinitionIndex,
-     manage_addFhirActivityDefinitionIndexForm,
-     manage_addFhirActivityDefinitionIndex),
+        manage_addFhirActivityDefinitionIndexForm,
+        manage_addFhirActivityDefinitionIndex),
     (FhirObservationIndex,
-     manage_addFhirObservationIndexForm,
-     manage_addFhirObservationIndex),
+        manage_addFhirObservationIndexForm,
+        manage_addFhirObservationIndex),
     (FhirProcedureRequestIndex,
-     manage_addFhirProcedureRequestIndexForm,
-     manage_addFhirProcedureRequestIndex),
+        manage_addFhirProcedureRequestIndexForm,
+        manage_addFhirProcedureRequestIndex),
     (FhirDeviceRequestIndex,
-     manage_addFhirDeviceRequestIndexForm,
-     manage_addFhirDeviceRequestIndex),
+        manage_addFhirDeviceRequestIndexForm,
+        manage_addFhirDeviceRequestIndex),
     (FhirDeviceIndex,
-     manage_addFhirDeviceIndexForm,
-     manage_addFhirDeviceIndex),
+        manage_addFhirDeviceIndexForm,
+        manage_addFhirDeviceIndex),
     (FhirCarePlanIndex,
-     manage_addFhirCarePlanIndexForm,
-     manage_addFhirCarePlanIndex),
+        manage_addFhirCarePlanIndexForm,
+        manage_addFhirCarePlanIndex),
     (FhirPlanDefinitionIndex,
-     manage_addFhirPlanDefinitionIndexForm,
-     manage_addFhirPlanDefinitionIndex),
+        manage_addFhirPlanDefinitionIndexForm,
+        manage_addFhirPlanDefinitionIndex),
+    (FhirAppointmentIndex,
+     manage_addFhirAppointmentIndexForm,
+     manage_addFhirPatientIndex),
+    (FhirMedicationAdministrationIndex,
+        manage_addFhirMedicationAdministrationIndexForm,
+        manage_addFhirMedicationAdministrationIndex),
+    (FhirMedicationRequestIndex,
+        manage_addFhirMedicationRequestIndexForm,
+        manage_addFhirMedicationRequestIndex),
+    (FhirMedicationStatementIndex,
+        manage_addFhirMedicationStatementIndexForm,
+        manage_addFhirMedicationStatementIndex),
+    (FhirMedicationDispenseIndex,
+        manage_addFhirMedicationDispenseIndexForm,
+        manage_addFhirMedicationDispenseIndex),
 ]
