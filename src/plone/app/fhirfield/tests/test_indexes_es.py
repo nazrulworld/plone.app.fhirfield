@@ -10,6 +10,7 @@ from . import FHIR_FIXTURE_PATH
 from collective.elasticsearch.es import ElasticSearchCatalog
 from DateTime import DateTime
 from plone import api
+from plone.app.fhirfield.testing import IS_TRAVIS
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING  # noqa: E501
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
@@ -45,7 +46,8 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
                                      'Basic {0}:{1}'.format(SITE_OWNER_NAME,
                                                             SITE_OWNER_PASSWORD))
         self.error_setup(self.admin_browser)
-        self.enable_event_log()
+        if not IS_TRAVIS:
+            self.enable_event_log()
 
     def error_setup(self, browser):
         """ """
@@ -67,7 +69,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
          """
         defaults = {
             'plone.app.fhirfield': 'INFO',
-            'collective.elasticsearch': 'DEBUG'
+            'collective.elasticsearch': 'DEBUG',
         }
         from Products.CMFPlone.log import logger
 
@@ -196,7 +198,8 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
     def load_contents(self):
         """ """
-        self.convert_to_elasticsearch(['organization_resource'])
+        self.convert_to_elasticsearch(['organization_resource', 'patient_resource', 'task_resource'])
+
         self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
@@ -230,52 +233,196 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
+        # add patient
+        self.admin_browser.open(self.portal_url + '/++add++FFTestPatient')
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Patient'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Patient.json'), 'r') as f:
+            self.admin_browser.getControl(name='form.widgets.patient_resource').value = f.read()
+
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+
+        # add tasks
+        self.admin_browser.open(self.portal_url + '/++add++FFTestTask')
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'ParentTask.json'), 'r') as f:
+            json_value = json.load(f)
+            self.admin_browser.getControl(name='form.widgets.task_resource')\
+                .value = json.dumps(json_value)
+
+            self.admin_browser.getControl(name='form.widgets.IBasic.title')\
+                .value = json_value['description']
+
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+
+        self.admin_browser.open(self.portal_url + '/++add++FFTestTask')
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'SubTask_HAQ.json'), 'r') as f:
+            json_value = json.load(f)
+            self.admin_browser.getControl(name='form.widgets.task_resource')\
+                .value = json.dumps(json_value)
+
+            self.admin_browser.getControl(name='form.widgets.IBasic.title')\
+                .value = json_value['description']
+
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+
+        self.admin_browser.open(self.portal_url + '/++add++FFTestTask')
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'SubTask_CRP.json'), 'r') as f:
+            json_value = json.load(f)
+            self.admin_browser.getControl(name='form.widgets.task_resource')\
+                .value = json.dumps(json_value)
+
+            self.admin_browser.getControl(name='form.widgets.IBasic.title')\
+                .value = json_value['description']
+
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+
         # ES indexes to be ready
         time.sleep(1)
 
-    def test_catalogsearch__lastupdated(self):
+    def test_catalogsearch_fhir_date_param(self):
         """ """
         self.load_contents()
         # ************ FIXTURES ARE LOADED **************
         # test:1 equal to
         portal_catalog = api.portal.get_tool('portal_catalog')
-        result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': '2010-05-28T05:35:56+00:00'})
+        result = portal_catalog(
+            organization_resource={'_lastUpdated': '2010-05-28T05:35:56+00:00'},
+            portal_type='FFTestOrganization')
 
         # result should contains only item
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].getObject().organization_resource.id, 'f001')
 
         # test:2 not equal to
-        result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': 'ne2015-05-28T05:35:56+00:00'})
+        result = portal_catalog(
+            organization_resource={'_lastUpdated': 'ne2015-05-28T05:35:56+00:00'},
+            portal_type='FFTestOrganization')
         # result should contains two items
         self.assertEqual(len(result), 2)
 
         # test:3 less than
-        result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': 'lt' + DateTime().ISO8601()})
+        result = portal_catalog(
+            organization_resource={'_lastUpdated': 'lt' + DateTime().ISO8601()},
+            portal_type='FFTestOrganization')
         # result should contains three items, all are less than current time
         self.assertEqual(len(result), 3)
 
         # test:4 less than or equal to
-        result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': 'le2015-05-28T05:35:56+00:00'})
+        result = portal_catalog(
+            organization_resource={'_lastUpdated': 'le2015-05-28T05:35:56+00:00'},
+            portal_type='FFTestOrganization')
         # result should contains two items, 2010-05-28T05:35:56+00:00 + 2015-05-28T05:35:56+00:00
         self.assertEqual(len(result), 2)
 
         # test:5 greater than
-        result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'}, portal_type='FFTestOrganization')
+        result = portal_catalog(
+            organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'},
+            portal_type='FFTestOrganization')
         # result should contains only item
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].getObject().organization_resource.id, 'f003')
 
         # test:6 greater than or equal to
-        result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': 'ge2015-05-28T05:35:56+00:00'}, portal_type='FFTestOrganization')
+        result = portal_catalog(
+            organization_resource={'_lastUpdated': 'ge2015-05-28T05:35:56+00:00'},
+            portal_type='FFTestOrganization')
         # result should contains only item
         self.assertEqual(len(result), 2)
+
+    def test_catalogsearch_fhir_token_param(self):
+        """Testing FHIR search token type params, i.e status, active"""
+        self.load_contents()
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        query = {
+            'task_resource': {'status': 'ready'},
+            'portal_type': 'FFTestTask',
+        }
+        result = portal_catalog(**query)
+
+        # should be two tasks with having status ready
+        self.assertEqual(len(result), 2)
+
+        query = {
+            'task_resource': {'status:not': 'ready'},
+            'portal_type': 'FFTestTask',
+        }
+        result = portal_catalog(**query)
+
+        # should be one task with having status draft
+        self.assertEqual(len(result), 1)
+
+        # test with combinition with lastUpdated
+        query = {
+            'task_resource': {'status': 'ready',
+                              '_lastUpdated': 'lt2018-01-15T06:31:18+00:00'},
+            'portal_type': 'FFTestTask',
+        }
+
+        result = portal_catalog(**query)
+
+        # should single task now
+        self.assertEqual(len(result), 1)
+
+        # ** Test boolen valued token **
+        query = {
+            'patient_resource': {'active': 'true'},
+            'portal_type': 'FFTestPatient',
+        }
+
+        result = portal_catalog(**query)
+
+        # only one patient
+        self.assertEqual(len(result), 1)
+
+        query = {
+            'patient_resource': {'active': 'false'},
+            'portal_type': 'FFTestPatient',
+        }
+
+        result = portal_catalog(**query)
+        self.assertEqual(len(result), 0)
+
+    def test_catalogsearch_fhir_reference_param(self):
+        """Testing FHIR search reference type params, i.e subject, owner"""
+        self.load_contents()
+        patient_id = 'Patient/19c5245f-89a8-49f8-b244-666b32adb92e'
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        query = {
+            'task_resource': {'owner': patient_id},
+            'portal_type': 'FFTestTask',
+        }
+        result = portal_catalog(**query)
+
+        # should be two tasks with having status ready
+        self.assertEqual(len(result), 2)
+
+        query = {
+            'task_resource': {'owner': 'Practitioner/619c1ac0-821d-46d9-9d40-a61f2578cadf'},
+            'portal_type': 'FFTestTask',
+        }
+        result = portal_catalog(**query)
+        self.assertEqual(len(result), 1)
+
+        query = {
+            'task_resource': {'patient': patient_id},
+            'portal_type': 'FFTestTask',
+        }
+        result = portal_catalog(**query)
+
+        self.assertEqual(len(result), 3)
+
+        # with compound query
+        query = {
+            'task_resource': {'patient': patient_id, 'status': 'draft'},
+            'portal_type': 'FFTestTask',
+        }
+        # should be now only single
+        result = portal_catalog(**query)
+        self.assertEqual(len(result), 1)
 
     def offtest_catalogsearch__profile(self):
         """solve me first: TransportError(400, u'search_phase_execution_exception',
@@ -284,7 +431,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # test:1 URI
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_profile': 'http://hl7.org/fhir/Organization'}
+            organization_resource={'_profile': 'http://hl7.org/fhir/Organization'},
         )
         # result should contains two items
         self.assertEqual(len(result), 2)

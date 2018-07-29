@@ -172,10 +172,16 @@ class ElasticsearchQueryBuilder(object):
         """ """
         path = self.find_query_path(field)
         org_field = modifier and ':'.join([field, modifier]) or field
+        value = self.params.get(org_field)
 
         if datatype is None:
-            if self.params.get(org_field) in ('true', 'false'):
+            if value in ('true', 'false'):
                 datatype = 'boolen'
+
+                if value == 'true':
+                    value = True
+                else:
+                    value = False
             else:
                 datatype = 'string'
 
@@ -183,7 +189,7 @@ class ElasticsearchQueryBuilder(object):
 
         if modifier == 'not':
 
-            q['match'] = {path: self.params.get(org_field), }
+            q['match'] = {path: value}
             self.query_tree['must_not'].append(q)
 
         elif modifier == 'in':
@@ -198,7 +204,7 @@ class ElasticsearchQueryBuilder(object):
             pass
 
         else:
-            q['match'] = {path: self.params.get(org_field), }
+            q['match'] = {path: value}
             self.query_tree['must'].append(q)
 
     def add_date_query(self,
@@ -230,14 +236,14 @@ class ElasticsearchQueryBuilder(object):
                 path: {
                     FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
                     FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
-                }
+                },
             }
 
         elif prefix in ('le', 'lt', 'ge', 'gt'):
             q['range'] = {
                 path: {
                     FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
-                }
+                },
             }
 
         if timezone:
@@ -247,6 +253,28 @@ class ElasticsearchQueryBuilder(object):
             self.query_tree['must_not'].append(q)
         else:
             self.query_tree['must'].append(q)
+
+    def add_reference_query(self,
+                            field,
+                            modifier,
+                            datatype=None):
+        """ """
+        path = self.find_query_path(field)
+        org_field = modifier and ':'.join([field, modifier]) or field
+
+        if datatype is None:
+            datatype = 'object'
+
+        q = dict()
+        if datatype == 'object':
+            if '.reference' not in path:
+                path += '.reference'
+            q['match'] = {path: self.params.get(org_field)}
+            self.query_tree['must'].append(q)
+
+        elif datatype == 'array':
+            # xxx: see elaticsearch array
+            pass
 
     def build(self):
         """
@@ -273,8 +301,14 @@ class ElasticsearchQueryBuilder(object):
 
             elif r_field in FSPR_KEYS_BY_GROUP.\
                     get(self.resource_type):
-                # xxx build_${resource_type}
-                pass
+                try:
+                    method = 'build_{0}_search_parameters'.\
+                        format(self.resource_type.lower())
+
+                    getattr(self, method)(r_field, modifier)
+
+                except AttributeError:
+                    self.build_search_parameters(r_field, modifier)
 
         return self.query_tree.copy()
 
@@ -298,8 +332,37 @@ class ElasticsearchQueryBuilder(object):
             q = {'terms': {path: [value], 'minimum_should_match': 1}}
             self.query_tree['must'].append(q)
 
-    def build_common_search_parameters(self, field):
+    def build_common_search_parameters(self, field, modifier):
         """ """
+        param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[field][0]
+
+        if param_type == 'token':
+            # xxx: data type have to implement
+            # xxx: identify other data type?
+            self.add_token_query(field, modifier)
+
+        elif param_type == 'date':
+            self.add_date_query(field, modifier)
+
+        elif param_type == 'reference':
+            # xxx: data type for other reference? like partOf?
+            self.add_reference_query(field, modifier, 'object')
+
+    def build_search_parameters(self, field, modifier):
+        """ """
+        param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[field][0]
+
+        if param_type == 'token':
+            # xxx: data type have to implement
+            # xxx: identify other data type?
+            self.add_token_query(field, modifier)
+
+        elif param_type == 'date':
+            self.add_date_query(field, modifier)
+
+        elif param_type == 'reference':
+            # xxx: data type
+            self.add_reference_query(field, modifier)
 
     def clean_params(self, params):
         """ """
@@ -339,8 +402,8 @@ class ElasticsearchQueryBuilder(object):
                 if path.startswith('Resource.'):
                     return path.replace('Resource', self.field_name)
 
-                if path.startswith(self.field_name):
-                    return path
+                if path.startswith(self.resource_type):
+                    return path.replace(self.resource_type, self.field_name)
 
 
 def build_elasticsearch_query(params,
