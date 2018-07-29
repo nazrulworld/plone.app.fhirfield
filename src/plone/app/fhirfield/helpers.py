@@ -165,88 +165,132 @@ class ElasticsearchQueryBuilder(object):
         self.validate(params)
         self.params = params
 
+    def add_token_query(self,
+                        field,
+                        modifier,
+                        datatype=None):
+        """ """
+        path = self.find_query_path(field)
+        org_field = modifier and ':'.join([field, modifier]) or field
+
+        if datatype is None:
+            if self.params.get(org_field) in ('true', 'false'):
+                datatype = 'boolen'
+            else:
+                datatype = 'string'
+
+        q = dict()
+
+        if modifier == 'not':
+
+            q['match'] = {path: self.params.get(org_field), }
+            self.query_tree['must_not'].append(q)
+
+        elif modifier == 'in':
+            # xxx: not implemnted yet
+            pass
+
+        elif modifier == 'not-in':
+            # xxx: not implemented yet
+            pass
+        elif modifier in ('above', 'below'):
+            # xxx: not implemnted yet
+            pass
+
+        else:
+            q['match'] = {path: self.params.get(org_field), }
+            self.query_tree['must'].append(q)
+
+    def add_date_query(self,
+                       field,
+                       modifier):
+        """ """
+        path = self.find_query_path(field)
+        org_field = modifier and ':'.join([field, modifier]) or field
+        value = self.params.get(org_field)
+        prefix = 'eq'
+
+        if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
+            prefix = value[0:2]
+            value = value[2:]
+        _iso8601 = DateTime(value).ISO8601()
+
+        if '+' in _iso8601:
+            parts = _iso8601.split('+')
+            timezone = '+{0!s}'.format(parts[1])
+            value = parts[0]
+        else:
+            timezone = None
+            value = _iso8601
+
+        q = dict()
+
+        if prefix in ('eq', 'ne'):
+            q['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
+                    FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
+                }
+            }
+
+        elif prefix in ('le', 'lt', 'ge', 'gt'):
+            q['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
+                }
+            }
+
+        if timezone:
+            q['range'][path]['time_zone'] = timezone
+
+        if prefix == 'ne':
+            self.query_tree['must_not'].append(q)
+        else:
+            self.query_tree['must'].append(q)
+
     def build(self):
         """
         https://www.elastic.co/guide/en/elasticsearch/reference/2.3/query-dsl-bool-query.html
         https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html
         https://stackoverflow.com/questions/16243496/nested-boolean-queries-in-elastic-search
         """
-        for field, value in self.params.items():
+        for r_field, value in self.params.items():
             """ """
-            if field in FSPR_KEYS_BY_GROUP.\
+            parts = r_field.split(':')
+            try:
+                r_field = parts[0]
+                modifier = parts[1]
+            except IndexError:
+                modifier = None
+
+            if r_field in FSPR_KEYS_BY_GROUP.\
                     get('Resource'):
-                self.build_resource_parameters(field)
-            elif field in FSPR_KEYS_BY_GROUP.\
+                self.build_resource_parameters(r_field, modifier)
+
+            elif r_field in FSPR_KEYS_BY_GROUP.\
                     get('Common Search Parameters'):
-                self.build_common_search_parameters(field)
-            elif field in FSPR_KEYS_BY_GROUP.\
+                self.build_common_search_parameters(r_field, modifier)
+
+            elif r_field in FSPR_KEYS_BY_GROUP.\
                     get(self.resource_type):
                 # xxx build_${resource_type}
                 pass
 
         return self.query_tree.copy()
 
-    def build_resource_parameters(self, field):
+    def build_resource_parameters(self, field, modifier=None):
         """ """
         param = self.get_parameter(
             field,
             FHIR_SEARCH_PARAMETER_REGISTRY.get('Resource'))
 
         if param[1] == 'token':
-
-            q = {
-                'match':
-                {
-                    param[3][0].replace('Resource', self.field_name): self.params.get(field),
-                },
-            }
-            # ??? _tag,_security,_query
-            self.query_tree['must'].append(q)
+            # xxx: data type have to implement
+            self.add_token_query(field, modifier)
 
         elif param[1] == 'date':
+            self.add_date_query(field, modifier)
 
-            value = self.params.get(field)
-            prefix = 'eq'
-            path = param[3][0].replace('Resource', self.field_name)
-
-            if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
-                prefix = value[0:2]
-                value = value[2:]
-            _iso8601 = DateTime(value).ISO8601()
-
-            if '+' in _iso8601:
-                parts = _iso8601.split('+')
-                timezone = '+{0!s}'.format(parts[1])
-                value = parts[0]
-            else:
-                timezone = None
-                value = _iso8601
-
-            if prefix in ('eq', 'ne'):
-                q = {
-                        'range': {
-                            path: {
-                                FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
-                                FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
-                            },
-                        },
-                    }
-
-            elif prefix in ('le', 'lt', 'ge', 'gt'):
-                q = {
-                        'range': {
-                            path: {
-                                FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
-                            },
-                        },
-                    }
-            if timezone:
-                q['range'][path]['time_zone'] = timezone
-
-            if prefix == 'ne':
-                self.query_tree['must_not'].append(q)
-            else:
-                self.query_tree['must'].append(q)
         elif param[1] == 'uri':
 
             path = param[3][0].replace('Resource', self.field_name)
@@ -284,6 +328,19 @@ class ElasticsearchQueryBuilder(object):
         for param in parameters:
             if param[0] == field:
                 return param
+
+    def find_query_path(self, r_field):
+        """:param: r_field: resource field"""
+        if r_field in FHIR_SEARCH_PARAMETER_SEARCHABLE:
+            paths = FHIR_SEARCH_PARAMETER_SEARCHABLE[r_field][1]
+
+            for path in paths:
+
+                if path.startswith('Resource.'):
+                    return path.replace('Resource', self.field_name)
+
+                if path.startswith(self.field_name):
+                    return path
 
 
 def build_elasticsearch_query(params,

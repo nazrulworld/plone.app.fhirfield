@@ -9,7 +9,7 @@ cache:
     - $HOME/buildout-cache
 env:
   matrix:
-    - PLONE_VERSION=4.3.x  QA=true
+    - PLONE_VERSION=4.3.x  QA=false
     - PLONE_VERSION=5.0.x  QA=true
     - PLONE_VERSION=5.1.x  QA=true
 

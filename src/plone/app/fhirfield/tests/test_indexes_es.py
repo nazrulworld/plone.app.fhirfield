@@ -16,8 +16,10 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
 
 import json
+import logging
 import os
 import six
+import sys
 import time
 import unittest
 
@@ -43,6 +45,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
                                      'Basic {0}:{1}'.format(SITE_OWNER_NAME,
                                                             SITE_OWNER_PASSWORD))
         self.error_setup(self.admin_browser)
+        self.enable_event_log()
 
     def error_setup(self, browser):
         """ """
@@ -56,6 +59,27 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         from Products.SiteErrorLog.SiteErrorLog import SiteErrorLog
         SiteErrorLog.raising = raising
+
+    def enable_event_log(self, loggers=None, plone_log_level='ERROR'):
+        """
+            :param loggers: dict of loggers. format {'logger name': 'level name'}
+            :param plone_log_level: log level of plone. default is ERROR
+         """
+        defaults = {
+            'plone.app.fhirfield': 'INFO',
+            'collective.elasticsearch': 'DEBUG'
+        }
+        from Products.CMFPlone.log import logger
+
+        loggers = loggers or defaults
+
+        for logger_name, level_name in six.iteritems(loggers):
+            logging.getLogger(logger_name).setLevel(getattr(logging, level_name.upper()))
+        # Plone log level:
+        logger.root.setLevel(getattr(logging, plone_log_level.upper()))
+
+        # Enable output when running tests:
+        logger.root.addHandler(logging.StreamHandler(sys.stdout))
 
     def test_resource_index_created(self):
         """resource is attribute of TestOrganization content
@@ -157,7 +181,8 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
     def convert_to_elasticsearch(self, indexes=list()):
         """ """
-        default_indexes = ['Description', 'SearchableText', 'Title']
+        default_indexes = ['Description', 'SearchableText',
+                           'Title', 'id', 'portal_type']
         if indexes:
             default_indexes.extend(indexes)
         # first we making sure to transfer handler
@@ -241,24 +266,26 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         # test:5 greater than
         result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'})
+            organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'}, portal_type='FFTestOrganization')
         # result should contains only item
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].getObject().organization_resource.id, 'f003')
 
         # test:6 greater than or equal to
         result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_lastUpdated': 'ge2015-05-28T05:35:56+00:00'})
+            organization_resource={'_lastUpdated': 'ge2015-05-28T05:35:56+00:00'}, portal_type='FFTestOrganization')
         # result should contains only item
         self.assertEqual(len(result), 2)
 
     def offtest_catalogsearch__profile(self):
-        """ """
+        """solve me first: TransportError(400, u'search_phase_execution_exception',
+        u'[terms] query does not support [minimum_should_match]') """
         self.load_contents()
         # test:1 URI
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
-            organization_resource={'_profile': 'http://hl7.org/fhir/Organization'})
+            organization_resource={'_profile': 'http://hl7.org/fhir/Organization'}
+        )
         # result should contains two items
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0].getObject().resource.id, 'f001')
