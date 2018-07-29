@@ -1,0 +1,76 @@
+{
+    "resourceType": "CarePlan",
+    "meta": {
+        "lastUpdated": "2018-07-28T15:36:33.302Z",
+        "versionId": "1.0.0"
+    },
+    "mapping": {
+        "properties": {
+            "id": {
+                "type": "string",
+                "store": true
+            },
+            "identifier": {
+                "type": "nested",
+                "properties": {
+                    "use": {
+                        "type": "string"
+                    },
+                    "system": {
+                            "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "resourceType": {
+                "type": "string",
+                "store": false
+            },
+            "status": {
+                "type": "string",
+                "store": false
+            },
+            "meta": {
+                "properties": {
+                    "versionId": {
+                        "type": "string",
+                        "store": false
+                    },
+                    "lastUpdated": {
+                        "type": "date",
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false
+                    },
+                    "profile": {
+                        "type": "string",
+                        "store": false
+                    }
+                }
+            },
+            "context": {
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "store": false
+                    }
+                }
+            },
+            "subject": {
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "store": false
+                    }
+                }
+            },
+            "title": {
+                "type": "string",
+                "index": "analyzed",
+                "analyzer": "keyword",
+                "store": false
+            }
+        }
+    }
+}

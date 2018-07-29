@@ -152,10 +152,18 @@ class EsFhirPractitionerIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'Practitioner'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirRelatedPersonIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'RelatedPerson'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirValueSetIndex(EsFhirFieldIndex):
@@ -198,10 +206,18 @@ class EsFhirActivityDefinitionIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'ActivityDefinition'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirHealthcareServiceIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'HealthcareService'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirObservationIndex(EsFhirFieldIndex):
@@ -244,32 +260,60 @@ class EsFhirCarePlanIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'CarePlan'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirPlanDefinitionIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'PlanDefinition'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirAppointmentIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'Appointment'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirMedicationAdministrationIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'MedicationAdministration'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
 
 
 class EsFhirMedicationRequestIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'MedicationRequest'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirMedicationStatementIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'MedicationStatement'
 
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
+
 
 class EsFhirMedicationDispenseIndex(EsFhirFieldIndex):
     """ """
     _resource_type = 'MedicationDispense'
+
+    def create_mapping(self, name):
+        """"""
+        return self.get_mapping_from_file()
