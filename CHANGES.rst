@@ -4,7 +4,7 @@ Changelog
 1.0.0b3 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Mapping improvment for `FhirQuestionnaireResponseIndex`, `FhirObservationIndex`, `FhirProcedureRequestIndex`, `FhirTaskIndex`, `FhirDeviceRequestIndex`
 
 
 1.0.0b2 (2018-07-29)

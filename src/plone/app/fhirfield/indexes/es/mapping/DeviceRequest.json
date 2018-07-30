@@ -64,6 +64,11 @@
                         "store": false
                     }
                 }
+            },
+            "authoredOn": {
+                "type": "date",
+                "format": "date_time_no_millis||date_optional_time",
+                "store": false
             }
         }
     }
