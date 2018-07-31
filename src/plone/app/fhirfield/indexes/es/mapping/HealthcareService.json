@@ -8,6 +8,7 @@
         "properties": {
             "id": {
                 "type": "string",
+                "index": "not_analyzed",
                 "store": true
             },
             "identifier": {
@@ -26,6 +27,7 @@
             },
             "resourceType": {
                 "type": "string",
+                "index": "not_analyzed",
                 "store": false
             },
             "name": {
@@ -38,6 +40,7 @@
                 "properties": {
                     "versionId": {
                         "type": "string",
+                        "index": "not_analyzed",
                         "store": false
                     },
                     "lastUpdated": {
@@ -47,6 +50,7 @@
                     },
                     "profile": {
                         "type": "string",
+                        "index": "not_analyzed",
                         "store": false
                     }
                 }
@@ -63,6 +67,7 @@
                 "properties": {
                     "reference": {
                         "type": "string",
+                        "index": "not_analyzed",
                         "store": false
                     }
                 }

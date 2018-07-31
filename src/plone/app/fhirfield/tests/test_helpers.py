@@ -117,8 +117,8 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
                                           'gte': '2011-09-17T00:00:00'}}}]
         query = builder.build()
 
-        self.assertEqual(len(query['must']), 1)
-        self.assertEqual(query['must'], compare)
+        self.assertEqual(len(query['and']), 1)
+        self.assertEqual(query['and'], compare)
 
         # test:2 not equal
         params = {'_lastUpdated': 'ne2011-09-17'}
@@ -126,14 +126,13 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'range': {
+        compare = {'range': {
             'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00',
-                                          'gte': '2011-09-17T00:00:00'}}}]
+                                          'gte': '2011-09-17T00:00:00'}}}
         query = builder.build()
 
-        self.assertEqual(len(query['must']), 0)
-        self.assertEqual(len(query['must_not']), 1)
-        self.assertEqual(query['must_not'], compare)
+        self.assertEqual(len(query['and']), 1)
+        self.assertEqual(query['and'][0]['query']['not'], compare)
 
         # test:3 less than
         params = {'_lastUpdated': 'lt2011-09-17'}
@@ -146,8 +145,8 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(len(query['must']), 1)
-        self.assertEqual(query['must'], compare)
+        self.assertEqual(len(query['and']), 1)
+        self.assertEqual(query['and'], compare)
 
         # test:4 greater than
         params = {'_lastUpdated': 'gt2011-09-17'}
@@ -160,8 +159,8 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(len(query['must']), 1)
-        self.assertEqual(query['must'], compare)
+        self.assertEqual(len(query['and']), 1)
+        self.assertEqual(query['and'], compare)
 
         # test:4 less than or equal
         params = {'_lastUpdated': 'le2011-09-17'}
@@ -174,8 +173,8 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(len(query['must']), 1)
-        self.assertEqual(query['must'], compare)
+        self.assertEqual(len(query['and']), 1)
+        self.assertEqual(query['and'], compare)
 
         # test:5 greater than or equal
         params = {'_lastUpdated': 'ge2011-09-17'}
@@ -188,8 +187,8 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(len(query['must']), 1)
-        self.assertEqual(query['must'], compare)
+        self.assertEqual(len(query['and']), 1)
+        self.assertEqual(query['and'], compare)
 
     def test_build_resource_profile(self):
         """ """

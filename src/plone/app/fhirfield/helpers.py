@@ -326,7 +326,7 @@ class ElasticsearchQueryBuilder(object):
 
             path = param[3][0].replace('Resource', self.field_name)
             value = self.params.get(field)
-            q = {'terms': {path: [value], 'minimum_should_match': 1}}
+            q = {'terms': {path: [value]}}
             self.query_tree['and'].append(q)
 
     def build_common_search_parameters(self, field, modifier):

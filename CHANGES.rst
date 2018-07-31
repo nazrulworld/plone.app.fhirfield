@@ -4,7 +4,8 @@ Changelog
 1.0.0b4 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Must Update (fix): Important updates made on mapping, reference field mapping was not working if value contains with `/`, now made it tokenize by indecating index is `not_analyzed`
+- `_profile` search parameter is now available. [nazrulworld]
 
 
 1.0.0b3 (2018-07-30)
