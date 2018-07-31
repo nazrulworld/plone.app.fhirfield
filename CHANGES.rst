@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0b4 (unreleased)
+1.0.0b4 (2018-08-01)
 --------------------
 
 - Must Update (fix): Important updates made on mapping, reference field mapping was not working if value contains with `/`, now made it tokenize by indecating index is `not_analyzed`
