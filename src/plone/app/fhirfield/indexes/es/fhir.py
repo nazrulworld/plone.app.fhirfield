@@ -22,7 +22,7 @@ class EsFhirFieldIndex(BaseIndex):
     """ """
     _mapping_cache = None
     _resource_type = 'Resource'
-    filter_query = False
+    filter_query = True
 
     def create_mapping(self, name):
         """Minimal mapping for all kind of fhir models"""
@@ -106,7 +106,7 @@ class EsFhirFieldIndex(BaseIndex):
                                           field_name=name,
                                           resource_type=resource_type)
 
-        return {'bool': query}
+        return query
 
     def get_mapping_from_file(self, filename=None, cache=True):
         """Fetch mapping from file system associated with resourceType"""

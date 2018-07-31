@@ -157,10 +157,7 @@ class ElasticsearchQueryBuilder(object):
         self.field_name = field_name
         self.resource_type = resource_type
         self.handling = handling
-        self.query_tree = dict(should=list(),
-                               must=list(),
-                               must_not=list(),
-                               filter=list())
+        self.query_tree = {'and': list()}
 
         self.validate(params)
         self.params = params
@@ -189,8 +186,8 @@ class ElasticsearchQueryBuilder(object):
 
         if modifier == 'not':
 
-            q['match'] = {path: value}
-            self.query_tree['must_not'].append(q)
+            q['query'] = {'not': {'term': {path: value}}}
+            self.query_tree['and'].append(q)
 
         elif modifier == 'in':
             # xxx: not implemnted yet
@@ -204,8 +201,8 @@ class ElasticsearchQueryBuilder(object):
             pass
 
         else:
-            q['match'] = {path: value}
-            self.query_tree['must'].append(q)
+            q['term'] = {path: value}
+            self.query_tree['and'].append(q)
 
     def add_date_query(self,
                        field,
@@ -250,9 +247,9 @@ class ElasticsearchQueryBuilder(object):
             q['range'][path]['time_zone'] = timezone
 
         if prefix == 'ne':
-            self.query_tree['must_not'].append(q)
+            self.query_tree['and'].append({'query': {'not': q}})
         else:
-            self.query_tree['must'].append(q)
+            self.query_tree['and'].append(q)
 
     def add_reference_query(self,
                             field,
@@ -269,8 +266,8 @@ class ElasticsearchQueryBuilder(object):
         if datatype == 'object':
             if '.reference' not in path:
                 path += '.reference'
-            q['match'] = {path: self.params.get(org_field)}
-            self.query_tree['must'].append(q)
+            q['term'] = {path: self.params.get(org_field)}
+            self.query_tree['and'].append(q)
 
         elif datatype == 'array':
             # xxx: see elaticsearch array
@@ -330,7 +327,7 @@ class ElasticsearchQueryBuilder(object):
             path = param[3][0].replace('Resource', self.field_name)
             value = self.params.get(field)
             q = {'terms': {path: [value], 'minimum_should_match': 1}}
-            self.query_tree['must'].append(q)
+            self.query_tree['and'].append(q)
 
     def build_common_search_parameters(self, field, modifier):
         """ """
