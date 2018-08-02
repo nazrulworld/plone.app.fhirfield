@@ -61,6 +61,15 @@
             "active": {
                 "type": "boolean",
                 "store": false
+            },
+            "managingOrganization": {
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "store": false
+                    }
+                }
             }
         }
     }

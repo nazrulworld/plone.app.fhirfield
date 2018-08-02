@@ -352,7 +352,7 @@ The project is licensed under the GPLv2.
 .. _`Plone`: https://www.plone.org/
 .. _`FHIR Resources`: https://www.hl7.org/fhir/resourcelist.html
 .. _`Plone restapi`: http://plonerestapi.readthedocs.io/en/latest/
-.. _`plone.app.fhirfield`: https://pypi.python.org/pypi/plone.app.fhirfield/
+.. _`plone.app.fhirfield`: https://pypi.org/project/plone.app.fhirfield/
 .. _`jmespath`: https://github.com/jmespath/jmespath.py
 .. _`jsonpath-rw`: http://jsonpath-rw.readthedocs.io/en/latest/
 .. _`jsonpath-ng`: https://pypi.python.org/pypi/jsonpath-ng/1.4.3
