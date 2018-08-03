@@ -1,0 +1,629 @@
+{
+    "meta": {
+        "lastUpdated": "2018-08-03T15:51:55.163669",
+        "profile": "http://hl7.org/fhir/STU3/fhir.schema.json.zip",
+        "versionId": "STU3"
+    },
+    "resources": {
+        "account": {
+            "name": "Account",
+            "url": "http://hl7.org/fhir/json-schema/Account.schema.json"
+        },
+        "activitydefinition": {
+            "name": "ActivityDefinition",
+            "url": "http://hl7.org/fhir/json-schema/ActivityDefinition.schema.json"
+        },
+        "address": {
+            "name": "Address",
+            "url": "http://hl7.org/fhir/json-schema/Address.schema.json"
+        },
+        "adverseevent": {
+            "name": "AdverseEvent",
+            "url": "http://hl7.org/fhir/json-schema/AdverseEvent.schema.json"
+        },
+        "age": {
+            "name": "Age",
+            "url": "http://hl7.org/fhir/json-schema/Age.schema.json"
+        },
+        "allergyintolerance": {
+            "name": "AllergyIntolerance",
+            "url": "http://hl7.org/fhir/json-schema/AllergyIntolerance.schema.json"
+        },
+        "annotation": {
+            "name": "Annotation",
+            "url": "http://hl7.org/fhir/json-schema/Annotation.schema.json"
+        },
+        "appointment": {
+            "name": "Appointment",
+            "url": "http://hl7.org/fhir/json-schema/Appointment.schema.json"
+        },
+        "appointmentresponse": {
+            "name": "AppointmentResponse",
+            "url": "http://hl7.org/fhir/json-schema/AppointmentResponse.schema.json"
+        },
+        "attachment": {
+            "name": "Attachment",
+            "url": "http://hl7.org/fhir/json-schema/Attachment.schema.json"
+        },
+        "auditevent": {
+            "name": "AuditEvent",
+            "url": "http://hl7.org/fhir/json-schema/AuditEvent.schema.json"
+        },
+        "backboneelement": {
+            "name": "BackboneElement",
+            "url": "http://hl7.org/fhir/json-schema/BackboneElement.schema.json"
+        },
+        "basic": {
+            "name": "Basic",
+            "url": "http://hl7.org/fhir/json-schema/Basic.schema.json"
+        },
+        "binary": {
+            "name": "Binary",
+            "url": "http://hl7.org/fhir/json-schema/Binary.schema.json"
+        },
+        "bodysite": {
+            "name": "BodySite",
+            "url": "http://hl7.org/fhir/json-schema/BodySite.schema.json"
+        },
+        "bundle": {
+            "name": "Bundle",
+            "url": "http://hl7.org/fhir/json-schema/Bundle.schema.json"
+        },
+        "capabilitystatement": {
+            "name": "CapabilityStatement",
+            "url": "http://hl7.org/fhir/json-schema/CapabilityStatement.schema.json"
+        },
+        "careplan": {
+            "name": "CarePlan",
+            "url": "http://hl7.org/fhir/json-schema/CarePlan.schema.json"
+        },
+        "careteam": {
+            "name": "CareTeam",
+            "url": "http://hl7.org/fhir/json-schema/CareTeam.schema.json"
+        },
+        "chargeitem": {
+            "name": "ChargeItem",
+            "url": "http://hl7.org/fhir/json-schema/ChargeItem.schema.json"
+        },
+        "claim": {
+            "name": "Claim",
+            "url": "http://hl7.org/fhir/json-schema/Claim.schema.json"
+        },
+        "claimresponse": {
+            "name": "ClaimResponse",
+            "url": "http://hl7.org/fhir/json-schema/ClaimResponse.schema.json"
+        },
+        "clinicalimpression": {
+            "name": "ClinicalImpression",
+            "url": "http://hl7.org/fhir/json-schema/ClinicalImpression.schema.json"
+        },
+        "codeableconcept": {
+            "name": "CodeableConcept",
+            "url": "http://hl7.org/fhir/json-schema/CodeableConcept.schema.json"
+        },
+        "codesystem": {
+            "name": "CodeSystem",
+            "url": "http://hl7.org/fhir/json-schema/CodeSystem.schema.json"
+        },
+        "coding": {
+            "name": "Coding",
+            "url": "http://hl7.org/fhir/json-schema/Coding.schema.json"
+        },
+        "communication": {
+            "name": "Communication",
+            "url": "http://hl7.org/fhir/json-schema/Communication.schema.json"
+        },
+        "communicationrequest": {
+            "name": "CommunicationRequest",
+            "url": "http://hl7.org/fhir/json-schema/CommunicationRequest.schema.json"
+        },
+        "compartmentdefinition": {
+            "name": "CompartmentDefinition",
+            "url": "http://hl7.org/fhir/json-schema/CompartmentDefinition.schema.json"
+        },
+        "composition": {
+            "name": "Composition",
+            "url": "http://hl7.org/fhir/json-schema/Composition.schema.json"
+        },
+        "conceptmap": {
+            "name": "ConceptMap",
+            "url": "http://hl7.org/fhir/json-schema/ConceptMap.schema.json"
+        },
+        "condition": {
+            "name": "Condition",
+            "url": "http://hl7.org/fhir/json-schema/Condition.schema.json"
+        },
+        "consent": {
+            "name": "Consent",
+            "url": "http://hl7.org/fhir/json-schema/Consent.schema.json"
+        },
+        "contactdetail": {
+            "name": "ContactDetail",
+            "url": "http://hl7.org/fhir/json-schema/ContactDetail.schema.json"
+        },
+        "contactpoint": {
+            "name": "ContactPoint",
+            "url": "http://hl7.org/fhir/json-schema/ContactPoint.schema.json"
+        },
+        "contract": {
+            "name": "Contract",
+            "url": "http://hl7.org/fhir/json-schema/Contract.schema.json"
+        },
+        "contributor": {
+            "name": "Contributor",
+            "url": "http://hl7.org/fhir/json-schema/Contributor.schema.json"
+        },
+        "count": {
+            "name": "Count",
+            "url": "http://hl7.org/fhir/json-schema/Count.schema.json"
+        },
+        "coverage": {
+            "name": "Coverage",
+            "url": "http://hl7.org/fhir/json-schema/Coverage.schema.json"
+        },
+        "dataelement": {
+            "name": "DataElement",
+            "url": "http://hl7.org/fhir/json-schema/DataElement.schema.json"
+        },
+        "datarequirement": {
+            "name": "DataRequirement",
+            "url": "http://hl7.org/fhir/json-schema/DataRequirement.schema.json"
+        },
+        "detectedissue": {
+            "name": "DetectedIssue",
+            "url": "http://hl7.org/fhir/json-schema/DetectedIssue.schema.json"
+        },
+        "device": {
+            "name": "Device",
+            "url": "http://hl7.org/fhir/json-schema/Device.schema.json"
+        },
+        "devicecomponent": {
+            "name": "DeviceComponent",
+            "url": "http://hl7.org/fhir/json-schema/DeviceComponent.schema.json"
+        },
+        "devicemetric": {
+            "name": "DeviceMetric",
+            "url": "http://hl7.org/fhir/json-schema/DeviceMetric.schema.json"
+        },
+        "devicerequest": {
+            "name": "DeviceRequest",
+            "url": "http://hl7.org/fhir/json-schema/DeviceRequest.schema.json"
+        },
+        "deviceusestatement": {
+            "name": "DeviceUseStatement",
+            "url": "http://hl7.org/fhir/json-schema/DeviceUseStatement.schema.json"
+        },
+        "diagnosticreport": {
+            "name": "DiagnosticReport",
+            "url": "http://hl7.org/fhir/json-schema/DiagnosticReport.schema.json"
+        },
+        "distance": {
+            "name": "Distance",
+            "url": "http://hl7.org/fhir/json-schema/Distance.schema.json"
+        },
+        "documentmanifest": {
+            "name": "DocumentManifest",
+            "url": "http://hl7.org/fhir/json-schema/DocumentManifest.schema.json"
+        },
+        "documentreference": {
+            "name": "DocumentReference",
+            "url": "http://hl7.org/fhir/json-schema/DocumentReference.schema.json"
+        },
+        "domainresource": {
+            "name": "DomainResource",
+            "url": "http://hl7.org/fhir/json-schema/DomainResource.schema.json"
+        },
+        "dosage": {
+            "name": "Dosage",
+            "url": "http://hl7.org/fhir/json-schema/Dosage.schema.json"
+        },
+        "duration": {
+            "name": "Duration",
+            "url": "http://hl7.org/fhir/json-schema/Duration.schema.json"
+        },
+        "element": {
+            "name": "Element",
+            "url": "http://hl7.org/fhir/json-schema/Element.schema.json"
+        },
+        "elementdefinition": {
+            "name": "ElementDefinition",
+            "url": "http://hl7.org/fhir/json-schema/ElementDefinition.schema.json"
+        },
+        "eligibilityrequest": {
+            "name": "EligibilityRequest",
+            "url": "http://hl7.org/fhir/json-schema/EligibilityRequest.schema.json"
+        },
+        "eligibilityresponse": {
+            "name": "EligibilityResponse",
+            "url": "http://hl7.org/fhir/json-schema/EligibilityResponse.schema.json"
+        },
+        "encounter": {
+            "name": "Encounter",
+            "url": "http://hl7.org/fhir/json-schema/Encounter.schema.json"
+        },
+        "endpoint": {
+            "name": "Endpoint",
+            "url": "http://hl7.org/fhir/json-schema/Endpoint.schema.json"
+        },
+        "enrollmentrequest": {
+            "name": "EnrollmentRequest",
+            "url": "http://hl7.org/fhir/json-schema/EnrollmentRequest.schema.json"
+        },
+        "enrollmentresponse": {
+            "name": "EnrollmentResponse",
+            "url": "http://hl7.org/fhir/json-schema/EnrollmentResponse.schema.json"
+        },
+        "episodeofcare": {
+            "name": "EpisodeOfCare",
+            "url": "http://hl7.org/fhir/json-schema/EpisodeOfCare.schema.json"
+        },
+        "expansionprofile": {
+            "name": "ExpansionProfile",
+            "url": "http://hl7.org/fhir/json-schema/ExpansionProfile.schema.json"
+        },
+        "explanationofbenefit": {
+            "name": "ExplanationOfBenefit",
+            "url": "http://hl7.org/fhir/json-schema/ExplanationOfBenefit.schema.json"
+        },
+        "extension": {
+            "name": "Extension",
+            "url": "http://hl7.org/fhir/json-schema/Extension.schema.json"
+        },
+        "familymemberhistory": {
+            "name": "FamilyMemberHistory",
+            "url": "http://hl7.org/fhir/json-schema/FamilyMemberHistory.schema.json"
+        },
+        "flag": {
+            "name": "Flag",
+            "url": "http://hl7.org/fhir/json-schema/Flag.schema.json"
+        },
+        "goal": {
+            "name": "Goal",
+            "url": "http://hl7.org/fhir/json-schema/Goal.schema.json"
+        },
+        "graphdefinition": {
+            "name": "GraphDefinition",
+            "url": "http://hl7.org/fhir/json-schema/GraphDefinition.schema.json"
+        },
+        "group": {
+            "name": "Group",
+            "url": "http://hl7.org/fhir/json-schema/Group.schema.json"
+        },
+        "guidanceresponse": {
+            "name": "GuidanceResponse",
+            "url": "http://hl7.org/fhir/json-schema/GuidanceResponse.schema.json"
+        },
+        "healthcareservice": {
+            "name": "HealthcareService",
+            "url": "http://hl7.org/fhir/json-schema/HealthcareService.schema.json"
+        },
+        "humanname": {
+            "name": "HumanName",
+            "url": "http://hl7.org/fhir/json-schema/HumanName.schema.json"
+        },
+        "identifier": {
+            "name": "Identifier",
+            "url": "http://hl7.org/fhir/json-schema/Identifier.schema.json"
+        },
+        "imagingmanifest": {
+            "name": "ImagingManifest",
+            "url": "http://hl7.org/fhir/json-schema/ImagingManifest.schema.json"
+        },
+        "imagingstudy": {
+            "name": "ImagingStudy",
+            "url": "http://hl7.org/fhir/json-schema/ImagingStudy.schema.json"
+        },
+        "immunization": {
+            "name": "Immunization",
+            "url": "http://hl7.org/fhir/json-schema/Immunization.schema.json"
+        },
+        "immunizationrecommendation": {
+            "name": "ImmunizationRecommendation",
+            "url": "http://hl7.org/fhir/json-schema/ImmunizationRecommendation.schema.json"
+        },
+        "implementationguide": {
+            "name": "ImplementationGuide",
+            "url": "http://hl7.org/fhir/json-schema/ImplementationGuide.schema.json"
+        },
+        "library": {
+            "name": "Library",
+            "url": "http://hl7.org/fhir/json-schema/Library.schema.json"
+        },
+        "linkage": {
+            "name": "Linkage",
+            "url": "http://hl7.org/fhir/json-schema/Linkage.schema.json"
+        },
+        "list": {
+            "name": "List",
+            "url": "http://hl7.org/fhir/json-schema/List.schema.json"
+        },
+        "location": {
+            "name": "Location",
+            "url": "http://hl7.org/fhir/json-schema/Location.schema.json"
+        },
+        "measure": {
+            "name": "Measure",
+            "url": "http://hl7.org/fhir/json-schema/Measure.schema.json"
+        },
+        "measurereport": {
+            "name": "MeasureReport",
+            "url": "http://hl7.org/fhir/json-schema/MeasureReport.schema.json"
+        },
+        "media": {
+            "name": "Media",
+            "url": "http://hl7.org/fhir/json-schema/Media.schema.json"
+        },
+        "medication": {
+            "name": "Medication",
+            "url": "http://hl7.org/fhir/json-schema/Medication.schema.json"
+        },
+        "medicationadministration": {
+            "name": "MedicationAdministration",
+            "url": "http://hl7.org/fhir/json-schema/MedicationAdministration.schema.json"
+        },
+        "medicationdispense": {
+            "name": "MedicationDispense",
+            "url": "http://hl7.org/fhir/json-schema/MedicationDispense.schema.json"
+        },
+        "medicationrequest": {
+            "name": "MedicationRequest",
+            "url": "http://hl7.org/fhir/json-schema/MedicationRequest.schema.json"
+        },
+        "medicationstatement": {
+            "name": "MedicationStatement",
+            "url": "http://hl7.org/fhir/json-schema/MedicationStatement.schema.json"
+        },
+        "messagedefinition": {
+            "name": "MessageDefinition",
+            "url": "http://hl7.org/fhir/json-schema/MessageDefinition.schema.json"
+        },
+        "messageheader": {
+            "name": "MessageHeader",
+            "url": "http://hl7.org/fhir/json-schema/MessageHeader.schema.json"
+        },
+        "meta": {
+            "name": "Meta",
+            "url": "http://hl7.org/fhir/json-schema/Meta.schema.json"
+        },
+        "money": {
+            "name": "Money",
+            "url": "http://hl7.org/fhir/json-schema/Money.schema.json"
+        },
+        "namingsystem": {
+            "name": "NamingSystem",
+            "url": "http://hl7.org/fhir/json-schema/NamingSystem.schema.json"
+        },
+        "narrative": {
+            "name": "Narrative",
+            "url": "http://hl7.org/fhir/json-schema/Narrative.schema.json"
+        },
+        "nutritionorder": {
+            "name": "NutritionOrder",
+            "url": "http://hl7.org/fhir/json-schema/NutritionOrder.schema.json"
+        },
+        "observation": {
+            "name": "Observation",
+            "url": "http://hl7.org/fhir/json-schema/Observation.schema.json"
+        },
+        "operationdefinition": {
+            "name": "OperationDefinition",
+            "url": "http://hl7.org/fhir/json-schema/OperationDefinition.schema.json"
+        },
+        "operationoutcome": {
+            "name": "OperationOutcome",
+            "url": "http://hl7.org/fhir/json-schema/OperationOutcome.schema.json"
+        },
+        "organization": {
+            "name": "Organization",
+            "url": "http://hl7.org/fhir/json-schema/Organization.schema.json"
+        },
+        "parameterdefinition": {
+            "name": "ParameterDefinition",
+            "url": "http://hl7.org/fhir/json-schema/ParameterDefinition.schema.json"
+        },
+        "parameters": {
+            "name": "Parameters",
+            "url": "http://hl7.org/fhir/json-schema/Parameters.schema.json"
+        },
+        "patient": {
+            "name": "Patient",
+            "url": "http://hl7.org/fhir/json-schema/Patient.schema.json"
+        },
+        "paymentnotice": {
+            "name": "PaymentNotice",
+            "url": "http://hl7.org/fhir/json-schema/PaymentNotice.schema.json"
+        },
+        "paymentreconciliation": {
+            "name": "PaymentReconciliation",
+            "url": "http://hl7.org/fhir/json-schema/PaymentReconciliation.schema.json"
+        },
+        "period": {
+            "name": "Period",
+            "url": "http://hl7.org/fhir/json-schema/Period.schema.json"
+        },
+        "person": {
+            "name": "Person",
+            "url": "http://hl7.org/fhir/json-schema/Person.schema.json"
+        },
+        "plandefinition": {
+            "name": "PlanDefinition",
+            "url": "http://hl7.org/fhir/json-schema/PlanDefinition.schema.json"
+        },
+        "practitioner": {
+            "name": "Practitioner",
+            "url": "http://hl7.org/fhir/json-schema/Practitioner.schema.json"
+        },
+        "practitionerrole": {
+            "name": "PractitionerRole",
+            "url": "http://hl7.org/fhir/json-schema/PractitionerRole.schema.json"
+        },
+        "procedure": {
+            "name": "Procedure",
+            "url": "http://hl7.org/fhir/json-schema/Procedure.schema.json"
+        },
+        "procedurerequest": {
+            "name": "ProcedureRequest",
+            "url": "http://hl7.org/fhir/json-schema/ProcedureRequest.schema.json"
+        },
+        "processrequest": {
+            "name": "ProcessRequest",
+            "url": "http://hl7.org/fhir/json-schema/ProcessRequest.schema.json"
+        },
+        "processresponse": {
+            "name": "ProcessResponse",
+            "url": "http://hl7.org/fhir/json-schema/ProcessResponse.schema.json"
+        },
+        "provenance": {
+            "name": "Provenance",
+            "url": "http://hl7.org/fhir/json-schema/Provenance.schema.json"
+        },
+        "quantity": {
+            "name": "Quantity",
+            "url": "http://hl7.org/fhir/json-schema/Quantity.schema.json"
+        },
+        "questionnaire": {
+            "name": "Questionnaire",
+            "url": "http://hl7.org/fhir/json-schema/Questionnaire.schema.json"
+        },
+        "questionnaireresponse": {
+            "name": "QuestionnaireResponse",
+            "url": "http://hl7.org/fhir/json-schema/QuestionnaireResponse.schema.json"
+        },
+        "range": {
+            "name": "Range",
+            "url": "http://hl7.org/fhir/json-schema/Range.schema.json"
+        },
+        "ratio": {
+            "name": "Ratio",
+            "url": "http://hl7.org/fhir/json-schema/Ratio.schema.json"
+        },
+        "reference": {
+            "name": "Reference",
+            "url": "http://hl7.org/fhir/json-schema/Reference.schema.json"
+        },
+        "referralrequest": {
+            "name": "ReferralRequest",
+            "url": "http://hl7.org/fhir/json-schema/ReferralRequest.schema.json"
+        },
+        "relatedartifact": {
+            "name": "RelatedArtifact",
+            "url": "http://hl7.org/fhir/json-schema/RelatedArtifact.schema.json"
+        },
+        "relatedperson": {
+            "name": "RelatedPerson",
+            "url": "http://hl7.org/fhir/json-schema/RelatedPerson.schema.json"
+        },
+        "requestgroup": {
+            "name": "RequestGroup",
+            "url": "http://hl7.org/fhir/json-schema/RequestGroup.schema.json"
+        },
+        "researchstudy": {
+            "name": "ResearchStudy",
+            "url": "http://hl7.org/fhir/json-schema/ResearchStudy.schema.json"
+        },
+        "researchsubject": {
+            "name": "ResearchSubject",
+            "url": "http://hl7.org/fhir/json-schema/ResearchSubject.schema.json"
+        },
+        "resource": {
+            "name": "Resource",
+            "url": "http://hl7.org/fhir/json-schema/Resource.schema.json"
+        },
+        "resourcelist": {
+            "name": "ResourceList",
+            "url": "http://hl7.org/fhir/json-schema/ResourceList.schema.json"
+        },
+        "riskassessment": {
+            "name": "RiskAssessment",
+            "url": "http://hl7.org/fhir/json-schema/RiskAssessment.schema.json"
+        },
+        "sampleddata": {
+            "name": "SampledData",
+            "url": "http://hl7.org/fhir/json-schema/SampledData.schema.json"
+        },
+        "schedule": {
+            "name": "Schedule",
+            "url": "http://hl7.org/fhir/json-schema/Schedule.schema.json"
+        },
+        "searchparameter": {
+            "name": "SearchParameter",
+            "url": "http://hl7.org/fhir/json-schema/SearchParameter.schema.json"
+        },
+        "sequence": {
+            "name": "Sequence",
+            "url": "http://hl7.org/fhir/json-schema/Sequence.schema.json"
+        },
+        "servicedefinition": {
+            "name": "ServiceDefinition",
+            "url": "http://hl7.org/fhir/json-schema/ServiceDefinition.schema.json"
+        },
+        "signature": {
+            "name": "Signature",
+            "url": "http://hl7.org/fhir/json-schema/Signature.schema.json"
+        },
+        "slot": {
+            "name": "Slot",
+            "url": "http://hl7.org/fhir/json-schema/Slot.schema.json"
+        },
+        "specimen": {
+            "name": "Specimen",
+            "url": "http://hl7.org/fhir/json-schema/Specimen.schema.json"
+        },
+        "structuredefinition": {
+            "name": "StructureDefinition",
+            "url": "http://hl7.org/fhir/json-schema/StructureDefinition.schema.json"
+        },
+        "structuremap": {
+            "name": "StructureMap",
+            "url": "http://hl7.org/fhir/json-schema/StructureMap.schema.json"
+        },
+        "subscription": {
+            "name": "Subscription",
+            "url": "http://hl7.org/fhir/json-schema/Subscription.schema.json"
+        },
+        "substance": {
+            "name": "Substance",
+            "url": "http://hl7.org/fhir/json-schema/Substance.schema.json"
+        },
+        "supplydelivery": {
+            "name": "SupplyDelivery",
+            "url": "http://hl7.org/fhir/json-schema/SupplyDelivery.schema.json"
+        },
+        "supplyrequest": {
+            "name": "SupplyRequest",
+            "url": "http://hl7.org/fhir/json-schema/SupplyRequest.schema.json"
+        },
+        "task": {
+            "name": "Task",
+            "url": "http://hl7.org/fhir/json-schema/Task.schema.json"
+        },
+        "testreport": {
+            "name": "TestReport",
+            "url": "http://hl7.org/fhir/json-schema/TestReport.schema.json"
+        },
+        "testscript": {
+            "name": "TestScript",
+            "url": "http://hl7.org/fhir/json-schema/TestScript.schema.json"
+        },
+        "timing": {
+            "name": "Timing",
+            "url": "http://hl7.org/fhir/json-schema/Timing.schema.json"
+        },
+        "triggerdefinition": {
+            "name": "TriggerDefinition",
+            "url": "http://hl7.org/fhir/json-schema/TriggerDefinition.schema.json"
+        },
+        "usagecontext": {
+            "name": "UsageContext",
+            "url": "http://hl7.org/fhir/json-schema/UsageContext.schema.json"
+        },
+        "valueset": {
+            "name": "ValueSet",
+            "url": "http://hl7.org/fhir/json-schema/ValueSet.schema.json"
+        },
+        "visionprescription": {
+            "name": "VisionPrescription",
+            "url": "http://hl7.org/fhir/json-schema/VisionPrescription.schema.json"
+        }
+    }
+}

@@ -19,6 +19,7 @@ import sys
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 logger = logging.getLogger('plone.app.fhirfield')
+FHIR_VERSION = 'STU3'
 FHIR_FIELD_DEBUG = os.environ.get('FHIR_FIELD_DEBUG', '').lower() in \
     ('y', 'yes', 't', 'true', '1')
 FHIR_RESOURCE_MODEL_CACHE = defaultdict()
@@ -28,6 +29,8 @@ FHIR_STATIC_DIR = os.path.join(
     'browser',
     'static',
     'FHIR')
+
+FHIR_RESOURCE_LIST_DIR = os.path.join(FHIR_STATIC_DIR, 'HL7', 'ResourceList')
 
 with open(os.path.join(FHIR_STATIC_DIR, 'HL7',
                        'search',
@@ -58,6 +61,12 @@ FSPR_VALUE_PRIFIXES_MAP = {'eq': None,
                            'sa': None,
                            'eb': None,
                            'ap': None}
+
+with open(
+    os.path.join(FHIR_RESOURCE_LIST_DIR,  FHIR_VERSION + '.json'),
+        'r') as f:
+    """ """
+    FHIR_RESOURCE_LIST = json.load(f)['resources']
 
 
 @required_parameters('model_name')
@@ -438,3 +447,44 @@ class ElasticsearchSortQueryBuilder(object):
 
     def build(self):
         """ """
+
+
+def make_fhir_elasticsearch_list(mapping_dir):
+    """ """
+    container = dict()
+
+    for root, dirs, files in os.walk(mapping_dir, topdown=True):
+
+        for filename in files:
+
+            if not filename.endswith('.json'):
+                continue
+
+            with open(os.path.join(root, filename), 'r') as f:
+                content = json.load(f)
+
+            assert filename.split('.')[0] == content['resourceType']
+
+            container[content['resourceType'].lower()] = content
+
+    return container
+
+
+def validate_index_name(name):
+    """ZCatalog index name validation"""
+    global FHIR_RESOURCE_LIST
+
+    parts = name.split('_')
+
+    try:
+        FHIR_RESOURCE_LIST[parts[0].lower()]
+    except KeyError:
+        msg = _(
+            'Invalid index name for FhirFieldIndex. Index name must start with '
+            'any valid fhir resource type name as prefix or just use '
+            'resource type name as index name.\n'
+            'allowed format: (resource type as prefix)_(your name), '
+            '(resource_type as index name)\n'
+            'example: hospital_resource, patient')
+
+        six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])

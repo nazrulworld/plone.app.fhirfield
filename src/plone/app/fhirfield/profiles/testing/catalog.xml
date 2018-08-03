@@ -1,40 +1,40 @@
 <?xml version="1.0"?>
 <object name="portal_catalog" meta_type="Plone Catalog Tool">
 
- <index name="organization_resource" meta_type="FhirOrganizationIndex">
+ <index name="organization_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="organization_resource"/>
  </index>
 
- <index name="patient_resource" meta_type="FhirPatientIndex">
+ <index name="patient_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="patient_resource"/>
  </index>
 
- <index name="questionnaire_resource" meta_type="FhirQuestionnaireIndex">
+ <index name="questionnaire_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="questionnaire_resource"/>
  </index>
 
- <index name="questionnaireresponse_resource" meta_type="FhirQuestionnaireResponseIndex">
+ <index name="questionnaireresponse_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="questionnaireresponse_resource"/>
  </index>
 
- <index name="task_resource" meta_type="FhirTaskIndex">
+ <index name="task_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="task_resource"/>
  </index>
 
- <index name="valueset_resource" meta_type="FhirValueSetIndex">
+ <index name="valueset_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="valueset_resource"/>
  </index>
 
 
- <index name="device_resource" meta_type="FhirDeviceIndex">
+ <index name="device_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="device_resource"/>
  </index>
 
- <index name="devicerequest_resource" meta_type="FhirDeviceRequestIndex">
+ <index name="devicerequest_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="devicerequest_resource"/>
  </index>
 
- <index name="procedurerequest_resource" meta_type="FhirProcedureRequestIndex">
+ <index name="procedurerequest_resource" meta_type="FhirFieldIndex">
   <indexed_attr value="procedurerequest_resource"/>
  </index>
 

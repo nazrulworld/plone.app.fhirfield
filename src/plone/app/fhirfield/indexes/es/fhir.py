@@ -7,25 +7,45 @@
 from collective.elasticsearch.indexes import BaseIndex
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.helpers import build_elasticsearch_query
+from plone.app.fhirfield.helpers import make_fhir_elasticsearch_list
+from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 
 import os
+import warnings
 
 
 __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 
 MAPPING_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'mapping')
+FHIR_ES_MAPPINGS = make_fhir_elasticsearch_list(MAPPING_FILE_DIR)
 
 
 class EsFhirFieldIndex(BaseIndex):
     """ """
     _mapping_cache = None
-    _resource_type = 'Resource'
     filter_query = True
+
+    def validate_name(self, name):
+        """"About validation of index/field name convention """
+
+        validate_index_name(name)
 
     def create_mapping(self, name):
         """Minimal mapping for all kind of fhir models"""
+        self.validate_name(name)
+
+        key = name.split('_')[0]
+
+        try:
+            return FHIR_ES_MAPPINGS[key]['mapping']
+        except KeyError:
+            warnings.warn(
+                'No mapping found for `{0}`, instead minimal '
+                'mapping has been used.'.format(name),
+                UserWarning)
+
         return {
             'properties': {
                 'id': {
