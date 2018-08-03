@@ -5,8 +5,8 @@
 # @Version : $Id$
 # All imports here
 from collective.elasticsearch.indexes import BaseIndex
-from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.helpers import build_elasticsearch_query
+from plone.app.fhirfield.helpers import FHIR_RESOURCE_LIST
 from plone.app.fhirfield.helpers import make_fhir_elasticsearch_list
 from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
@@ -20,6 +20,10 @@ __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 MAPPING_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'mapping')
 FHIR_ES_MAPPINGS = make_fhir_elasticsearch_list(MAPPING_FILE_DIR)
+
+DEPRICATION_MSG = """Use `{0}` CatalogIndex has been deprecated, use `FhirFieldIndex` instead
+as this class will be removed to next release.
+"""
 
 
 class EsFhirFieldIndex(BaseIndex):
@@ -102,14 +106,14 @@ class EsFhirFieldIndex(BaseIndex):
     def get_query(self, name, value):
         """Only prepared fhir query is acceptable
         other query is building here"""
+        self.validate_name(name)
+
         value = self._normalize_query(value)
         if value in (None, ''):
             return
 
         if value.get('query'):
-            query = {
-                'bool': value.get('query'),
-            }
+            query = {'and': value.get('query')}
             # need query validation???
             return query
 
@@ -118,222 +122,191 @@ class EsFhirFieldIndex(BaseIndex):
         if value.get('params'):
             params = value.get('params')
 
-        resource_type = value.pop('resource_type', self._resource_type)
+        resource_type = value.pop(
+            'resource_type',
+            FHIR_RESOURCE_LIST[name.split('_')[0].lower()]['name'])
         if params is None:
             params = value
 
-        query = build_elasticsearch_query(params,
-                                          field_name=name,
-                                          resource_type=resource_type)
+        query = build_elasticsearch_query(
+            params,
+            field_name=name,
+            resource_type=resource_type)
 
         return query
-
-    def get_mapping_from_file(self, filename=None, cache=True):
-        """Fetch mapping from file system associated with resourceType"""
-        if filename is None:
-            filename = os.path.join(
-                MAPPING_FILE_DIR,
-                self._resource_type + '.json')
-
-        if os.path.sep not in filename:
-            # only file name is provided, need add full path
-            filename = os.path.join(
-                MAPPING_FILE_DIR,
-                filename)
-
-        if not cache or self._mapping_cache is None:
-            with open(filename, 'r') as f:
-                contents = json.load(f)
-                # ??? do some validation ???
-                self._mapping_cache = contents['mapping']
-
-        return self._mapping_cache
 
 
 class EsFhirOrganizationIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'Organization'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirPatientIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'Patient'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirPractitionerIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'Practitioner'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirRelatedPersonIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'RelatedPerson'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirValueSetIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'ValueSet'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirTaskIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'Task'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirQuestionnaireIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'Questionnaire'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirQuestionnaireResponseIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'QuestionnaireResponse'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirActivityDefinitionIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'ActivityDefinition'
 
     def create_mapping(self, name):
         """"""
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
         return self.get_mapping_from_file()
 
 
 class EsFhirHealthcareServiceIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'HealthcareService'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirObservationIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'Observation'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirProcedureRequestIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'ProcedureRequest'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirDeviceIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'Device'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirDeviceRequestIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'DeviceRequest'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirCarePlanIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'CarePlan'
 
     def create_mapping(self, name):
         """"""
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
         return self.get_mapping_from_file()
 
 
 class EsFhirPlanDefinitionIndex(EsFhirFieldIndex):
     """ """
-    _resource_type = 'PlanDefinition'
 
     def create_mapping(self, name):
         """"""
-        return self.get_mapping_from_file()
-
-
-class EsFhirAppointmentIndex(EsFhirFieldIndex):
-    """ """
-    _resource_type = 'Appointment'
-
-    def create_mapping(self, name):
-        """"""
-        return self.get_mapping_from_file()
-
-
-class EsFhirMedicationAdministrationIndex(EsFhirFieldIndex):
-    """ """
-    _resource_type = 'MedicationAdministration'
-
-    def create_mapping(self, name):
-        """"""
-        return self.get_mapping_from_file()
-
-
-class EsFhirMedicationRequestIndex(EsFhirFieldIndex):
-    """ """
-    _resource_type = 'MedicationRequest'
-
-    def create_mapping(self, name):
-        """"""
-        return self.get_mapping_from_file()
-
-
-class EsFhirMedicationStatementIndex(EsFhirFieldIndex):
-    """ """
-    _resource_type = 'MedicationStatement'
-
-    def create_mapping(self, name):
-        """"""
-        return self.get_mapping_from_file()
-
-
-class EsFhirMedicationDispenseIndex(EsFhirFieldIndex):
-    """ """
-    _resource_type = 'MedicationDispense'
-
-    def create_mapping(self, name):
-        """"""
-        return self.get_mapping_from_file()
+        warnings.warn(
+            DEPRICATION_MSG.format(self.__class__.__name__),
+            UserWarning)
+        return EsFhirFieldIndex.create_mapping(self, name)

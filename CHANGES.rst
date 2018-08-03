@@ -4,7 +4,10 @@ Changelog
 1.0.0b5 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Newfeatures
+
+- `FhirFieldIndex` Catalog Index has been refactored. Now this class is capable to handle all the FHIR resources. That's why other PluginIndexes related to FhirField have been deprecated.
+- New ZCatalog (plone index) index naming convention has been introduced. Any index name for FhirFieldIndex must have fhir resource type name as prefix. for example: `task_index`
 
 
 1.0.0b4 (2018-08-01)

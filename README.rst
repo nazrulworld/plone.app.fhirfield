@@ -180,101 +180,16 @@ Available Catalog PluginIndexes
 
 Bellows are fhirfield based catalog indexes are available.
 
-
-1. `FhirActivityDefinitionIndex`
-    - Resource Type: ActivityDefinition
-    - Has Mapping: yes
-
-2. `FhirAppointmentIndex`
-    - Resource Type: Appointment
-    - Has Mapping: yes
-
-3. `FhirCarePlanIndex`
-    - Resource Type: CarePlan
-    - Has Mapping: yes
-
-4. `FhirDeviceIndex`
-    - Resource Type: Device
-    - Has Mapping: yes
-
-5. `FhirDeviceRequestIndex`
-    - Resource Type: DeviceRequest
-    - Has Mapping: yes
-
-6. `FhirHealthcareServiceIndex`
-    - Resource Type: HealthcareService
-    - Has Mapping: yes
-
-7. `FhirMedicationAdministrationIndex`
-    - Resource Type: MedicationAdministration
-    - Has Mapping: yes
-
-8. `FhirMedicationDispenseIndex`
-    - Resource Type: MedicationDispense
-    - Has Mapping: yes
-
-9. `FhirMedicationRequestIndex`
-    - Resource Type: MedicationRequest
-    - Has Mapping: yes
-
-10. `FhirMedicationStatementIndex`
-     - Resource Type: MedicationStatement
-     - Has Mapping: yes
-
-11. `FhirObservationIndex`
-     - Resource Type: Observation
-     - Has Mapping: yes
-
-12. `FhirOrganizationIndex`
-     - Resource Type: Organization
-     - Has Mapping: yes
-
-13. `FhirPatientIndex`
-     - Resource Type: Patient
-     - Has Mapping: yes
-
-14. `FhirPlanDefinitionIndex`
-     - Resource Type: PlanDefinition
-     - Has Mapping: yes
-
-15. `FhirPractitionerIndex`
-     - Resource Type: Practitioner
-     - Has Mapping: yes
-
-16. `FhirProcedureRequestIndex`
-     - Resource Type: ProcedureRequest
-     - Has Mapping: yes
-
-17. `FhirQuestionnaireIndex`
-     - Resource Type: Questionnaire
-     - Has Mapping: yes
-
-18. `FhirQuestionnaireResponseIndex`
-     - Resource Type: QuestionnaireResponse
-     - Has Mapping: yes
-
-19. `FhirRelatedPersonIndex`
-     - Resource Type: RelatedPerson
-     - Has Mapping: yes
-
-20. `FhirTaskIndex`
-     - Resource Type: Task
-     - Has Mapping: yes
-
-21. `FhirValueSetIndex`
-     - Resource Type: ValueSet
-     - Has Mapping: yes
-
-22. `FhirFieldIndex`:
-     - Resource Type: any valid fhir resource
-     - Has Mapping: minimal (id, identifier, meta)
+2. `FhirFieldIndex`:
+    - Resource Type: any valid fhir resource
+    - Has Mapping: minimal (id, identifier, meta)
 
 
 Example usages::
 
     <?xml version="1.0"?>
     <object name="portal_catalog" meta_type="Plone Catalog Tool">
-        <index name="organization_resource" meta_type="FhirOrganizationIndex">
+        <index name="organization_resource" meta_type="FhirFieldIndex">
             <indexed_attr value="organization_resource"/>
         </index>
     </object>

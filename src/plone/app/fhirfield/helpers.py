@@ -63,7 +63,7 @@ FSPR_VALUE_PRIFIXES_MAP = {'eq': None,
                            'ap': None}
 
 with open(
-    os.path.join(FHIR_RESOURCE_LIST_DIR,  FHIR_VERSION + '.json'),
+    os.path.join(FHIR_RESOURCE_LIST_DIR, FHIR_VERSION + '.json'),
         'r') as f:
     """ """
     FHIR_RESOURCE_LIST = json.load(f)['resources']
