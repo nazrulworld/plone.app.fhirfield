@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0b5 (unreleased)
+1.0.0b5 (2018-08-03)
 --------------------
 
 Newfeatures
