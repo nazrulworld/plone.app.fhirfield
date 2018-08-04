@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0b6 (unreleased)
+1.0.0b6 (2018-08-04)
 --------------------
 
 - Fix: minor type mistake on non existing method called.
