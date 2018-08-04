@@ -232,7 +232,7 @@ class EsFhirActivityDefinitionIndex(EsFhirFieldIndex):
         warnings.warn(
             DEPRICATION_MSG.format(self.__class__.__name__),
             UserWarning)
-        return self.get_mapping_from_file()
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirHealthcareServiceIndex(EsFhirFieldIndex):
@@ -298,7 +298,7 @@ class EsFhirCarePlanIndex(EsFhirFieldIndex):
         warnings.warn(
             DEPRICATION_MSG.format(self.__class__.__name__),
             UserWarning)
-        return self.get_mapping_from_file()
+        return EsFhirFieldIndex.create_mapping(self, name)
 
 
 class EsFhirPlanDefinitionIndex(EsFhirFieldIndex):

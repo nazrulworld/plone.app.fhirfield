@@ -4,7 +4,8 @@ Changelog
 1.0.0b6 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Fix: minor type mistake on non existing method called.
+- Migration guide has been added. [nazrulworld]
 
 
 1.0.0b5 (2018-08-03)
