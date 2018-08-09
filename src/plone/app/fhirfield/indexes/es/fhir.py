@@ -6,10 +6,10 @@
 # All imports here
 from collective.elasticsearch.indexes import BaseIndex
 from plone.app.fhirfield.helpers import build_elasticsearch_query
-from plone.app.fhirfield.helpers import FHIR_RESOURCE_LIST
 from plone.app.fhirfield.helpers import make_fhir_elasticsearch_list
 from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
+from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST
 
 import os
 import warnings

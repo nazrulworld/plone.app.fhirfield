@@ -1,7 +1,19 @@
 # _*_ coding: utf-8 _*_
 from .compat import EMPTY_STRING
 from .compat import NO_VALUE
-from collections import defaultdict
+from .variables import ERROR_MESSAGES
+from .variables import ERROR_PARAM_UNKNOWN
+from .variables import ERROR_PARAM_UNSUPPORTED
+from .variables import ERROR_PARAM_WRONG_DATATYPE
+from .variables import FHIR_FIELD_DEBUG
+from .variables import FHIR_RESOURCE_LIST  # noqa: F401
+from .variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
+from .variables import FHIR_SEARCH_PARAMETER_REGISTRY
+from .variables import FHIR_SEARCH_PARAMETER_SEARCHABLE
+from .variables import FSPR_KEYS_BY_GROUP
+from .variables import FSPR_VALUE_PRIFIXES_MAP
+from .variables import LOGGER
+from .variables import SEARCH_PARAM_MODIFIERS
 from DateTime import DateTime
 from importlib import import_module
 from plone.api.validation import required_parameters
@@ -9,7 +21,6 @@ from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from zope.interface import Invalid
 
-import logging
 import os
 import pkgutil
 import six
@@ -18,68 +29,21 @@ import sys
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
-logger = logging.getLogger('plone.app.fhirfield')
-FHIR_VERSION = 'STU3'
-FHIR_FIELD_DEBUG = os.environ.get('FHIR_FIELD_DEBUG', '').lower() in \
-    ('y', 'yes', 't', 'true', '1')
-FHIR_RESOURCE_MODEL_CACHE = defaultdict()
-
-FHIR_STATIC_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    'browser',
-    'static',
-    'FHIR')
-
-FHIR_RESOURCE_LIST_DIR = os.path.join(FHIR_STATIC_DIR, 'HL7', 'ResourceList')
-
-with open(os.path.join(FHIR_STATIC_DIR, 'HL7',
-                       'search',
-                       'FHIR-Search-Parameter-Registry.json')) as f:
-
-    FHIR_SEARCH_PARAMETER_REGISTRY = json.load(f)['object']
-
-with open(os.path.join(FHIR_STATIC_DIR, 'HL7',
-                       'search',
-                       'FHIR-Search-Parameter-Registry-searchable.json')) as f:
-
-    FHIR_SEARCH_PARAMETER_SEARCHABLE = json.load(f)['searchable']
-    FHIR_SEARCH_PARAMETER_SEARCHABLE_KEYS = FHIR_SEARCH_PARAMETER_SEARCHABLE.keys()
-
-FSPR_KEYS_BY_GROUP = dict()
-
-for group, rows in FHIR_SEARCH_PARAMETER_REGISTRY.items():
-    FSPR_KEYS_BY_GROUP[group] = list()
-    for row in rows[1:]:
-        FSPR_KEYS_BY_GROUP[group].append(row[0])
-
-FSPR_VALUE_PRIFIXES_MAP = {'eq': None,
-                           'ne': None,
-                           'gt': 'gt',
-                           'lt': 'lt',
-                           'ge': 'gte',
-                           'le': 'lte',
-                           'sa': None,
-                           'eb': None,
-                           'ap': None}
-
-with open(
-    os.path.join(FHIR_RESOURCE_LIST_DIR, FHIR_VERSION + '.json'),
-        'r') as f:
-    """ """
-    FHIR_RESOURCE_LIST = json.load(f)['resources']
-
 
 @required_parameters('model_name')
 def search_fhir_model(model_name, cache=True):
     """ """
     global FHIR_RESOURCE_MODEL_CACHE
     if model_name in FHIR_RESOURCE_MODEL_CACHE.keys() and cache:
-        return '{0}.{1}'.format(FHIR_RESOURCE_MODEL_CACHE[model_name], model_name)
+        return '{0}.{1}'.format(
+            FHIR_RESOURCE_MODEL_CACHE[model_name],
+            model_name)
 
     # Trying to get from entire modules
     from fhirclient import models
     for importer, modname, ispkg in \
-            pkgutil.walk_packages(models.__path__, models.__name__ + '.', onerror=lambda x: None):
+            pkgutil.walk_packages(models.__path__, models.__name__ + '.',
+                                  onerror=lambda x: None):
         if ispkg or modname.endswith('_tests'):
             continue
 
@@ -96,7 +60,8 @@ def resource_type_str_to_fhir_model(resource_type):
     """ """
     dotted_path = search_fhir_model(resource_type)
     if dotted_path is None:
-        raise Invalid(_('Invalid: `{0}` is not valid resource type!'.format(resource_type)))
+        raise Invalid(_('Invalid: `{0}` is not valid resource type!'.
+                        format(resource_type)))
 
     return import_string(dotted_path)
 
@@ -131,7 +96,8 @@ def parse_json_str(str_val, encoding='utf-8'):
         json_dict = json.loads(str_val, encoding=encoding)
     except ValueError as exc:
         six.reraise(Invalid,
-                    Invalid('Invalid JSON String is provided!\n{0!s}'.format(exc)), sys.exc_info()[2])
+                    Invalid('Invalid JSON String is provided!\n{0!s}'.
+                            format(exc)), sys.exc_info()[2])
 
     return json_dict
 
@@ -156,20 +122,14 @@ class ElasticsearchQueryBuilder(object):
                  resource_type,
                  handling='strict'):
 
-        unwanted = self.clean_params(params)
-        if handling == 'strict' and len(unwanted) > 0:
-            raise Invalid(
-                _('Unwanted params ${params} are found, those are not '
-                  'supported as FHIR search parameter',
-                  mapping={'params': str(unwanted)}))
-
         self.field_name = field_name
         self.resource_type = resource_type
         self.handling = handling
-        self.query_tree = {'and': list()}
-
-        self.validate(params)
         self.params = params
+
+        self.validate()
+
+        self.query_tree = {'and': list()}
 
     def add_token_query(self,
                         field,
@@ -282,8 +242,29 @@ class ElasticsearchQueryBuilder(object):
             # xxx: see elaticsearch array
             pass
 
+    def add_exists_query(self, field, modifier):
+        """https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
+        """
+        path = self.find_query_path(field)
+        org_field = ':'.join([field, modifier])
+        value = self.params.get(org_field)
+        q = dict(query=dict())
+        if (modifier == 'missing' and value == 'true') or \
+                (modifier == 'exists' and value == 'false'):
+            q['query']['bool'] = \
+                {
+                    'must_not': {'exists': {'field': path}}
+                }
+        elif (modifier == 'missing' and value == 'false') or \
+                (modifier == 'exists' and value == 'true'):
+
+            q['query']['exists'] = {'field': path}
+
+        self.query_tree['and'].append(q)
+
     def build(self):
         """
+        https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
         https://www.elastic.co/guide/en/elasticsearch/reference/2.3/query-dsl-bool-query.html
         https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html
         https://stackoverflow.com/questions/16243496/nested-boolean-queries-in-elastic-search
@@ -296,6 +277,10 @@ class ElasticsearchQueryBuilder(object):
                 modifier = parts[1]
             except IndexError:
                 modifier = None
+
+            if modifier in ('missing', 'exists'):
+                self.add_exists_query(*parts)
+                continue
 
             if r_field in FSPR_KEYS_BY_GROUP.\
                     get('Resource'):
@@ -370,27 +355,116 @@ class ElasticsearchQueryBuilder(object):
             # xxx: data type
             self.add_reference_query(field, modifier)
 
-    def clean_params(self, params):
+    def clean_params(self):
         """ """
         unwanted = list()
 
-        for param in params.keys():
+        for param in self.params.keys():
             parts = param.split(':')
 
-            if parts[0] not in FHIR_SEARCH_PARAMETER_SEARCHABLE_KEYS:
-                unwanted.append(param)
-                del params[param]
+            if parts[0] not in FHIR_SEARCH_PARAMETER_SEARCHABLE:
+                unwanted.append((param, ERROR_PARAM_UNKNOWN))
+                del self.params[param]
+                continue
+
+            if parts[0] in ('_content', '_id', '_lastUpdated',
+                            '_profile', '_query', '_security',
+                            '_tag', '_text'):
+                continue
+
+            supported_paths = \
+                FHIR_SEARCH_PARAMETER_SEARCHABLE[parts[0]][1]
+
+            for path in supported_paths:
+                if path.startswith(self.resource_type):
+                    break
+            else:
+                del self.params[param]
+                unwanted.append((param, ERROR_PARAM_UNSUPPORTED))
 
         FHIR_FIELD_DEBUG and \
             unwanted and \
-            logger.info(
+            LOGGER.info(
                 'ElasticsearchQueryBuilder: unwanted {0!s} parameter(s) '
                 'have been cleaned'.format(unwanted))
         return unwanted
 
-    def validate(self, params):
+    def validate(self):
         """ """
-        return
+        unwanted = self.clean_params()
+
+        if self.handling == 'strict' and len(unwanted) > 0:
+
+            errors = self.process_error_message(unwanted)
+
+            raise Invalid(
+                _('Unwanted search parameters are found, ${errors}',
+                  mapping={'errors': str(errors)}))
+
+        error_fields = list()
+
+        for param, value in six.iteritems(self.params):
+            """ """
+            parts = param.split(':')
+            try:
+                name = parts[0]
+                modifier = parts[1]
+            except IndexError:
+                modifier = None
+
+            if modifier and (modifier not in SEARCH_PARAM_MODIFIERS):
+                error_fields.append((
+                    name,
+                    _('Unsupported modifier has been attached with parameter.'
+                      'Allows modifiers are {0!s}'.
+                      format(SEARCH_PARAM_MODIFIERS))
+                    ))
+                continue
+
+            if modifier in ('missing', 'exists') and \
+                    value not in ('true', 'false'):
+                error_fields.append((param, ERROR_PARAM_WRONG_DATATYPE, ('true', 'false')))
+                continue
+
+            param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[name][0]
+
+            if param_type == 'date':
+                self.validate_date(name, modifier, value, error_fields)
+
+    def validate_date(self, field, modifier, value, container):
+        """ """
+        if modifier:
+            container.append((
+                field,
+                _('date type parameter don\'t accept any modifier except `missing`' )
+            ))
+        else:
+            prefix = value[0:2]
+            if prefix in FSPR_VALUE_PRIFIXES_MAP:
+                date_val = value[2:]
+            else:
+                date_val = value
+
+            try:
+                DateTime(date_val)
+            except Exception:
+                container.append((field, ERROR_PARAM_WRONG_DATATYPE))
+
+    def process_error_message(self, errors):
+        """ """
+        container = list()
+        for field, code in six.iteritems(errors):
+            try:
+                container.append({
+                    'name': field,
+                    'error': ERROR_MESSAGES[code]
+                    })
+            except KeyError:
+                container.append({
+                    'name': field,
+                    'error': code
+                    })
+        return container
 
     def get_parameter(self, field, parameters):
 
@@ -418,7 +492,12 @@ def build_elasticsearch_query(params,
                               handling='strict'):
     """This is the helper method for making elasticsearch compatiable query from
     HL7 FHIR search standard request params"""
-    builder = ElasticsearchQueryBuilder(params,
+    if not isinstance(params, dict):
+        raise TypeError(
+            'parameters must be dict data type, but got {0}'.
+            format(type(params)))
+
+    builder = ElasticsearchQueryBuilder(params.copy(),
                                         field_name,
                                         resource_type,
                                         handling)

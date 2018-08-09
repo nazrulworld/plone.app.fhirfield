@@ -192,3 +192,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
     def test_build_resource_profile(self):
         """ """
+        pass
+
+    def test_validate_exists_modifier(self):
+        """When any parameter has got modifier `missing or exists`, value always be boolean"""
