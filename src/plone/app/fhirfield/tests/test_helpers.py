@@ -192,7 +192,99 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
     def test_build_resource_profile(self):
         """ """
-        pass
+        params = {'_profile': 'https://www.hl7.org/fhir/search.html'}
+
+        builder = helpers.ElasticsearchQueryBuilder(
+            params,
+            'resource',
+            'Organization')
+        query = builder.build()
+        compare = {'and': [{'terms': {'resource.meta.profile': ['https://www.hl7.org/fhir/search.html']}}]}
+
+        self.assertEqual(query, compare)
+
+    def test_validate(self):
+        """ """
+        # test with params those are unknown to fhir search
+        try:
+            params = {'created_on': '2011-09-17', 'fake_param': None}
+            helpers.ElasticsearchQueryBuilder(
+                params,
+                'task_resource',
+                'Task')
+            raise AssertionError(
+                'code should not come here as unknown '
+                'parameters are provided')
+        except Invalid as e:
+            self.assertIn('unrecognized by FHIR search', str(e))
+            self.assertIn('created_on', str(e))
+            self.assertIn('fake_param', str(e))
+
+        # Test with unsupported modifier
+        try:
+            params = {'patient:unknown': 'Patient/1'}
+            helpers.ElasticsearchQueryBuilder(
+                params,
+                'task_resource',
+                'Task')
+            raise AssertionError(
+                'code should not come here as unknown '
+                'parameters are provided')
+        except Invalid as e:
+            self.assertIn(
+                'Unsupported modifier has been attached with parameter',
+                str(e))
 
     def test_validate_exists_modifier(self):
-        """When any parameter has got modifier `missing or exists`, value always be boolean"""
+        """When any parameter has got modifier `missing or exists`,
+        value always be boolean"""
+        params = {'patient:missing': None}
+        try:
+            helpers.ElasticsearchQueryBuilder(
+                params,
+                'task_resource',
+                'Task')
+            raise AssertionError('Code should not come here, as ')
+        except Invalid:
+            pass
+
+    def test_validate_date_value(self):
+        """ """
+        # test with other modifier
+        try:
+            params = {'_lastUpdated:exact': 'Some Date'}
+            helpers.ElasticsearchQueryBuilder(
+                params,
+                'task_resource',
+                'Task')
+            raise AssertionError(
+                'code should not come here as invalide '
+                'modifier has been provided')
+        except Invalid as e:
+            self.assertIn('don\'t accept any modifier', str(e))
+
+        # test with validate date
+        try:
+            params = {'_lastUpdated': '7679-89-90'}
+            helpers.ElasticsearchQueryBuilder(
+                params,
+                'task_resource',
+                'Task')
+            raise AssertionError(
+                'code should not come here as invalide '
+                'modifier has been provided')
+        except Invalid as e:
+            self.assertIn('is not valid date string!', str(e))
+
+        # test with invalid prefix
+        try:
+            params = {'_lastUpdated': 'it2011-09-17'}
+            helpers.ElasticsearchQueryBuilder(
+                params,
+                'task_resource',
+                'Task')
+            raise AssertionError(
+                'code should not come here as invalide '
+                'modifier has been provided')
+        except Invalid as e:
+            self.assertIn('is not valid date string!', str(e))

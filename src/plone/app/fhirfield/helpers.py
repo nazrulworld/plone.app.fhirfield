@@ -1,6 +1,8 @@
 # _*_ coding: utf-8 _*_
 from .compat import EMPTY_STRING
 from .compat import NO_VALUE
+from .exc import SearchQueryError
+from .exc import SearchQueryValidationError
 from .variables import ERROR_MESSAGES
 from .variables import ERROR_PARAM_UNKNOWN
 from .variables import ERROR_PARAM_UNSUPPORTED
@@ -60,8 +62,9 @@ def resource_type_str_to_fhir_model(resource_type):
     """ """
     dotted_path = search_fhir_model(resource_type)
     if dotted_path is None:
-        raise Invalid(_('Invalid: `{0}` is not valid resource type!'.
-                        format(resource_type)))
+        raise SearchQueryValidationError(
+            _('Invalid: `{0}` is not valid resource type!'.
+              format(resource_type)))
 
     return import_string(dotted_path)
 
@@ -253,7 +256,7 @@ class ElasticsearchQueryBuilder(object):
                 (modifier == 'exists' and value == 'false'):
             q['query']['bool'] = \
                 {
-                    'must_not': {'exists': {'field': path}}
+                    'must_not': {'exists': {'field': path}},
                 }
         elif (modifier == 'missing' and value == 'false') or \
                 (modifier == 'exists' and value == 'true'):
@@ -397,9 +400,10 @@ class ElasticsearchQueryBuilder(object):
 
             errors = self.process_error_message(unwanted)
 
-            raise Invalid(
-                _('Unwanted search parameters are found, ${errors}',
-                  mapping={'errors': str(errors)}))
+            raise SearchQueryValidationError(
+                _('Unwanted search parameters are found, {0!s}').
+                format(errors),
+                )
 
         error_fields = list()
 
@@ -417,13 +421,13 @@ class ElasticsearchQueryBuilder(object):
                     name,
                     _('Unsupported modifier has been attached with parameter.'
                       'Allows modifiers are {0!s}'.
-                      format(SEARCH_PARAM_MODIFIERS))
+                      format(SEARCH_PARAM_MODIFIERS)),
                     ))
                 continue
 
             if modifier in ('missing', 'exists') and \
                     value not in ('true', 'false'):
-                error_fields.append((param, ERROR_PARAM_WRONG_DATATYPE, ('true', 'false')))
+                error_fields.append((param, ERROR_PARAM_WRONG_DATATYPE))
                 continue
 
             param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[name][0]
@@ -431,12 +435,17 @@ class ElasticsearchQueryBuilder(object):
             if param_type == 'date':
                 self.validate_date(name, modifier, value, error_fields)
 
+        if error_fields:
+            errors = self.process_error_message(error_fields)
+            raise SearchQueryValidationError(
+                _('Validation failed, {0!s}').format(errors))
+
     def validate_date(self, field, modifier, value, container):
         """ """
         if modifier:
             container.append((
                 field,
-                _('date type parameter don\'t accept any modifier except `missing`' )
+                _('date type parameter don\'t accept any modifier except `missing`'),
             ))
         else:
             prefix = value[0:2]
@@ -448,21 +457,21 @@ class ElasticsearchQueryBuilder(object):
             try:
                 DateTime(date_val)
             except Exception:
-                container.append((field, ERROR_PARAM_WRONG_DATATYPE))
+                container.append((field, '{0} is not valid date string!'.format(value)))
 
     def process_error_message(self, errors):
         """ """
         container = list()
-        for field, code in six.iteritems(errors):
+        for field, code in errors:
             try:
                 container.append({
                     'name': field,
-                    'error': ERROR_MESSAGES[code]
+                    'error': ERROR_MESSAGES[code],
                     })
             except KeyError:
                 container.append({
                     'name': field,
-                    'error': code
+                    'error': code,
                     })
         return container
 
@@ -566,4 +575,4 @@ def validate_index_name(name):
             '(resource_type as index name)\n'
             'example: hospital_resource, patient')
 
-        six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
+        six.reraise(SearchQueryError, SearchQueryError(msg), sys.exc_info()[2])

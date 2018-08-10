@@ -24,7 +24,7 @@ ERROR_PARAM_WRONG_DATATYPE = 'EP003'
 ERROR_MESSAGES = {
     ERROR_PARAM_UNKNOWN: 'Parameter is unrecognized by FHIR search.',
     ERROR_PARAM_UNSUPPORTED: 'Parameter is not supported for this resource type',
-    ERROR_PARAM_WRONG_DATATYPE: 'The value\'s data type is not excepted'
+    ERROR_PARAM_WRONG_DATATYPE: 'The value\'s data type is not excepted',
 }
 
 FHIR_RESOURCE_MODEL_CACHE = defaultdict()

@@ -4,7 +4,8 @@ Changelog
 1.0.0b7 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- `Media search available <https://www.hl7.org/fhir/media.html>`_.
+- `plone.app.fhirfield.SearchQueryError` exception class available, it would be used to catch any fhir query buiding errors. [nazrulworld]
 
 
 1.0.0b6 (2018-08-04)
