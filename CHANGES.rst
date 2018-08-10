@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0b7 (unreleased)
+1.0.0b7 (2018-08-10)
 --------------------
 
 - `Media search available <https://www.hl7.org/fhir/media.html>`_.
