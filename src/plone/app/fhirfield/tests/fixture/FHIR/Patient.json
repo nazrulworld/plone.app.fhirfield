@@ -24,7 +24,7 @@
             "value": "demo1@example.com"
         }
     ],
-    "gender": "MALE",
+    "gender": "male",
     "resourceType": "Patient",
     "active": true,
     "identifier": [

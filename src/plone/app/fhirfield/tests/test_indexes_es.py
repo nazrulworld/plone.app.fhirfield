@@ -436,6 +436,40 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # result should contains two items
         self.assertEqual(len(result), 2)
 
+    def test_catalogsearch_missing_modifier(self):
+        """ """
+        self.load_contents()
+        # add another patient
+        self.admin_browser.open(self.portal_url + '/++add++FFTestPatient')
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Patient'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Patient.json'), 'r') as f:
+            data = json.load(f)
+            data['id'] = '20c5245f-89a8-49f8-b244-666b32adb92e'
+            data['gender'] = None
+            self.admin_browser.getControl(name='form.widgets.patient_resource').value = json.dumps(data)
+
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        # let's wait a bit
+        time.sleep(1)
+        # Let's test
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'gender:missing': 'true'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(1, len(result))
+        self.assertIsNone(result[0].getObject().patient_resource.gender)
+
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'gender:missing': 'false'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(1, len(result))
+        self.assertIsNotNone(result[0].getObject().patient_resource.gender)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
