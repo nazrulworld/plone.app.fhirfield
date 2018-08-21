@@ -8,6 +8,7 @@ from .variables import ERROR_PARAM_UNKNOWN
 from .variables import ERROR_PARAM_UNSUPPORTED
 from .variables import ERROR_PARAM_WRONG_DATATYPE
 from .variables import FHIR_FIELD_DEBUG
+from .variables import FHIR_REFERENCE_PARAM_DATA_TYPE_MAP
 from .variables import FHIR_RESOURCE_LIST  # noqa: F401
 from .variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
 from .variables import FHIR_SEARCH_PARAMETER_REGISTRY
@@ -238,15 +239,22 @@ class ElasticsearchQueryBuilder(object):
             datatype = 'object'
 
         q = dict()
-        if datatype == 'object':
-            if '.reference' not in path:
-                path += '.reference'
-            q['term'] = {path: self.params.get(org_field)}
-            self.query_tree['and'].append(q)
+        if '.reference' not in path:
+            fullpath = path + '.reference'
+        else:
+            fullpath = path
+        q['term'] = {fullpath: self.params.get(org_field)}
 
-        elif datatype == 'array':
-            # xxx: see elaticsearch array
-            pass
+        if datatype == 'array':
+            q = {
+                'nested': {
+                    'path': path,
+                    'query': {'bool': {'must': [
+                        {'match': q['term']},
+                    ]}},
+                },
+            }
+        self.query_tree['and'].append(q)
 
     def add_exists_query(self, field, modifier):
         """https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
@@ -343,7 +351,10 @@ class ElasticsearchQueryBuilder(object):
 
         elif param_type == 'reference':
             # xxx: data type for other reference? like partOf?
-            self.add_reference_query(field, modifier, 'object')
+            datatype = \
+                field in FHIR_REFERENCE_PARAM_DATA_TYPE_MAP['array'] and \
+                'array' or 'object'
+            self.add_reference_query(field, modifier, datatype)
 
     def build_search_parameters(self, field, modifier):
         """ """
@@ -359,7 +370,10 @@ class ElasticsearchQueryBuilder(object):
 
         elif param_type == 'reference':
             # xxx: data type
-            self.add_reference_query(field, modifier)
+            datatype = \
+                field in FHIR_REFERENCE_PARAM_DATA_TYPE_MAP['array'] and \
+                'array' or 'object'
+            self.add_reference_query(field, modifier, datatype)
 
     def add_identifier_query(self, field, modifier):
         """https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html

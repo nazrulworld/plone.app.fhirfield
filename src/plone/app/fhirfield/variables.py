@@ -85,3 +85,8 @@ with open(
         'r') as f:
     """ """
     FHIR_RESOURCE_LIST = json.load(f)['resources']
+
+FHIR_REFERENCE_PARAM_DATA_TYPE_MAP = {
+    'array': ('part-of', 'based-on'),
+    'object': (),
+}

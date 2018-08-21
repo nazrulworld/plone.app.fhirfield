@@ -545,6 +545,26 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         except SearchQueryValidationError as e:
             self.assertIn('Only single Pipe (|)', str(e))
 
+    def test_catalogsearch_array_type_reference(self):
+        """Search where reference inside List """
+        self.load_contents()
+
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        # Search with based on
+        result = portal_catalog.unrestrictedSearchResults(
+            task_resource={'based-on': 'ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce'},
+            portal_type='FFTestTask',
+        )
+        self.assertEqual(len(result), 1)
+
+        # Search with part-of
+        # should be two sub tasks
+        result = portal_catalog.unrestrictedSearchResults(
+            task_resource={'part-of': 'Task/5df31190-0ed4-45ba-8b16-3c689fc2e686'},
+            portal_type='FFTestTask',
+        )
+        self.assertEqual(len(result), 2)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

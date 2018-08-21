@@ -72,6 +72,26 @@
                     }
                 }
             },
+            "basedOn": {
+                "type": "nested",
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "store": false
+                    }
+                }
+            },
+            "partOf": {
+                "type": "nested",
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "store": false
+                    }
+                }
+            },
             "authoredOn": {
                 "type": "date",
                 "format": "date_time_no_millis||date_optional_time",
