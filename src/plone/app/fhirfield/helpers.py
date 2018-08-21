@@ -139,6 +139,9 @@ class ElasticsearchQueryBuilder(object):
                         modifier,
                         datatype=None):
         """ """
+        if field == 'identifier':
+            return self.add_identifier_query(field, modifier)
+
         path = self.find_query_path(field)
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
@@ -358,6 +361,57 @@ class ElasticsearchQueryBuilder(object):
             # xxx: data type
             self.add_reference_query(field, modifier)
 
+    def add_identifier_query(self, field, modifier):
+        """https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html
+        """
+        path = self.find_query_path(field)
+        query = {
+            'nested': {
+                'path': path,
+                'query': {'bool': {'must': list()}},
+            },
+        }
+        org_field = modifier and ':'.join([field, modifier]) or field
+        value = self.params.get(org_field)
+
+        if modifier == 'text':
+            # make dentifier.type.text query
+            query['nested']['query']['bool']['must'].append({
+                'match': {path + '.type.text': value},
+                })
+            self.query_tree['and'].append(query)
+            return
+        has_pipe = '|' in value
+
+        if has_pipe:
+            if value.startswith('|'):
+                query['nested']['query']['bool']['must'].append({
+                    'match': {path + '.value': value[1:]},
+                })
+            elif value.endswith('|'):
+                query['nested']['query']['bool']['must'].append({
+                    'match': {path + '.system': value[:-1]},
+                })
+            else:
+                parts = value.split('|')
+                try:
+                    query['nested']['query']['bool']['must'].append({
+                        'match': {path + '.system': parts[0]},
+                    })
+
+                    query['nested']['query']['bool']['must'].append({
+                        'match': {path + '.value': parts[1]},
+                    })
+
+                except IndexError:
+                    pass
+        else:
+            query['nested']['query']['bool']['must'].append({
+                'match': {path + '.value': value},
+                })
+
+        self.query_tree['and'].append(query)
+
     def clean_params(self):
         """ """
         unwanted = list()
@@ -434,6 +488,8 @@ class ElasticsearchQueryBuilder(object):
 
             if param_type == 'date':
                 self.validate_date(name, modifier, value, error_fields)
+            elif param_type == 'token':
+                self.validate_token(name, modifier, value, error_fields)
 
         if error_fields:
             errors = self.process_error_message(error_fields)
@@ -458,6 +514,20 @@ class ElasticsearchQueryBuilder(object):
                 DateTime(date_val)
             except Exception:
                 container.append((field, '{0} is not valid date string!'.format(value)))
+
+    def validate_token(self, field, modifier, value, container):
+        """ """
+        if modifier == 'text' and '|' in value:
+            container.append((
+                field,
+                _('Pipe (|) is not allowed in value, when `text` modifier is provided'),
+            ))
+        elif len(value.split('|')) > 2:
+
+            container.append((
+                field,
+                _('Only single Pipe (|) can be used as separator!'),
+            ))
 
     def process_error_message(self, errors):
         """ """

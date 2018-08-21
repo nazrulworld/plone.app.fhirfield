@@ -10,6 +10,7 @@ from . import FHIR_FIXTURE_PATH
 from collective.elasticsearch.es import ElasticSearchCatalog
 from DateTime import DateTime
 from plone import api
+from plone.app.fhirfield.exc import SearchQueryValidationError
 from plone.app.fhirfield.testing import IS_TRAVIS
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING  # noqa: E501
 from plone.app.testing import SITE_OWNER_NAME
@@ -469,6 +470,80 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(1, len(result))
         self.assertIsNotNone(result[0].getObject().patient_resource.gender)
+
+    def test_catalogsearch_identifier(self):
+        """ """
+        self.load_contents()
+
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'identifier': '240365-0002'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(len(result), 1)
+
+        # Test with system+value
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'identifier': 'CPR|240365-0002'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(len(result), 1)
+
+        # Test with system only with pipe sign
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'identifier': 'UUID|'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(len(result), 1)
+
+        # Test with value only with pipe sign
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'identifier': '|19c5245f-89a8-49f8-b244-666b32adb92e'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(len(result), 1)
+
+        # Test with empty result
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'identifier': 'CPR|19c5245f-89a8-49f8-b244-666b32adb92e'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(len(result), 0)
+
+        # Test with text modifier
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        result = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'identifier:text': 'Plone Patient UUID'},
+            portal_type='FFTestPatient',
+        )
+        self.assertEqual(len(result), 1)
+
+    def test_identifier_query_validation(self):
+        """ """
+        self.load_contents()
+
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        try:
+            portal_catalog.unrestrictedSearchResults(
+                patient_resource={'identifier:text': 'Plone|Patient-UUID'},
+                portal_type='FFTestPatient',
+            )
+            raise AssertionError('Code should not come here, as validation error should raise')
+        except SearchQueryValidationError as e:
+            self.assertIn('Pipe (|) is not allowed', str(e))
+
+        try:
+            portal_catalog.unrestrictedSearchResults(
+                patient_resource={'identifier': 'Plone|Patient|UUID'},
+                portal_type='FFTestPatient',
+            )
+            raise AssertionError('Code should not come here, as validation error should raise')
+        except SearchQueryValidationError as e:
+            self.assertIn('Only single Pipe (|)', str(e))
 
     def tearDown(self):
         """ """

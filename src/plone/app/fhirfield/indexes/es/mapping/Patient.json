@@ -18,10 +18,22 @@
                         "type": "string"
                     },
                     "system": {
-                            "type": "string"
+                            "type": "string",
+                            "index": "not_analyzed",
+                            "store": false
                     },
                     "value": {
-                        "type": "string"
+                        "type": "string",
+                        "index": "not_analyzed",
+                        "store": false
+                    },
+                    "type": {
+                        "properties": {
+                            "text": {
+                                "type": "string",
+                                "store": false
+                            }
+                        }
                     }
                 }
             },

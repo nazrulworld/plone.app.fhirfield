@@ -4,7 +4,9 @@ Changelog
 1.0.0b8 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Newfeatures
+
+- `Identifier search parameter <http://www.hl7.org/fhir/search.html#token>`_ is active now.
 
 
 1.0.0b7 (2018-08-10)
