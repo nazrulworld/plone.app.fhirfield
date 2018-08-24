@@ -90,3 +90,5 @@ FHIR_REFERENCE_PARAM_DATA_TYPE_MAP = {
     'array': ('part-of', 'based-on'),
     'object': (),
 }
+
+FHIR_ES_MAPPINGS_CACHE = dict()

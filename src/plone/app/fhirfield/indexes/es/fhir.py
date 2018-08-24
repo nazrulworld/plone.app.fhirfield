@@ -6,7 +6,7 @@
 # All imports here
 from collective.elasticsearch.indexes import BaseIndex
 from plone.app.fhirfield.helpers import build_elasticsearch_query
-from plone.app.fhirfield.helpers import make_fhir_elasticsearch_list
+from plone.app.fhirfield.helpers import get_elasticsearch_mapping
 from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST
@@ -19,7 +19,6 @@ __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 
 MAPPING_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'mapping')
-FHIR_ES_MAPPINGS = make_fhir_elasticsearch_list(MAPPING_FILE_DIR)
 
 DEPRICATION_MSG = """Use `{0}` CatalogIndex has been deprecated, use `FhirFieldIndex` instead
 as this class will be removed to next release.
@@ -28,7 +27,6 @@ as this class will be removed to next release.
 
 class EsFhirFieldIndex(BaseIndex):
     """ """
-    _mapping_cache = None
     filter_query = True
 
     def validate_name(self, name):
@@ -43,56 +41,14 @@ class EsFhirFieldIndex(BaseIndex):
         key = name.split('_')[0]
 
         try:
-            return FHIR_ES_MAPPINGS[key]['mapping']
-        except KeyError:
+            return get_elasticsearch_mapping(key, MAPPING_FILE_DIR)['mapping']
+        except LookupError:
             warnings.warn(
                 'No mapping found for `{0}`, instead minimal '
                 'mapping has been used.'.format(name),
                 UserWarning)
-
-        return {
-            'properties': {
-                'id': {
-                    'type': 'string',
-                    'store': True,
-                },
-                'identifier': {
-                    'type': 'nested',
-                    'properties': {
-                        'use': {
-                            'type': 'string',
-                        },
-                        'system': {
-                            'type': 'string',
-                        },
-                        'value': {
-                            'type': 'string',
-                        },
-                    },
-                },
-                'resourceType': {
-                    'type': 'string',
-                    'store': False,
-                },
-                'meta': {
-                    'properties': {
-                        'versionId': {
-                            'type': 'string',
-                            'store': False,
-                        },
-                        'lastUpdated': {
-                            'type': 'date',
-                            'format': 'date_time_no_millis||date_optional_time',
-                            'store': False,
-                        },
-                        'profile': {
-                            'type': 'string',
-                            'store': False,
-                        },
-                    },
-                },
-            },
-        }
+        # Return the base/basic mapping
+        return get_elasticsearch_mapping('Resource', MAPPING_FILE_DIR)['mapping']
 
     def get_value(self, object):
         """ """

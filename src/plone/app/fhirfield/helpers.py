@@ -7,6 +7,7 @@ from .variables import ERROR_MESSAGES
 from .variables import ERROR_PARAM_UNKNOWN
 from .variables import ERROR_PARAM_UNSUPPORTED
 from .variables import ERROR_PARAM_WRONG_DATATYPE
+from .variables import FHIR_ES_MAPPINGS_CACHE
 from .variables import FHIR_FIELD_DEBUG
 from .variables import FHIR_REFERENCE_PARAM_DATA_TYPE_MAP
 from .variables import FHIR_RESOURCE_LIST  # noqa: F401
@@ -621,25 +622,33 @@ class ElasticsearchSortQueryBuilder(object):
         """ """
 
 
-def make_fhir_elasticsearch_list(mapping_dir):
-    """ """
-    container = dict()
+def get_elasticsearch_mapping(resource, mapping_dir, cache=True):
+    """Elastic search mapping for FHIR resources"""
 
-    for root, dirs, files in os.walk(mapping_dir, topdown=True):
+    key = resource.lower()
 
-        for filename in files:
+    if key not in FHIR_ES_MAPPINGS_CACHE or cache is False:
+        file_location = None
+        expected_filename = '{0}.mapping.json'.format(FHIR_RESOURCE_LIST[key]['name'])
+        for root, dirs, files in os.walk(mapping_dir, topdown=True):
+            for filename in files:
+                if filename == expected_filename:
+                    file_location = os.path.join(root, filename)
+                    break
 
-            if not filename.endswith('.mapping.json'):
-                continue
+        if file_location is None:
+            raise LookupError(
+                'Mapping files {0}/{1} doesn\'t exists.'.
+                format(mapping_dir, expected_filename)
+                )
 
-            with open(os.path.join(root, filename), 'r') as f:
-                content = json.load(f)
-
+        with open(os.path.join(root, file_location), 'r') as f:
+            content = json.load(f)
             assert filename.split('.')[0] == content['resourceType']
 
-            container[content['resourceType'].lower()] = content
+            FHIR_ES_MAPPINGS_CACHE[key] = content
 
-    return container
+    return FHIR_ES_MAPPINGS_CACHE[key]
 
 
 def validate_index_name(name):

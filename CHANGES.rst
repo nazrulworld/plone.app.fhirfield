@@ -8,6 +8,7 @@ Newfeatures
 
 - `Identifier search parameter <http://www.hl7.org/fhir/search.html#token>`_ is active now.
 - Array of Reference query support (for example `basedOn` (list of reference) ) is active now.
+- All available mappings for searchable resources are generated.
 
 
 1.0.0b7 (2018-08-10)
