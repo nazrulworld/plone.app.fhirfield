@@ -9,7 +9,6 @@ from .variables import ERROR_PARAM_UNSUPPORTED
 from .variables import ERROR_PARAM_WRONG_DATATYPE
 from .variables import FHIR_ES_MAPPINGS_CACHE
 from .variables import FHIR_FIELD_DEBUG
-from .variables import FHIR_REFERENCE_PARAM_DATA_TYPE_MAP
 from .variables import FHIR_RESOURCE_LIST  # noqa: F401
 from .variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
 from .variables import FHIR_SEARCH_PARAMETER_REGISTRY
@@ -230,23 +229,28 @@ class ElasticsearchQueryBuilder(object):
 
     def add_reference_query(self,
                             field,
-                            modifier,
-                            datatype=None):
+                            modifier):
         """ """
         path = self.find_query_path(field)
         org_field = modifier and ':'.join([field, modifier]) or field
 
-        if datatype is None:
-            datatype = 'object'
+        mapping = get_elasticsearch_mapping(self.resource_type)
+        mapped_field = path.replace(self.field_name + '.', '').split('.')[0]
+
+        if mapping['properties'][mapped_field].get('type', None) == 'nested':
+            nested = True
+        else:
+            nested = False
 
         q = dict()
         if '.reference' not in path:
             fullpath = path + '.reference'
         else:
             fullpath = path
+
         q['term'] = {fullpath: self.params.get(org_field)}
 
-        if datatype == 'array':
+        if nested:
             q = {
                 'nested': {
                     'path': path,
@@ -352,10 +356,7 @@ class ElasticsearchQueryBuilder(object):
 
         elif param_type == 'reference':
             # xxx: data type for other reference? like partOf?
-            datatype = \
-                field in FHIR_REFERENCE_PARAM_DATA_TYPE_MAP['array'] and \
-                'array' or 'object'
-            self.add_reference_query(field, modifier, datatype)
+            self.add_reference_query(field, modifier)
 
     def build_search_parameters(self, field, modifier):
         """ """
@@ -370,16 +371,20 @@ class ElasticsearchQueryBuilder(object):
             self.add_date_query(field, modifier)
 
         elif param_type == 'reference':
-            # xxx: data type
-            datatype = \
-                field in FHIR_REFERENCE_PARAM_DATA_TYPE_MAP['array'] and \
-                'array' or 'object'
-            self.add_reference_query(field, modifier, datatype)
+            self.add_reference_query(field, modifier)
 
     def add_identifier_query(self, field, modifier):
         """https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html
         """
+        mapping = get_elasticsearch_mapping(self.resource_type)
+        if mapping['properties']['identifier'].get('type', None) == 'nested':
+            nested = True
+        else:
+            nested = False
+
         path = self.find_query_path(field)
+        matches = list()
+
         query = {
             'nested': {
                 'path': path,
@@ -388,43 +393,52 @@ class ElasticsearchQueryBuilder(object):
         }
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
+        has_pipe = '|' in value
 
         if modifier == 'text':
             # make dentifier.type.text query
-            query['nested']['query']['bool']['must'].append({
+            matches.append({
                 'match': {path + '.type.text': value},
                 })
-            self.query_tree['and'].append(query)
-            return
-        has_pipe = '|' in value
 
-        if has_pipe:
+        elif has_pipe:
             if value.startswith('|'):
-                query['nested']['query']['bool']['must'].append({
+                matches.append({
                     'match': {path + '.value': value[1:]},
                 })
             elif value.endswith('|'):
-                query['nested']['query']['bool']['must'].append({
+                matches.append({
                     'match': {path + '.system': value[:-1]},
                 })
             else:
                 parts = value.split('|')
                 try:
-                    query['nested']['query']['bool']['must'].append({
+                    matches.append({
                         'match': {path + '.system': parts[0]},
                     })
 
-                    query['nested']['query']['bool']['must'].append({
+                    matches.append({
                         'match': {path + '.value': parts[1]},
                     })
 
                 except IndexError:
                     pass
         else:
-            query['nested']['query']['bool']['must'].append({
+            matches.append({
                 'match': {path + '.value': value},
                 })
 
+        if nested:
+            query = {
+                'nested': {
+                    'path': path,
+                    'query': {'bool': {'must': matches}},
+                },
+            }
+        else:
+            query = {
+                'query': {'bool': {'must': matches}},
+            }
         self.query_tree['and'].append(query)
 
     def clean_params(self):
@@ -622,10 +636,16 @@ class ElasticsearchSortQueryBuilder(object):
         """ """
 
 
-def get_elasticsearch_mapping(resource, mapping_dir, cache=True):
+def get_elasticsearch_mapping(resource, mapping_dir=None, cache=True):
     """Elastic search mapping for FHIR resources"""
 
     key = resource.lower()
+    if mapping_dir is None:
+        mapping_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'indexes',
+            'es',
+            'mapping')
 
     if key not in FHIR_ES_MAPPINGS_CACHE or cache is False:
         file_location = None
@@ -648,7 +668,7 @@ def get_elasticsearch_mapping(resource, mapping_dir, cache=True):
 
             FHIR_ES_MAPPINGS_CACHE[key] = content
 
-    return FHIR_ES_MAPPINGS_CACHE[key]
+    return FHIR_ES_MAPPINGS_CACHE[key]['mapping']
 
 
 def validate_index_name(name):

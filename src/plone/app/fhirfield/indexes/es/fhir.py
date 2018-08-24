@@ -41,7 +41,7 @@ class EsFhirFieldIndex(BaseIndex):
         key = name.split('_')[0]
 
         try:
-            return get_elasticsearch_mapping(key, MAPPING_FILE_DIR)['mapping']
+            return get_elasticsearch_mapping(key, MAPPING_FILE_DIR)
         except LookupError:
             warnings.warn(
                 'No mapping found for `{0}`, instead minimal '
