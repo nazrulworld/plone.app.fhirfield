@@ -639,7 +639,7 @@ def get_elasticsearch_mapping(resource, mapping_dir, cache=True):
         if file_location is None:
             raise LookupError(
                 'Mapping files {0}/{1} doesn\'t exists.'.
-                format(mapping_dir, expected_filename)
+                format(mapping_dir, expected_filename),
                 )
 
         with open(os.path.join(root, file_location), 'r') as f:
