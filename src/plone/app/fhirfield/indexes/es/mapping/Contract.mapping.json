@@ -1,0 +1,113 @@
+{
+    "mapping": {
+        "properties": {
+            "authority": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "domain": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "id": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "identifier": {
+                "properties": {
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "type": {
+                        "properties": {
+                            "text": {
+                                "index": "analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "issued": {
+                "format": "date_time_no_millis||date_optional_time",
+                "store": false,
+                "type": "date"
+            },
+            "meta": {
+                "properties": {
+                    "lastUpdated": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    },
+                    "profile": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "versionId": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "resourceType": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "subject": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "topic": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            }
+        }
+    },
+    "meta": {
+        "lastUpdated": "2018-08-24T19:56:55+02:00",
+        "versionId": "STU3"
+    },
+    "resourceType": "Contract"
+}

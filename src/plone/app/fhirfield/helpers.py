@@ -629,7 +629,7 @@ def make_fhir_elasticsearch_list(mapping_dir):
 
         for filename in files:
 
-            if not filename.endswith('.json'):
+            if not filename.endswith('.mapping.json'):
                 continue
 
             with open(os.path.join(root, filename), 'r') as f:

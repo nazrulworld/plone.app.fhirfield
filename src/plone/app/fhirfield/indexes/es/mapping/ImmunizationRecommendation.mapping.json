@@ -1,0 +1,78 @@
+{
+    "mapping": {
+        "properties": {
+            "id": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "identifier": {
+                "properties": {
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "type": {
+                        "properties": {
+                            "text": {
+                                "index": "analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "meta": {
+                "properties": {
+                    "lastUpdated": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    },
+                    "profile": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "versionId": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "patient": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "resourceType": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            }
+        }
+    },
+    "meta": {
+        "lastUpdated": "2018-08-24T19:56:55+02:00",
+        "versionId": "STU3"
+    },
+    "resourceType": "ImmunizationRecommendation"
+}

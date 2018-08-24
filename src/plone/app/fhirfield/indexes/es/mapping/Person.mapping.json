@@ -1,0 +1,195 @@
+{
+    "mapping": {
+        "properties": {
+            "address": {
+                "properties": {
+                    "city": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "country": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "postalCode": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "state": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "birthDate": {
+                "format": "date_time_no_millis||date_optional_time",
+                "store": false,
+                "type": "date"
+            },
+            "gender": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "id": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "identifier": {
+                "properties": {
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "type": {
+                        "properties": {
+                            "text": {
+                                "index": "analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "managingOrganization": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "meta": {
+                "properties": {
+                    "lastUpdated": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    },
+                    "profile": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "versionId": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "name": {
+                "properties": {
+                    "family": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "period": {
+                        "properties": {
+                            "end": {
+                                "format": "date_time_no_millis||date_optional_time",
+                                "store": false,
+                                "type": "date"
+                            },
+                            "start": {
+                                "format": "date_time_no_millis||date_optional_time",
+                                "store": false,
+                                "type": "date"
+                            }
+                        }
+                    },
+                    "prefix": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "text": {
+                        "index": "analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "resourceType": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "telecom": {
+                "properties": {
+                    "period": {
+                        "properties": {
+                            "end": {
+                                "format": "date_time_no_millis||date_optional_time",
+                                "store": false,
+                                "type": "date"
+                            },
+                            "start": {
+                                "format": "date_time_no_millis||date_optional_time",
+                                "store": false,
+                                "type": "date"
+                            }
+                        }
+                    },
+                    "rank": {
+                        "store": false,
+                        "type": "integer"
+                    },
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "index": "analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            }
+        }
+    },
+    "meta": {
+        "lastUpdated": "2018-08-24T19:56:55+02:00",
+        "versionId": "STU3"
+    },
+    "resourceType": "Person"
+}

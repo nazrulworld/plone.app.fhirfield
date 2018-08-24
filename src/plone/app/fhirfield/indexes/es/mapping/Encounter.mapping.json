@@ -1,0 +1,231 @@
+{
+    "mapping": {
+        "properties": {
+            "appointment": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "class": {
+                "properties": {
+                    "code": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "episodeOfCare": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "id": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "identifier": {
+                "properties": {
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "type": {
+                        "properties": {
+                            "text": {
+                                "index": "analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "incomingReferral": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "length": {
+                "properties": {
+                    "code": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "unit": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "store": false,
+                        "type": "float"
+                    }
+                }
+            },
+            "meta": {
+                "properties": {
+                    "lastUpdated": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    },
+                    "profile": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "versionId": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "partOf": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "period": {
+                "properties": {
+                    "end": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    },
+                    "start": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    }
+                }
+            },
+            "reason": {
+                "properties": {
+                    "coding": {
+                        "properties": {
+                            "code": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            },
+                            "system": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        },
+                        "type": "nested"
+                    },
+                    "text": {
+                        "index": "analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "resourceType": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "serviceProvider": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "status": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "subject": {
+                "properties": {
+                    "reference": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "type": {
+                "properties": {
+                    "coding": {
+                        "properties": {
+                            "code": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            },
+                            "system": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        },
+                        "type": "nested"
+                    },
+                    "text": {
+                        "index": "analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            }
+        }
+    },
+    "meta": {
+        "lastUpdated": "2018-08-24T19:56:55+02:00",
+        "versionId": "STU3"
+    },
+    "resourceType": "Encounter"
+}

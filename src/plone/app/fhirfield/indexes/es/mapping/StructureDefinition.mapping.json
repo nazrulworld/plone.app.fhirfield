@@ -1,0 +1,187 @@
+{
+    "mapping": {
+        "properties": {
+            "abstract": {
+                "store": false,
+                "type": "boolean"
+            },
+            "baseDefinition": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "context": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "contextType": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "date": {
+                "format": "date_time_no_millis||date_optional_time",
+                "store": false,
+                "type": "date"
+            },
+            "derivation": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "description": {
+                "index": "analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "experimental": {
+                "store": false,
+                "type": "boolean"
+            },
+            "id": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "identifier": {
+                "properties": {
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "type": {
+                        "properties": {
+                            "text": {
+                                "index": "analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "use": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "jurisdiction": {
+                "properties": {
+                    "coding": {
+                        "properties": {
+                            "code": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            },
+                            "system": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        },
+                        "type": "nested"
+                    },
+                    "text": {
+                        "index": "analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "keyword": {
+                "properties": {
+                    "code": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                },
+                "type": "nested"
+            },
+            "kind": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "meta": {
+                "properties": {
+                    "lastUpdated": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    },
+                    "profile": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "versionId": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "name": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "publisher": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "resourceType": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "status": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "title": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "type": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "url": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            },
+            "version": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
+            }
+        }
+    },
+    "meta": {
+        "lastUpdated": "2018-08-24T19:56:55+02:00",
+        "versionId": "STU3"
+    },
+    "resourceType": "StructureDefinition"
+}
