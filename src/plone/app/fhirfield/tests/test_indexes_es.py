@@ -599,6 +599,20 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             result[1].getObject().task_resource.meta.lastUpdated.date,
             result[2].getObject().task_resource.meta.lastUpdated.date)
 
+    def test_mapping_adapter_patch(self):
+        """collective.elasticsearch.mapping.MappingAdapter.
+        The patch provides default index settings"""
+        self.convert_to_elasticsearch()
+        time.sleep(1)
+        es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
+
+        settings = es.connection.indices.get_settings(es.index_name)
+        settings = settings[es.real_index_name]['settings']
+
+        self.assertEqual(
+            settings['index']['mapping']['nested_fields']['limit'],
+            '100')
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

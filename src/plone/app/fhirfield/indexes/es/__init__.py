@@ -23,6 +23,7 @@ from .fhir import EsFhirTaskIndex
 from .fhir import EsFhirValueSetIndex
 from .helpers import build_elasticsearch_sortable
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
+from collective.elasticsearch.mapping import MappingAdapter
 from collective.elasticsearch.query import QueryAssembler
 from plone.app.fhirfield.indexes.PluginIndexes import FhirActivityDefinitionIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirCarePlanIndex  # noqa: E501
@@ -125,8 +126,30 @@ def QueryAssembler_normalize(self, query):
 
     return query, sortstr
 
+
+def MappingAdapter_get_index_creation_body(self):
+    """Per index based settings
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
+    https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#mapping-limit-settings
+    """
+    settings = {
+        'index': {
+            'mapping': {
+                'total_fields': {'limit': '1000'},
+                'depth': {'limit': '20'},
+                'nested_fields': {'limit': '100'},
+            },
+        },
+    }
+
+    return dict(settings=settings)
+
 # *** Monkey Patch ***
 
 
 setattr(QueryAssembler, '_old_normalize', QueryAssembler.normalize)
 setattr(QueryAssembler, 'normalize', QueryAssembler_normalize)
+
+setattr(MappingAdapter,
+        'get_index_creation_body',
+        MappingAdapter_get_index_creation_body)

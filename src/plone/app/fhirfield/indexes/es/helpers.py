@@ -895,7 +895,7 @@ class ElasticsearchSortQueryBuilder(object):
                     sort_order = 'desc'
 
                 path_ = self.find_path(cleaned_s_field, field, resource_type)
-                container.append(path_+':'+sort_order)
+                container.append(path_ + ':' + sort_order)
         return container
 
     def validate(self):
