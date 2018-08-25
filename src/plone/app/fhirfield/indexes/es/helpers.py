@@ -404,6 +404,72 @@ class ElasticsearchQueryBuilder(object):
         else:
             self.query_tree['and'].append(q)
 
+    def add_quantity_query(self, field, modifier):
+        """ """
+        path = self.find_query_path(field)
+        org_field = modifier and ':'.join([field, modifier]) or field
+        value = self.params.get(org_field)
+        prefix = 'eq'
+
+        if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
+            prefix = value[0:2]
+            value = value[2:]
+
+        matches = list()
+        value_parts = value.split('|')
+        value = float(value_parts[0])
+
+        value_query = dict()
+
+        if prefix in ('eq', 'ne'):
+            value_query['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
+                    FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
+                },
+            }
+
+        elif prefix in ('le', 'lt', 'ge', 'gt'):
+            value_query['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
+                },
+            }
+
+        try:
+            if value_parts[1]:
+                # some times could be empty
+                matches.append({
+                    'match': {path + '.system': value_parts[1]},
+                })
+                matches.append({
+                    'match': {path + '.code': value_parts[2]},
+                })
+            else:
+                matches.append({
+                    'match': {path + '.unit': value_parts[2]},
+                })
+
+        except IndexError:
+            pass
+
+        if prefix == 'ne':
+            query = {
+                'query': {'bool': {'must_not': [value_query]}},
+            }
+        else:
+            query = {
+                'query': {'bool': {'must': [value_query]}},
+            }
+
+        if matches:
+            if 'must' not in query['query']['bool']:
+                query['query']['bool'].update({'must': list()})
+
+            query['query']['bool']['must'].extends(matches)
+
+        self.query_tree['and'].append(query)
+
     def add_reference_query(self,
                             field,
                             modifier):
@@ -808,22 +874,89 @@ class ElasticsearchSortQueryBuilder(object):
     """
 
     def __init__(self,
-                 params,
-                 field_name,
-                 resource_type):
+                 field_definitions,
+                 sort_fields):
         """ """
-        self.sort_on = params.pop('_sort', None)
-        self.sort_order = 'asc'
-        if self.sort_on:
-            self.sort_on = self.sort_on.split(',')
+        self.field_definitions = field_definitions
+        self.sort_fields = sort_fields
+        self.validate()
 
-            for index, item in enumerate(self.sort_on):
-                if item.startswith('-'):
-                    self.sort_order = 'desc'
-                    self.sort_on[index] = item[1:]
-
-    def build(self):
+    def build(self, container=None):
         """ """
+        container = container or list()
+        for resource_type, field in six.iteritems(self.field_definitions):
+            for s_field in self.sort_fields:
+
+                cleaned_s_field = s_field.strip()
+                sort_order = 'asc'
+
+                if cleaned_s_field.startswith('-'):
+                    cleaned_s_field = cleaned_s_field[1:]
+                    sort_order = 'desc'
+
+                path_ = self.find_path(cleaned_s_field, field, resource_type)
+                container.append(path_+':'+sort_order)
+        return container
+
+    def validate(self):
+        """ """
+        errors = list()
+        for resource_type, field in six.iteritems(self.field_definitions):
+            for s_field in self.sort_fields:
+
+                cleaned_s_field = s_field.strip()
+                if cleaned_s_field.startswith('-'):
+                    cleaned_s_field = cleaned_s_field[1:]
+
+                if cleaned_s_field not in FHIR_SEARCH_PARAMETER_SEARCHABLE:
+                    errors.append(
+                        '{0} is unknown as FHIR search sortable field'.
+                        format(cleaned_s_field))
+                    continue
+
+                if cleaned_s_field in ('_content', '_id', '_lastUpdated',
+                                       '_profile', '_query', '_security',
+                                       '_tag', '_text'):
+                    continue
+
+                supported_paths = \
+                    FHIR_SEARCH_PARAMETER_SEARCHABLE[cleaned_s_field][1]
+
+                for path in supported_paths:
+                    if path.startswith(resource_type):
+                        break
+                else:
+                    errors.append(
+                        '{0} is not available for {1} FHIR Resource'.
+                        format(cleaned_s_field, resource_type),
+                        )
+
+        if errors:
+            raise SearchQueryValidationError(
+                'Sort validation: {0}'.
+                format(', '.join(errors)))
+
+    def find_path(self, s_field, field, resource_type):
+        """:param: s_field: sort field
+        :param: field: fhir field
+        :param: resource_type
+        """
+        paths = FHIR_SEARCH_PARAMETER_SEARCHABLE[s_field][1]
+
+        for path in paths:
+
+            if path.startswith('Resource.'):
+                return path.replace('Resource', field)
+
+            if path.startswith(resource_type):
+                return path.replace(resource_type, field)
+
+
+def build_elasticsearch_sortable(field_definitions, sort_fields, container=None):
+    """ """
+    builder = ElasticsearchSortQueryBuilder(field_definitions, sort_fields)
+
+    return builder.build(container)
 
 
 def get_elasticsearch_mapping(resource, mapping_dir=None, cache=True):

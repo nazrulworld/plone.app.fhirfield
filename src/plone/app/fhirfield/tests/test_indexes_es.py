@@ -566,6 +566,39 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(result), 2)
 
+    def test_elasticsearch_sorting(self):
+        """Search where reference inside List """
+        self.load_contents()
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        # Test ascending order
+        result = portal_catalog.unrestrictedSearchResults(
+            task_resource={'status:missing': 'false'},
+            portal_type='FFTestTask',
+            _sort='_lastUpdated',
+        )
+
+        self.assertGreater(
+            result[1].getObject().task_resource.meta.lastUpdated.date,
+            result[0].getObject().task_resource.meta.lastUpdated.date)
+        self.assertGreater(
+            result[2].getObject().task_resource.meta.lastUpdated.date,
+            result[1].getObject().task_resource.meta.lastUpdated.date)
+
+        # Test descending order
+        result = portal_catalog.unrestrictedSearchResults(
+            task_resource={'status:missing': 'false'},
+            portal_type='FFTestTask',
+            _sort='-_lastUpdated',
+        )
+
+        self.assertGreater(
+            result[0].getObject().task_resource.meta.lastUpdated.date,
+            result[1].getObject().task_resource.meta.lastUpdated.date)
+        self.assertGreater(
+            result[1].getObject().task_resource.meta.lastUpdated.date,
+            result[2].getObject().task_resource.meta.lastUpdated.date)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

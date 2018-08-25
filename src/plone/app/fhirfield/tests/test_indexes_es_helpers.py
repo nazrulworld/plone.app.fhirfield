@@ -1,4 +1,6 @@
 # _*_ coding: utf-8 _*_
+from collective.elasticsearch.query import QueryAssembler
+from plone.app.fhirfield.exc import SearchQueryValidationError
 from plone.app.fhirfield.indexes.es import helpers
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from zope.interface import Invalid
@@ -197,3 +199,105 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
                 'modifier has been provided')
         except Invalid as e:
             self.assertIn('is not valid date string!', str(e))
+
+
+class ElasticsearchSortQueryBuilderIntegrationTest(unittest.TestCase):
+    """ """
+    layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
+
+    def test_build(self):
+        """ """
+        sort_on = ['_score']
+
+        builder = helpers.ElasticsearchSortQueryBuilder(
+            {'Task': 'task_resource'},
+            '-_lastUpdated,status'.split(','))
+        builder.build(sort_on)
+        self.assertEqual(
+            '_score,task_resource.meta.lastUpdated:desc,task_resource.status:asc',
+            ','.join(sort_on))
+
+    def test_validation(self):
+        """ """
+        # test unknown field
+        try:
+            helpers.build_elasticsearch_sortable(
+                {'Task': 'task_resource'}, ('created_on', ),
+            )
+            raise AssertionError('Code should not come here!')
+        except SearchQueryValidationError as e:
+            self.assertIn('created_on is unknown', str(e))
+
+        # test unsupported field for certain resource
+        # for example Task has no attribute gender
+
+        try:
+            helpers.build_elasticsearch_sortable(
+                {'Task': 'task_resource'}, ('_lastUpdated', 'gender'),
+            )
+            raise AssertionError('Code should not come here!')
+        except SearchQueryValidationError as e:
+            self.assertIn('gender is not available', str(e))
+
+
+class QueryAssemblerPatchIntegrationTest(unittest.TestCase):
+    """ """
+    layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
+
+    def setUp(self):
+        """ """
+        class ES(object):
+            def __init__(self):
+                """ """
+                self.catalogtool = None
+
+        self.portal = self.layer['portal']
+        self.es = ES()
+
+    def test_fhir_sortable(self):
+        """ """
+        assembler = QueryAssembler(None, self.es)
+
+        query = {
+            'task_resource': {'status': 'ready',
+                              '_lastUpdated': 'lt2018-01-15T06:31:18+00:00'},
+            'portal_type': 'Task',
+            '_sort': '-_lastUpdated,status',
+        }
+        query, sortstr = assembler.normalize(query)
+
+        self.assertEqual(
+            sortstr,
+            '_score,task_resource.meta.lastUpdated:desc,task_resource.status:asc')
+        self.assertNotIn('_sort', query)
+
+    def test_plone_sortable_obsolute(self):
+        """
+        Any kind of FHIR query, plone `sort_on` simple wiped out.
+        """
+        assembler = QueryAssembler(None, self.es)
+
+        query = {
+            'task_resource': {'status': 'ready',
+                              '_lastUpdated': 'lt2018-01-15T06:31:18+00:00'},
+            'portal_type': 'Task',
+            'sort_on': 'created',
+            'sort_order': 'desc',
+        }
+        query, sortstr = assembler.normalize(query)
+
+        self.assertEqual(sortstr, '')
+        self.assertNotIn('sort_on', query)
+        self.assertNotIn('sort_order', query)
+
+    def test_plone_sortable_working(self):
+        """For any kind of non FHIR query,
+        there should work normal plone sorting"""
+        query = {
+            'portal_type': 'Task',
+            'sort_on': 'created,id',
+            'sort_order': 'desc',
+        }
+        assembler = QueryAssembler(None, self.es)
+        query, sortstr = assembler.normalize(query)
+        self.assertEqual(sortstr, '_score,created,id:desc')
