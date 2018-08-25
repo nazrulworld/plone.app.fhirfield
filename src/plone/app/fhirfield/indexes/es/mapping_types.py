@@ -4,66 +4,66 @@
 # @Link    : http://nazrul.me/
 # @Version : $Id$
 # All imports here
-"""Compound mapping types """
+
 
 __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
 
-date_pattern = '-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1]))?)?'
-datetime_pattern = '-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?'
+date_pattern = '-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1]))?)?'  # noqa: E501
+datetime_pattern = '-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00)))?)?)?'  # noqa: E501
 Bool = {
-    "type": "boolean",
-    "store": False
+    'type': 'boolean',
+    'store': False,
 }
 Float = {
-    "type": "float",
-    "store": False
+    'type': 'float',
+    'store': False,
 }
 
 Integer = {
-    "type": "integer",
-    "store": False
+    'type': 'integer',
+    'store': False,
 }
 Long = {
-    "type": "long",
-    "store": False
+    'type': 'long',
+    'store': False,
 }
 
 Token = {
     'type': 'string',
     'index': 'not_analyzed',
-    'store': False
+    'store': False,
 }
 
 Text = {
     'type': 'string',
     'index': 'analyzed',
-    'store': False
+    'store': False,
 }
 
 SearchableText = {
     'type': 'string',
     'index': 'analyzed',
     'analyzer': 'keyword',
-    'store': False
+    'store': False,
 }
 
 Date = {
     'type': 'date',
     'format': 'date_time_no_millis||date_optional_time',
-    'store': False
+    'store': False,
 }
 
 Timing = {
     'properties': {
         'event': Date,
-        'code': Token
-    }
+        'code': Token,
+    },
 }
 
 Reference = {
     'properties': {
-        'reference': Token
-    }
+        'reference': Token,
+    },
 }
 
 Attachment = {
@@ -71,16 +71,16 @@ Attachment = {
         'url': Token,
         'language': Token,
         'title': Text,
-        'creation': Date
-    }
+        'creation': Date,
+    },
 }
 
 Coding = {
     'properties': {
         'system': Token,
         'code': Token,
-        'display': Token
-    }
+        'display': Token,
+    },
 }
 
 CodeableConcept = {
@@ -88,16 +88,16 @@ CodeableConcept = {
         'text': Text,
         'coding': {
             'type': 'nested',
-            'properties': Coding['properties']
-        }
-    }
+            'properties': Coding['properties'],
+        },
+    },
 }
 
 Period = {
     'properties': {
         'start': Date,
-        'end': Date
-    }
+        'end': Date,
+    },
 }
 Identifier = {
     'properties': {
@@ -106,26 +106,26 @@ Identifier = {
         'value': Token,
         'type': {
             'properties': {
-                'text': Text
-            }
-        }
-    }
+                'text': Text,
+            },
+        },
+    },
 }
 Quantity = {
     'properties': {
         'value': Float,
         'code': Token,
         'system': Token,
-        'unit': Token
-    }
+        'unit': Token,
+    },
 }
 
 Money = Quantity
 Range = {
     'properties': {
         'high': Quantity,
-        'low': Quantity
-    }
+        'low': Quantity,
+    },
 }
 
 Address = {
@@ -134,8 +134,8 @@ Address = {
         'country': Token,
         'postalCode': Token,
         'state': Token,
-        'use': Token
-    }
+        'use': Token,
+    },
 }
 
 HumanName = {
@@ -144,8 +144,8 @@ HumanName = {
         'text': Text,
         'prefix': Token,
         'period': Period,
-        'use': Token
-    }
+        'use': Token,
+    },
 }
 Duration = Quantity
 
@@ -155,19 +155,19 @@ ContactPoint = {
         'rank': Integer,
         'system': Token,
         'use': Token,
-        'value': Text
-    }
+        'value': Text,
+    },
 }
 
 ContactDetail = {
     'properties': {
         'name': Token,
-        'telecom': ContactPoint
-    }
+        'telecom': ContactPoint,
+    },
 }
 
 ContactDetail['properties']['telecom'].update({
-    'type': 'nested'
+    'type': 'nested',
 })
 
 Annotation = {
@@ -175,8 +175,8 @@ Annotation = {
         'authorReference': Reference,
         'authorString': Text,
         'text': Text,
-        'time': Date
-    }
+        'time': Date,
+    },
 }
 
 Dosage = {
@@ -187,16 +187,16 @@ Dosage = {
         'doseRange': Range,
         'site': CodeableConcept,
         'text': Text,
-        'timing': Timing
-    }
+        'timing': Timing,
+    },
 }
 
 RelatedArtifact = {
     'properties': {
         'type': Token,
         'url': Token,
-        'resource': Reference
-    }
+        'resource': Reference,
+    },
 }
 
 Signature = {
@@ -204,8 +204,8 @@ Signature = {
         'contentType': Token,
         'when': Date,
         'whoReference': Reference,
-        'whoUri': Token
-    }
+        'whoUri': Token,
+    },
 }
 # Common
 Id = Token
@@ -213,6 +213,6 @@ Meta = {
     'properties': {
         'versionId': Token,
         'lastUpdated': Date,
-        'profile': Token
-    }
+        'profile': Token,
+    },
 }

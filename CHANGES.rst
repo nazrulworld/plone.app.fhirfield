@@ -6,8 +6,8 @@ Changelog
 
 Newfeatures
 
-- `Identifier search parameter <http://www.hl7.org/fhir/search.html#token>`_ is active now.
-- Array of Reference query support (for example `basedOn` (list of reference) ) is active now.
+- `Identifier search parameter <http://www.hl7.org/fhir/search.html#token>`_ is active now (both array of identifier and single object identifier).
+- Array of Reference query support (for example `basedOn` (list of reference) ) is active now. Although normal object reference has already been supported.
 - All available mappings for searchable resources are generated.
 
 

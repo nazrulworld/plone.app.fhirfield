@@ -82,6 +82,11 @@
                                 "store": false,
                                 "type": "string"
                             },
+                            "display": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            },
                             "system": {
                                 "index": "not_analyzed",
                                 "store": false,
@@ -101,6 +106,11 @@
             "keyword": {
                 "properties": {
                     "code": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "display": {
                         "index": "not_analyzed",
                         "store": false,
                         "type": "string"
@@ -180,7 +190,7 @@
         }
     },
     "meta": {
-        "lastUpdated": "2018-08-24T20:07:13+02:00",
+        "lastUpdated": "2018-08-25T12:21:19+02:00",
         "versionId": "STU3"
     },
     "resourceType": "StructureDefinition"
