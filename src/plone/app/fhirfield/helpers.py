@@ -9,11 +9,13 @@ from importlib import import_module
 from plone.api.validation import required_parameters
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
+from plone.memoize import ram
 from zope.interface import Invalid
 
 import pkgutil
 import six
 import sys
+import time
 
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
@@ -110,3 +112,25 @@ def validate_index_name(name):
             'example: hospital_resource, patient')
 
         six.reraise(SearchQueryError, SearchQueryError(msg), sys.exc_info()[2])
+
+
+@ram.cache(lambda *args: (args[1], time.time() // (60 * 60 * 24)))  # cache for 24 hours
+def fhir_search_path_meta_info(path):
+    """ """
+    resource_type = path.split('.')[0]
+    properties = path.split('.')[1:]
+
+    model_cls = resource_type_str_to_fhir_model(resource_type)
+    result = None
+    for prop in properties:
+        for name, jsname, typ, is_list, of_many, not_optional in \
+                model_cls().elementProperties():
+            if prop != name:
+                continue
+            if typ not in (int, float, bool, str):
+                model_cls = typ
+
+            result = (jsname, is_list, of_many)
+            break
+
+    return result

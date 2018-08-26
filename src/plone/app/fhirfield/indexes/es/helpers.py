@@ -1,8 +1,11 @@
 # _*_ coding: utf-8 _*_
 from DateTime import DateTime
+from plone.api.validation import at_least_one_of
+from plone.api.validation import mutually_exclusive_parameters
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.exc import SearchQueryValidationError
+from plone.app.fhirfield.helpers import fhir_search_path_meta_info
 from plone.app.fhirfield.variables import ERROR_MESSAGES
 from plone.app.fhirfield.variables import ERROR_PARAM_UNKNOWN
 from plone.app.fhirfield.variables import ERROR_PARAM_UNSUPPORTED
@@ -108,7 +111,12 @@ class ElasticsearchQueryBuilder(object):
         if field == 'identifier':
             return self.add_identifier_query(field, modifier)
 
-        path = self.find_query_path(field)
+        raw_path = self.find_path(field)
+        # condition like: as(CodeableConcept), is(Range), .where(system='email')
+        raw_path, condition = self.normalize_path(raw_path)
+        path = self.find_query_path(raw_path=raw_path)
+
+        path_info = fhir_search_path_meta_info(raw_path)
 
         mapping = get_elasticsearch_mapping(self.resource_type)
         mapped_field = path.replace(self.field_name + '.', '').split('.')[0]
@@ -150,16 +158,19 @@ class ElasticsearchQueryBuilder(object):
                 else:
                     value = False
 
-            q = dict()
+            query = dict()
+            if path_info[1] is True:
+                # check Array type
+                query['terms'] = {path: [value]}
+            else:
+                query['term'] = {path: value}
 
             if modifier == 'not':
+                query = {
+                    'query': {'not': query},
+                }
 
-                q['query'] = {'not': {'term': {path: value}}}
-                self.query_tree['and'].append(q)
-
-            else:
-                q['term'] = {path: value}
-                self.query_tree['and'].append(q)
+            self.query_tree['and'].append(query)
 
     def add_string_query(self,
                          field,
@@ -172,7 +183,41 @@ class ElasticsearchQueryBuilder(object):
                          field,
                          modifier):
         """ """
-        # XXX: coming soon
+        prefix = 'eq'
+        org_field = modifier and ':'.join([field, modifier]) or field
+        path = self.find_query_path(field=field)
+        value = self.params.get(org_field)
+
+        if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
+            prefix = value[0:2]
+            value = value[2:]
+        if '.' in value:
+            value = float(value)
+        else:
+            value = int(value)
+
+        q = dict()
+
+        if prefix in ('eq', 'ne'):
+            q['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
+                    FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
+                },
+            }
+
+        elif prefix in ('le', 'lt', 'ge', 'gt'):
+            q['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
+                },
+            }
+
+        if (prefix != 'ne' and modifier == 'not') or \
+                (prefix == 'ne' and modifier != 'not'):
+            self.query_tree['and'].append({'query': {'not': q}})
+        else:
+            self.query_tree['and'].append(q)
 
     def add_codeableconcept_query(self,
                                   field,
@@ -413,7 +458,11 @@ class ElasticsearchQueryBuilder(object):
                        field,
                        modifier):
         """ """
-        path = self.find_query_path(field)
+        raw_path = self.find_path(field)
+        # condition like: as(CodeableConcept), is(Range), .where(system='email')
+        raw_path, condition = self.normalize_path(raw_path)
+        path = self.find_query_path(raw_path=raw_path)
+
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
         prefix = 'eq'
@@ -451,14 +500,19 @@ class ElasticsearchQueryBuilder(object):
         if timezone:
             q['range'][path]['time_zone'] = timezone
 
-        if prefix == 'ne' or modifier == 'not':
+        if (prefix != 'ne' and modifier == 'not') or \
+                (prefix == 'ne' and modifier != 'not'):
             self.query_tree['and'].append({'query': {'not': q}})
         else:
             self.query_tree['and'].append(q)
 
     def add_quantity_query(self, field, modifier):
         """ """
-        path = self.find_query_path(field)
+        raw_path = self.find_path(field)
+        # condition like: as(CodeableConcept), is(Range), .where(system='email')
+        raw_path, condition = self.normalize_path(raw_path)
+        path = self.find_query_path(raw_path=raw_path)
+
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
         prefix = 'eq'
@@ -505,7 +559,8 @@ class ElasticsearchQueryBuilder(object):
         except IndexError:
             pass
 
-        if prefix == 'ne':
+        if (prefix != 'ne' and modifier == 'not') or \
+                (prefix == 'ne' and modifier != 'not'):
             query = {
                 'query': {'bool': {'must_not': [value_query]}},
             }
@@ -593,12 +648,25 @@ class ElasticsearchQueryBuilder(object):
     def add_uri_query(self, field, modifier):
         """ """
         # XXX: we not sure all could be List of URI???
-        path = self.find_query_path(field)
+        raw_path = self.find_path(field)
+        path = self.find_query_path(raw_path=raw_path)
+        # js_name, is_list, of_many = fhir_search_path_meta_info(path)
+        info = fhir_search_path_meta_info(raw_path)
+
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
+        if info[1] is True:
+            # Array
+            query = {'terms': {path: [value]}}
+        else:
+            query = {'term': {path: value}}
 
-        q = {'terms': {path: [value]}}
-        self.query_tree['and'].append(q)
+        if modifier == 'not':
+            query = {
+                'query': {'not': query},
+            }
+
+        self.query_tree['and'].append(query)
 
     def add_identifier_query(self, field, modifier):
         """https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html
@@ -800,7 +868,21 @@ class ElasticsearchQueryBuilder(object):
                     })
         return container
 
-    def find_query_path(self, field):
+    @mutually_exclusive_parameters('field', 'raw_path')
+    @at_least_one_of('field', 'raw_path')
+    def find_query_path(self, field=None, raw_path=None):
+        """:param: r_field: resource field"""
+        if field:
+            raw_path = self.find_path(field)
+        if not raw_path:
+            return
+
+        if raw_path.startswith('Resource.'):
+            return raw_path.replace('Resource', self.field_name)
+        else:
+            return raw_path.replace(self.resource_type, self.field_name)
+
+    def find_path(self, field):
         """:param: r_field: resource field"""
         if field in FHIR_SEARCH_PARAMETER_SEARCHABLE:
             paths = FHIR_SEARCH_PARAMETER_SEARCHABLE[field][1]
@@ -808,10 +890,21 @@ class ElasticsearchQueryBuilder(object):
             for path in paths:
 
                 if path.startswith('Resource.'):
-                    return path.replace('Resource', self.field_name)
+                    return path
 
                 if path.startswith(self.resource_type):
-                    return path.replace(self.resource_type, self.field_name)
+                    return path
+
+    def normalize_path(self, path):
+        """Seprates if any condition is provided"""
+        condition = None
+
+        if '.where(' in path or '.as(' in path or '.is(' in path:
+            parts = path.split('.')
+            condition = parts[-1]
+            path = '.'.join(parts[:-1])
+
+        return path, condition
 
 
 def build_elasticsearch_query(params,

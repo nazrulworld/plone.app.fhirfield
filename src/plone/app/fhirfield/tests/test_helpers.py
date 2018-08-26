@@ -98,3 +98,17 @@ class HelperIntegrationTest(unittest.TestCase):
 
         value = helpers.parse_json_str(compat.EMPTY_STRING)
         self.assertIsNone(value)
+
+    def test_fhir_search_path_meta_info(self):
+        """ """
+        js_name, is_list, of_many = \
+            helpers.fhir_search_path_meta_info('Resource.meta.profile')
+
+        self.assertEqual(js_name, 'profile')
+        self.assertTrue(is_list)
+        self.assertIsNone(of_many)
+
+        js_name, is_list, of_many = \
+            helpers.fhir_search_path_meta_info('ActivityDefinition.url')
+
+        self.assertFalse(is_list)
