@@ -11,9 +11,7 @@ from plone.app.fhirfield.variables import FHIR_ES_MAPPINGS_CACHE
 from plone.app.fhirfield.variables import FHIR_FIELD_DEBUG
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST  # noqa: F401
 from plone.app.fhirfield.variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
-from plone.app.fhirfield.variables import FHIR_SEARCH_PARAMETER_REGISTRY
 from plone.app.fhirfield.variables import FHIR_SEARCH_PARAMETER_SEARCHABLE
-from plone.app.fhirfield.variables import FSPR_KEYS_BY_GROUP
 from plone.app.fhirfield.variables import FSPR_VALUE_PRIFIXES_MAP
 from plone.app.fhirfield.variables import LOGGER
 from plone.app.fhirfield.variables import SEARCH_PARAM_MODIFIERS
@@ -55,6 +53,54 @@ class ElasticsearchQueryBuilder(object):
 
         self.query_tree = {'and': list()}
 
+    def build(self):
+        """
+        https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
+        https://www.elastic.co/guide/en/elasticsearch/reference/2.3/query-dsl-bool-query.html
+        https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html
+        https://stackoverflow.com/questions/16243496/nested-boolean-queries-in-elastic-search
+        """
+        for r_field in self.params.keys():
+            """ """
+            parts = r_field.split(':')
+            try:
+                field = parts[0]
+                modifier = parts[1]
+            except IndexError:
+                modifier = None
+
+            if modifier in ('missing', 'exists'):
+                self.add_exists_query(*parts)
+                continue
+
+            # pass
+            param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[field][0]
+
+            if param_type == 'token':
+                # xxx: data type have to implement
+                # xxx: identify other data type?
+                self.add_token_query(field, modifier)
+
+            elif param_type == 'date':
+                self.add_date_query(field, modifier)
+
+            elif param_type == 'reference':
+                self.add_reference_query(field, modifier)
+
+            elif param_type == 'uri':
+                self.add_uri_query(field, modifier)
+
+            elif param_type == 'string':
+                self.add_string_query(field, modifier)
+
+            elif param_type == 'quantity':
+                self.add_quantity_query(field, modifier)
+
+            elif param_type == 'number':
+                self.add_number_query(field, modifier)
+
+        return self.query_tree.copy()
+
     def add_token_query(self,
                         field,
                         modifier):
@@ -95,32 +141,38 @@ class ElasticsearchQueryBuilder(object):
                 pass
 
         else:
-            self.add_str_token_query(field, modifier, path)
+            org_field = modifier and ':'.join([field, modifier]) or field
+            value = self.params.get(org_field)
 
-    def add_str_token_query(self,
-                            field,
-                            modifier,
-                            path):
-        """ """
-        org_field = modifier and ':'.join([field, modifier]) or field
-        value = self.params.get(org_field)
+            if value in ('true', 'false'):
+                if value == 'true':
+                    value = True
+                else:
+                    value = False
 
-        if value in ('true', 'false'):
-            if value == 'true':
-                value = True
+            q = dict()
+
+            if modifier == 'not':
+
+                q['query'] = {'not': {'term': {path: value}}}
+                self.query_tree['and'].append(q)
+
             else:
-                value = False
+                q['term'] = {path: value}
+                self.query_tree['and'].append(q)
 
-        q = dict()
+    def add_string_query(self,
+                         field,
+                         modifier):
+        """ """
+        # XXX: coming soon
+        self.add_token_query(field, modifier)
 
-        if modifier == 'not':
-
-            q['query'] = {'not': {'term': {path: value}}}
-            self.query_tree['and'].append(q)
-
-        else:
-            q['term'] = {path: value}
-            self.query_tree['and'].append(q)
+    def add_number_query(self,
+                         field,
+                         modifier):
+        """ """
+        # XXX: coming soon
 
     def add_codeableconcept_query(self,
                                   field,
@@ -538,97 +590,15 @@ class ElasticsearchQueryBuilder(object):
 
         self.query_tree['and'].append(q)
 
-    def build(self):
-        """
-        https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
-        https://www.elastic.co/guide/en/elasticsearch/reference/2.3/query-dsl-bool-query.html
-        https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html
-        https://stackoverflow.com/questions/16243496/nested-boolean-queries-in-elastic-search
-        """
-        for r_field, value in self.params.items():
-            """ """
-            parts = r_field.split(':')
-            try:
-                r_field = parts[0]
-                modifier = parts[1]
-            except IndexError:
-                modifier = None
-
-            if modifier in ('missing', 'exists'):
-                self.add_exists_query(*parts)
-                continue
-
-            if r_field in FSPR_KEYS_BY_GROUP.\
-                    get('Resource'):
-                self.build_resource_parameters(r_field, modifier)
-
-            elif r_field in FSPR_KEYS_BY_GROUP.\
-                    get('Common Search Parameters'):
-                self.build_common_search_parameters(r_field, modifier)
-
-            elif r_field in FSPR_KEYS_BY_GROUP.\
-                    get(self.resource_type):
-                try:
-                    method = 'build_{0}_search_parameters'.\
-                        format(self.resource_type.lower())
-
-                    getattr(self, method)(r_field, modifier)
-
-                except AttributeError:
-                    self.build_search_parameters(r_field, modifier)
-
-        return self.query_tree.copy()
-
-    def build_resource_parameters(self, field, modifier=None):
+    def add_uri_query(self, field, modifier):
         """ """
-        param = self.get_parameter(
-            field,
-            FHIR_SEARCH_PARAMETER_REGISTRY.get('Resource'))
+        # XXX: we not sure all could be List of URI???
+        path = self.find_query_path(field)
+        org_field = modifier and ':'.join([field, modifier]) or field
+        value = self.params.get(org_field)
 
-        if param[1] == 'token':
-            # xxx: data type have to implement
-            self.add_token_query(field, modifier)
-
-        elif param[1] == 'date':
-            self.add_date_query(field, modifier)
-
-        elif param[1] == 'uri':
-
-            path = param[3][0].replace('Resource', self.field_name)
-            value = self.params.get(field)
-            q = {'terms': {path: [value]}}
-            self.query_tree['and'].append(q)
-
-    def build_common_search_parameters(self, field, modifier):
-        """ """
-        param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[field][0]
-
-        if param_type == 'token':
-            # xxx: data type have to implement
-            # xxx: identify other data type?
-            self.add_token_query(field, modifier)
-
-        elif param_type == 'date':
-            self.add_date_query(field, modifier)
-
-        elif param_type == 'reference':
-            # xxx: data type for other reference? like partOf?
-            self.add_reference_query(field, modifier)
-
-    def build_search_parameters(self, field, modifier):
-        """ """
-        param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[field][0]
-
-        if param_type == 'token':
-            # xxx: data type have to implement
-            # xxx: identify other data type?
-            self.add_token_query(field, modifier)
-
-        elif param_type == 'date':
-            self.add_date_query(field, modifier)
-
-        elif param_type == 'reference':
-            self.add_reference_query(field, modifier)
+        q = {'terms': {path: [value]}}
+        self.query_tree['and'].append(q)
 
     def add_identifier_query(self, field, modifier):
         """https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html
@@ -830,16 +800,10 @@ class ElasticsearchQueryBuilder(object):
                     })
         return container
 
-    def get_parameter(self, field, parameters):
-
-        for param in parameters:
-            if param[0] == field:
-                return param
-
-    def find_query_path(self, r_field):
+    def find_query_path(self, field):
         """:param: r_field: resource field"""
-        if r_field in FHIR_SEARCH_PARAMETER_SEARCHABLE:
-            paths = FHIR_SEARCH_PARAMETER_SEARCHABLE[r_field][1]
+        if field in FHIR_SEARCH_PARAMETER_SEARCHABLE:
+            paths = FHIR_SEARCH_PARAMETER_SEARCHABLE[field][1]
 
             for path in paths:
 
