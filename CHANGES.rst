@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0b8 (unreleased)
+1.0.0rc1 (unreleased)
 --------------------
 
 Newfeatures
@@ -10,6 +10,14 @@ Newfeatures
 - Array of Reference query support (for example `basedOn` (list of reference) ) is active now. Although normal object reference has already been supported.
 - All available mappings for searchable resources are generated.
 - `FHIR search sort feature <https://www.hl7.org/fhir/search.html#sort>`_ is available!
+- `fhirfield.es.index.mapping.nested_fields.limit`, `fhirfield.es.index.mapping.depth.limit` and `fhirfield.es.index.mapping.total_fields.limit` `registry records <https://pypi.org/project/plone.app.registry>`_ are `available to setup ES mapping <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#mapping-limit-settings>`_
+
+
+Breaking Changes
+
+- `plone.app.fhirfield` have to install, as some registry records (settings) for elasticsearch mapping have been introduced.
+
+- Any deprecated FHIR Field Indexes other than `FhirFieldIndex` (`FhirOrganizationIndex` and so on) are removed
 
 
 1.0.0b7 (2018-08-10)

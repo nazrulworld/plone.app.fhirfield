@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<registry>
+    <record name="fhirfield.es.index.mapping.nested_fields.limit"
+            remove="True">
+    </record>
+    <record name="fhirfield.es.index.mapping.depth.limit"
+            remove="True">
+    </record>
+    <record name="fhirfield.es.index.mapping.total_fields.limit"
+            remove="True">
+    </record>
+</registry>

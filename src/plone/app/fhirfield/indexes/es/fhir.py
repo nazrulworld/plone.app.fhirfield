@@ -11,18 +11,10 @@ from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST
 
-import os
 import warnings
 
 
 __author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
-
-MAPPING_FILE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'mapping')
-
-DEPRICATION_MSG = """Use `{0}` CatalogIndex has been deprecated, use `FhirFieldIndex` instead
-as this class will be removed to next release.
-"""
 
 
 class EsFhirFieldIndex(BaseIndex):
@@ -41,14 +33,14 @@ class EsFhirFieldIndex(BaseIndex):
         key = name.split('_')[0]
 
         try:
-            return get_elasticsearch_mapping(key, MAPPING_FILE_DIR)
+            return get_elasticsearch_mapping(key)
         except LookupError:
             warnings.warn(
                 'No mapping found for `{0}`, instead minimal '
                 'mapping has been used.'.format(name),
                 UserWarning)
         # Return the base/basic mapping
-        return get_elasticsearch_mapping('Resource', MAPPING_FILE_DIR)['mapping']
+        return get_elasticsearch_mapping('Resource')
 
     def get_value(self, object):
         """ """
@@ -90,179 +82,3 @@ class EsFhirFieldIndex(BaseIndex):
             resource_type=resource_type)
 
         return query
-
-
-class EsFhirOrganizationIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirPatientIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirPractitionerIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirRelatedPersonIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirValueSetIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirTaskIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirQuestionnaireIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirQuestionnaireResponseIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirActivityDefinitionIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirHealthcareServiceIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirObservationIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirProcedureRequestIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirDeviceIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirDeviceRequestIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirCarePlanIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)
-
-
-class EsFhirPlanDefinitionIndex(EsFhirFieldIndex):
-    """ """
-
-    def create_mapping(self, name):
-        """"""
-        warnings.warn(
-            DEPRICATION_MSG.format(self.__class__.__name__),
-            UserWarning)
-        return EsFhirFieldIndex.create_mapping(self, name)

@@ -1,4 +1,24 @@
 <?xml version="1.0"?>
 <registry>
-
+    <record name="fhirfield.es.index.mapping.nested_fields.limit"
+            field="nested_fields_limit">
+        <field type="plone.registry.field.Int">
+            <title>Index Mapping nested_fields</title>
+        </field>
+        <value>100</value>
+    </record>
+    <record name="fhirfield.es.index.mapping.depth.limit"
+            field="depth_limit">
+        <field type="plone.registry.field.Int">
+            <title>Index Mapping depth</title>
+        </field>
+        <value>20</value>
+    </record>
+    <record name="fhirfield.es.index.mapping.total_fields.limit"
+            field="total_fields_limit">
+        <field type="plone.registry.field.Int">
+            <title>Index Mapping total_fields</title>
+        </field>
+        <value>1000</value>
+    </record>
 </registry>

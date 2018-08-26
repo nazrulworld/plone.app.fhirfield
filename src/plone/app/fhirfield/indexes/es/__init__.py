@@ -4,67 +4,23 @@
 # @Link    : http://nazrul.me/
 # @Version : $Id$
 # All imports here
-from .fhir import EsFhirActivityDefinitionIndex
-from .fhir import EsFhirCarePlanIndex
-from .fhir import EsFhirDeviceIndex
-from .fhir import EsFhirDeviceRequestIndex
 from .fhir import EsFhirFieldIndex
-from .fhir import EsFhirHealthcareServiceIndex
-from .fhir import EsFhirObservationIndex
-from .fhir import EsFhirOrganizationIndex
-from .fhir import EsFhirPatientIndex
-from .fhir import EsFhirPlanDefinitionIndex
-from .fhir import EsFhirPractitionerIndex
-from .fhir import EsFhirProcedureRequestIndex
-from .fhir import EsFhirQuestionnaireIndex
-from .fhir import EsFhirQuestionnaireResponseIndex
-from .fhir import EsFhirRelatedPersonIndex
-from .fhir import EsFhirTaskIndex
-from .fhir import EsFhirValueSetIndex
 from .helpers import build_elasticsearch_sortable
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
 from collective.elasticsearch.mapping import MappingAdapter
 from collective.elasticsearch.query import QueryAssembler
-from plone.app.fhirfield.indexes.PluginIndexes import FhirActivityDefinitionIndex  # noqa: E501
-from plone.app.fhirfield.indexes.PluginIndexes import FhirCarePlanIndex  # noqa: E501
-from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceIndex  # noqa: E501
-from plone.app.fhirfield.indexes.PluginIndexes import FhirDeviceRequestIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes import FhirFieldIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirHealthcareServiceIndex  # noqa: E501
-from plone.app.fhirfield.indexes.PluginIndexes import FhirObservationIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirOrganizationIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirPatientIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirPlanDefinitionIndex  # noqa: E501
-from plone.app.fhirfield.indexes.PluginIndexes import FhirPractitionerIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirProcedureRequestIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirQuestionnaireIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirQuestionnaireResponseIndex  # noqa: E501
-from plone.app.fhirfield.indexes.PluginIndexes import FhirRelatedPersonIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirTaskIndex
-from plone.app.fhirfield.indexes.PluginIndexes import FhirValueSetIndex
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST  # noqa: F401
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+
+import warnings
 
 
 __author__ = 'Md Nazrul Islam (email2nazrul@gmail.com)'
 
 INDEX_MAPPING = {
     FhirFieldIndex: EsFhirFieldIndex,
-    FhirOrganizationIndex: EsFhirOrganizationIndex,
-    FhirPatientIndex: EsFhirPatientIndex,
-    FhirPractitionerIndex: EsFhirPractitionerIndex,
-    FhirRelatedPersonIndex: EsFhirRelatedPersonIndex,
-    FhirValueSetIndex: EsFhirValueSetIndex,
-    FhirTaskIndex: EsFhirTaskIndex,
-    FhirQuestionnaireIndex: EsFhirQuestionnaireIndex,
-    FhirQuestionnaireResponseIndex: EsFhirQuestionnaireResponseIndex,
-    FhirActivityDefinitionIndex: EsFhirActivityDefinitionIndex,
-    FhirObservationIndex: EsFhirObservationIndex,
-    FhirHealthcareServiceIndex: EsFhirHealthcareServiceIndex,
-    FhirProcedureRequestIndex: EsFhirProcedureRequestIndex,
-    FhirDeviceIndex: EsFhirDeviceIndex,
-    FhirDeviceRequestIndex: EsFhirDeviceRequestIndex,
-    FhirCarePlanIndex: EsFhirCarePlanIndex,
-    FhirPlanDefinitionIndex: EsFhirPlanDefinitionIndex,
 }
 
 # Tiny patch
@@ -132,15 +88,24 @@ def MappingAdapter_get_index_creation_body(self):
     https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
     https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#mapping-limit-settings
     """
-    settings = {
-        'index': {
+    registry = getUtility(IRegistry)
+    settings = dict()
+    try:
+        settings['index'] = {
             'mapping': {
-                'total_fields': {'limit': '1000'},
-                'depth': {'limit': '20'},
-                'nested_fields': {'limit': '100'},
+                'total_fields': {'limit': registry['fhirfield.es.index.mapping.total_fields.limit']},
+                'depth': {'limit': registry['fhirfield.es.index.mapping.depth.limit']},
+                'nested_fields': {'limit': registry['fhirfield.es.index.mapping.nested_fields.limit']},
             },
-        },
-    }
+        }
+    except KeyError:
+        msg = 'Plone registry records ("fhirfield.es.index.mapping.total_fields.limit",'\
+              '"fhirfield.es.index.mapping.depth.limit", "fhirfield.es.index.mapping.nested_fields.limit"'\
+              ') are not created.\n May be plone.app.fhirfield is not installed!\n'\
+              'Either install plone.app.fhirfield or create records from other addon.'
+        warnings.warn(
+            msg,
+            UserWarning)
 
     return dict(settings=settings)
 

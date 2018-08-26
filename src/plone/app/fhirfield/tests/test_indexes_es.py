@@ -86,10 +86,10 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
     def test_resource_index_created(self):
         """resource is attribute of TestOrganization content
-        that is indexed as FhirOrganizationIndex"""
+        that is indexed as FhirFieldIndex"""
         self.admin_browser.open(self.portal_catalog_url + '/manage_catalogIndexes')
 
-        self.assertIn('FhirOrganizationIndex',
+        self.assertIn('FhirFieldIndex',
                       self.admin_browser.contents)
         self.assertIn('organization_resource',
                       self.admin_browser.contents)

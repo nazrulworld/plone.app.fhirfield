@@ -966,8 +966,6 @@ def get_elasticsearch_mapping(resource, mapping_dir=None, cache=True):
     if mapping_dir is None:
         mapping_dir = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            'indexes',
-            'es',
             'mapping')
 
     if key not in FHIR_ES_MAPPINGS_CACHE or cache is False:
