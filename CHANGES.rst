@@ -2,15 +2,23 @@ Changelog
 =========
 
 1.0.0rc1 (unreleased)
---------------------
+---------------------
 
 Newfeatures
 
 - `Identifier search parameter <http://www.hl7.org/fhir/search.html#token>`_ is active now (both array of identifier and single object identifier).
+
 - Array of Reference query support (for example `basedOn` (list of reference) ) is active now. Although normal object reference has already been supported.
+
 - All available mappings for searchable resources are generated.
+
 - `FHIR search sort feature <https://www.hl7.org/fhir/search.html#sort>`_ is available!
+
 - `fhirfield.es.index.mapping.nested_fields.limit`, `fhirfield.es.index.mapping.depth.limit` and `fhirfield.es.index.mapping.total_fields.limit` `registry records <https://pypi.org/project/plone.app.registry>`_ are `available to setup ES mapping <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#mapping-limit-settings>`_
+
+- `URI` and `Number` type parameter based search are fully available.
+
+- **`resourceType` filter is automatically injected into every generated query.** Query Builder knows about which resourceType should be.
 
 
 Breaking Changes

@@ -23,12 +23,16 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'range': {
-            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00',
-                                          'gte': '2011-09-17T00:00:00'}}}]
+        compare = [
+            {'range': {
+                'resource.meta.lastUpdated': {
+                    'lte': '2011-09-17T00:00:00',
+                    'gte': '2011-09-17T00:00:00'}}},
+            {'term': {'resource.resourceType': 'Organization'}},
+          ]
         query = builder.build()
-
-        self.assertEqual(len(query['and']), 1)
+        # resourceType should be auto included
+        self.assertEqual(len(query['and']), 2)
         self.assertEqual(query['and'], compare)
 
         # test:2 not equal
@@ -42,7 +46,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
                                           'gte': '2011-09-17T00:00:00'}}}
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 1)
+        self.assertEqual(len(query['and']), 2)
         self.assertEqual(query['and'][0]['query']['not'], compare)
 
         # test:3 less than
@@ -51,13 +55,13 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'range': {
-            'resource.meta.lastUpdated': {'lt': '2011-09-17T00:00:00'}}}]
+        compare = {'range': {
+            'resource.meta.lastUpdated': {'lt': '2011-09-17T00:00:00'}}}
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 1)
-        self.assertEqual(query['and'], compare)
+        self.assertEqual(len(query['and']), 2)
+        self.assertEqual(query['and'][0], compare)
 
         # test:4 greater than
         params = {'_lastUpdated': 'gt2011-09-17'}
@@ -65,13 +69,13 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'range': {
-            'resource.meta.lastUpdated': {'gt': '2011-09-17T00:00:00'}}}]
+        compare = {'range': {
+            'resource.meta.lastUpdated': {'gt': '2011-09-17T00:00:00'}}}
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 1)
-        self.assertEqual(query['and'], compare)
+        self.assertEqual(len(query['and']), 2)
+        self.assertEqual(query['and'][0], compare)
 
         # test:4 less than or equal
         params = {'_lastUpdated': 'le2011-09-17'}
@@ -79,13 +83,13 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'range': {
-            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00'}}}]
+        compare = {'range': {
+            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00'}}}
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 1)
-        self.assertEqual(query['and'], compare)
+        self.assertEqual(len(query['and']), 2)
+        self.assertEqual(query['and'][0], compare)
 
         # test:5 greater than or equal
         params = {'_lastUpdated': 'ge2011-09-17'}
@@ -93,13 +97,13 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         builder = helpers.ElasticsearchQueryBuilder(params,
                                                     'resource',
                                                     'Organization')
-        compare = [{'range': {
-            'resource.meta.lastUpdated': {'gte': '2011-09-17T00:00:00'}}}]
+        compare = {'range': {
+            'resource.meta.lastUpdated': {'gte': '2011-09-17T00:00:00'}}}
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 1)
-        self.assertEqual(query['and'], compare)
+        self.assertEqual(len(query['and']), 2)
+        self.assertEqual(query['and'][0], compare)
 
     def test_build_resource_profile(self):
         """ """
@@ -110,7 +114,9 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
             'resource',
             'Organization')
         query = builder.build()
-        compare = {'and': [{'terms': {'resource.meta.profile': ['https://www.hl7.org/fhir/search.html']}}]}
+        compare = {'and': [
+            {'terms': {'resource.meta.profile': ['https://www.hl7.org/fhir/search.html']}},
+            {'term': {'resource.resourceType': 'Organization'}}]}
 
         self.assertEqual(query, compare)
 

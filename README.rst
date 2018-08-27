@@ -28,7 +28,7 @@
 Background (plone.app.fhirfield)
 ================================
 
-`FHIR`_ (Fast Healthcare Interoperability Resources) is the industry standard for Healthcare system. Our intend to implement `FHIR`_ based system using `Plone`_! `plone.app.fhirfield`_ will make life easier to create, manage content for `FHIR resources`_.
+`FHIR`_ (Fast Healthcare Interoperability Resources) is the industry standard for Healthcare system. Our intend to implement `FHIR`_ based system using `Plone`_! `plone.app.fhirfield`_ will make life easier to create, manage content for `FHIR resources`_ as well search facilities for any FHIR Resources.
 
 How It Works
 ------------
@@ -50,6 +50,19 @@ Example::
 
 The field's value is the instance of a specilized class `FhirResourceValue` inside the context, which is kind of proxy class of `fhirclient model <https://github.com/smart-on-fhir/client-py>`_ with additional methods and attributes.
 
+**Make field indexable**
+
+A specilized Catalog PluginIndexes is named ``FhirFieldIndex`` is available, you will use it as like other catalog indexes. However importantly you have to maintain a strict convention (index name must be started with any valid fhir resource name (no matter uppercase or lowercase) and should _(underscore) be used as separator, i.e task_index(<resource>_<any name>))
+
+Example::
+
+    <?xml version="1.0"?>
+    <object name="portal_catalog" meta_type="Plone Catalog Tool">
+        <index name="organization_resource" meta_type="FhirFieldIndex">
+            <indexed_attr value="organization_resource"/>
+        </index>
+    </object>
+
 
 Features
 --------
@@ -58,7 +71,7 @@ Features
 - Widget: z3cform support
 - plone.supermodel support
 - plone.rfc822 marshaler field support
-- elasticsearch based catalog search
+- `100% FHIR search compliance <https://www.hl7.org/fhir/search.html>`_ catalog search.
 
 
 Available Field's Options
@@ -175,25 +188,6 @@ This package provides some useful functions those could be usable in your codeba
         >>> task_model_class = resource_type_str_to_fhir_model('Task')
 
 
-Available Catalog PluginIndexes
-===============================
-
-Bellows are fhirfield based catalog indexes are available.
-
-2. `FhirFieldIndex`:
-    - Resource Type: any valid fhir resource
-    - Has Mapping: minimal (id, identifier, meta)
-
-
-Example usages::
-
-    <?xml version="1.0"?>
-    <object name="portal_catalog" meta_type="Plone Catalog Tool">
-        <index name="organization_resource" meta_type="FhirFieldIndex">
-            <indexed_attr value="organization_resource"/>
-        </index>
-    </object>
-
 elasticsearch setup
 ===================
 
@@ -238,7 +232,13 @@ Install plone.app.fhirfield by adding it to your buildout::
         plone.app.fhirfield [elasticsearch]
 
 
-and then running ``bin/buildout``
+and then running ``bin/buildout``. Go to plone control and install ``plone.app.fhirfield`` or If you are creating an addon that depends on this product, you may add ``<dependency>profile-plone.app.fhirfield:default</dependency>`` in ``metadata.xml`` at profiles.
+
+configuration
+-------------
+
+This product provides three plone registry based records ``fhirfield.es.index.mapping.nested_fields.limit``, ``fhirfield.es.index.mapping.depth.limit``, ``fhirfield.es.index.mapping.total_fields.limit``. Those are related to ElasticSearch index mapping setup, if you aware about it, then you have option to modify from plone control panel (Registry).
+
 
 
 Links
@@ -259,7 +259,7 @@ Issue Tracker:
 
 
 License
--------
+=======
 
 The project is licensed under the GPLv2.
 

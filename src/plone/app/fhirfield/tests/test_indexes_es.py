@@ -291,8 +291,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # test:1 equal to
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog(
-            organization_resource={'_lastUpdated': '2010-05-28T05:35:56+00:00'},
-            portal_type='FFTestOrganization')
+            organization_resource={'_lastUpdated': '2010-05-28T05:35:56+00:00'})
 
         # result should contains only item
         self.assertEqual(len(result), 1)
@@ -300,8 +299,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         # test:2 not equal to
         result = portal_catalog(
-            organization_resource={'_lastUpdated': 'ne2015-05-28T05:35:56+00:00'},
-            portal_type='FFTestOrganization')
+            organization_resource={'_lastUpdated': 'ne2015-05-28T05:35:56+00:00'})
         # result should contains two items
         self.assertEqual(len(result), 2)
 
@@ -314,23 +312,20 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         # test:4 less than or equal to
         result = portal_catalog(
-            organization_resource={'_lastUpdated': 'le2015-05-28T05:35:56+00:00'},
-            portal_type='FFTestOrganization')
+            organization_resource={'_lastUpdated': 'le2015-05-28T05:35:56+00:00'})
         # result should contains two items, 2010-05-28T05:35:56+00:00 + 2015-05-28T05:35:56+00:00
         self.assertEqual(len(result), 2)
 
         # test:5 greater than
         result = portal_catalog(
-            organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'},
-            portal_type='FFTestOrganization')
+            organization_resource={'_lastUpdated': 'gt2015-05-28T05:35:56+00:00'})
         # result should contains only item
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0].getObject().organization_resource.id, 'f003')
 
         # test:6 greater than or equal to
         result = portal_catalog(
-            organization_resource={'_lastUpdated': 'ge2015-05-28T05:35:56+00:00'},
-            portal_type='FFTestOrganization')
+            organization_resource={'_lastUpdated': 'ge2015-05-28T05:35:56+00:00'})
         # result should contains only item
         self.assertEqual(len(result), 2)
 
@@ -349,7 +344,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         query = {
             'task_resource': {'status:not': 'ready'},
-            'portal_type': 'FFTestTask',
         }
         result = portal_catalog(**query)
 
@@ -360,7 +354,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         query = {
             'task_resource': {'status': 'ready',
                               '_lastUpdated': 'lt2018-01-15T06:31:18+00:00'},
-            'portal_type': 'FFTestTask',
         }
 
         result = portal_catalog(**query)
@@ -371,7 +364,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # ** Test boolen valued token **
         query = {
             'patient_resource': {'active': 'true'},
-            'portal_type': 'FFTestPatient',
         }
 
         result = portal_catalog(**query)
@@ -381,7 +373,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         query = {
             'patient_resource': {'active': 'false'},
-            'portal_type': 'FFTestPatient',
         }
 
         result = portal_catalog(**query)
@@ -394,7 +385,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         query = {
             'task_resource': {'owner': patient_id},
-            'portal_type': 'FFTestTask',
         }
         result = portal_catalog(**query)
 
@@ -403,14 +393,12 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         query = {
             'task_resource': {'owner': 'Practitioner/619c1ac0-821d-46d9-9d40-a61f2578cadf'},
-            'portal_type': 'FFTestTask',
         }
         result = portal_catalog(**query)
         self.assertEqual(len(result), 1)
 
         query = {
             'task_resource': {'patient': patient_id},
-            'portal_type': 'FFTestTask',
         }
         result = portal_catalog(**query)
 
@@ -419,7 +407,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # with compound query
         query = {
             'task_resource': {'patient': patient_id, 'status': 'draft'},
-            'portal_type': 'FFTestTask',
         }
         # should be now only single
         result = portal_catalog(**query)
@@ -459,14 +446,12 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'gender:missing': 'true'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(1, len(result))
         self.assertIsNone(result[0].getObject().patient_resource.gender)
 
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'gender:missing': 'false'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(1, len(result))
         self.assertIsNotNone(result[0].getObject().patient_resource.gender)
@@ -478,7 +463,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'identifier': '240365-0002'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(len(result), 1)
 
@@ -486,7 +470,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'identifier': 'CPR|240365-0002'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(len(result), 1)
 
@@ -494,7 +477,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'identifier': 'UUID|'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(len(result), 1)
 
@@ -502,7 +484,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'identifier': '|19c5245f-89a8-49f8-b244-666b32adb92e'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(len(result), 1)
 
@@ -510,7 +491,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'identifier': 'CPR|19c5245f-89a8-49f8-b244-666b32adb92e'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(len(result), 0)
 
@@ -518,7 +498,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         result = portal_catalog.unrestrictedSearchResults(
             patient_resource={'identifier:text': 'Plone Patient UUID'},
-            portal_type='FFTestPatient',
         )
         self.assertEqual(len(result), 1)
 
@@ -531,7 +510,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         try:
             portal_catalog.unrestrictedSearchResults(
                 patient_resource={'identifier:text': 'Plone|Patient-UUID'},
-                portal_type='FFTestPatient',
             )
             raise AssertionError('Code should not come here, as validation error should raise')
         except SearchQueryValidationError as e:
@@ -540,7 +518,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         try:
             portal_catalog.unrestrictedSearchResults(
                 patient_resource={'identifier': 'Plone|Patient|UUID'},
-                portal_type='FFTestPatient',
             )
             raise AssertionError('Code should not come here, as validation error should raise')
         except SearchQueryValidationError as e:
@@ -554,7 +531,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # Search with based on
         result = portal_catalog.unrestrictedSearchResults(
             task_resource={'based-on': 'ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce'},
-            portal_type='FFTestTask',
         )
         self.assertEqual(len(result), 1)
 
@@ -562,7 +538,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # should be two sub tasks
         result = portal_catalog.unrestrictedSearchResults(
             task_resource={'part-of': 'Task/5df31190-0ed4-45ba-8b16-3c689fc2e686'},
-            portal_type='FFTestTask',
         )
         self.assertEqual(len(result), 2)
 
@@ -588,7 +563,6 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # Test descending order
         result = portal_catalog.unrestrictedSearchResults(
             task_resource={'status:missing': 'false'},
-            portal_type='FFTestTask',
             _sort='-_lastUpdated',
         )
 

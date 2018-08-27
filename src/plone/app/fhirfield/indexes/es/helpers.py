@@ -51,6 +51,8 @@ class ElasticsearchQueryBuilder(object):
         self.resource_type = resource_type
         self.handling = handling
         self.params = params
+        # Although we are not supporting Multiple Resources Query yet!
+        self.resource_types = params.pop('_type', None)
 
         self.validate()
 
@@ -101,6 +103,11 @@ class ElasticsearchQueryBuilder(object):
 
             elif param_type == 'number':
                 self.add_number_query(field, modifier)
+
+        # unofficial but tricky
+        query = {'term': {self.field_name + '.resourceType': self.resource_type}}
+        # XXX multiple resources?
+        self.query_tree['and'].append(query)
 
         return self.query_tree.copy()
 
@@ -739,7 +746,13 @@ class ElasticsearchQueryBuilder(object):
         """ """
         unwanted = list()
 
-        for param in self.params.keys():
+        for param, value in self.params.items():
+
+            # Clean escape char in value.
+            # https://www.hl7.org/fhir/search.html#escaping
+            if value and '\\' in value:
+                value = value.replace('\\', '')
+
             parts = param.split(':')
 
             if parts[0] not in FHIR_SEARCH_PARAMETER_SEARCHABLE:
