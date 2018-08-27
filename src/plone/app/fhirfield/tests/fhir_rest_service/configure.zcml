@@ -7,7 +7,7 @@
         method="GET"
         name="@fhir-test"
         for="Products.CMFCore.interfaces.ISiteRoot"
-        factory=".get.FHIRGetService"
+        factory=".get.FHIRSearchService"
         permission="zope2.View"
     />
 
