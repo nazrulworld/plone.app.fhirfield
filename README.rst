@@ -42,7 +42,7 @@ Example::
 
     class IMyContent(model.Schema):
 
-        resource = FhirResource(
+        <resource_type>_resource = FhirResource(
             title=u'your title',
             desciption=u'your desciption',
             resource_type='any fhir resource type[optional]'

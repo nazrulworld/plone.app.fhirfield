@@ -5,11 +5,11 @@ from zope.publisher.interfaces import IPublishTraverse
 
 
 @implementer(IPublishTraverse)
-class FHIRGetService(Service):
+class FHIRSearchService(Service):
     """ """
     def __init__(self, context, request):
         """ """
-        super(FHIRGetService, self).__init__(context, request)
+        super(FHIRSearchService, self).__init__(context, request)
         self.params = []
 
     def reply(self):
@@ -26,7 +26,7 @@ class FHIRGetService(Service):
     def resource_type(self):
         """ """
 
-        if 0 < len(self.params) and self.params[0] != '_search':
+        if 0 < len(self.params):
             _rt = self.params[0]
             return _rt
         return None
