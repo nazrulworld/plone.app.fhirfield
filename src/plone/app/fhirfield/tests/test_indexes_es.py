@@ -456,6 +456,30 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.assertIsNotNone(result[0].getObject().patient_resource.gender)
 
+    def test_issue_5(self):
+        """https://github.com/nazrulworld/plone.app.fhirfield/issues/5
+        FHIR search's modifier `missing` is not working for nested mapping
+        """
+        self.load_contents()
+        # let's wait a bit
+        time.sleep(1)
+
+        # ------ Test in Complex Data Type -------------
+        # Parent Task has not partOf but each child has partOf referenced to parent
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        result = portal_catalog.unrestrictedSearchResults(
+            task_resource={'part-of:missing': 'false'},
+        )
+        # should be two
+        self.assertEqual(len(result), 2)
+
+        result = portal_catalog.unrestrictedSearchResults(
+            task_resource={'part-of:missing': 'true'},
+        )
+        # should be one (parent Task)
+        self.assertEqual(len(result), 1)
+
     def test_catalogsearch_identifier(self):
         """ """
         self.load_contents()

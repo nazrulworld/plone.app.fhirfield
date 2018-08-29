@@ -635,22 +635,55 @@ class ElasticsearchQueryBuilder(object):
     def add_exists_query(self, field, modifier):
         """https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
         """
-        path = self.find_query_path(field)
+        raw_path = self.find_path(field)
+        path = self.find_query_path(raw_path=raw_path)
+
+        mapping = get_elasticsearch_mapping(self.resource_type)
+        mapped_field = path.replace(self.field_name + '.', '').split('.')[0]
+
+        if mapping.get('properties') and \
+                mapping['properties'][mapped_field].get('type', None) == 'nested':
+            nested = True
+        else:
+            nested = False
+
         org_field = ':'.join([field, modifier])
         value = self.params.get(org_field)
-        q = dict(query=dict())
+
+        query = dict()
+        exists_q = {
+            'exists': {'field': path},
+        }
+
         if (modifier == 'missing' and value == 'true') or \
                 (modifier == 'exists' and value == 'false'):
-            q['query']['bool'] = \
+            query['bool'] = \
                 {
-                    'must_not': {'exists': {'field': path}},
+                    'must_not': exists_q,
                 }
         elif (modifier == 'missing' and value == 'false') or \
                 (modifier == 'exists' and value == 'true'):
 
-            q['query']['exists'] = {'field': path}
+            query['exists'] = {'field': path}
 
-        self.query_tree['and'].append(q)
+        if nested:
+            nested_query = {
+                    'nested': {
+                        'path': path,
+                        'query': exists_q,
+                    },
+                }
+
+            if 'bool' in query:
+                query['bool']['must_not'] = nested_query
+            else:
+                query = {
+                    'bool': {
+                        'must': nested_query,
+                    },
+                }
+
+        self.query_tree['and'].append({'query': query})
 
     def add_uri_query(self, field, modifier):
         """ """

@@ -4,8 +4,9 @@ Changelog
 1.0.0rc2 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+Bugfixes
 
+- Issue 5: `https://github.com/nazrulworld/plone.app.fhirfield/issues/5<https://github.com/nazrulworld/plone.app.fhirfield/issues/5>`_
 
 1.0.0rc1 (2018-08-27)
 ---------------------
