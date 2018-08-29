@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0rc2 (unreleased)
+1.0.0rc2 (2018-08-29)
 ---------------------
 
 Bugfixes
