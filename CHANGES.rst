@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0rc3 (unreleased)
+1.0.0rc3 (2018-09-22)
 ---------------------
 
 Improvements
