@@ -4,7 +4,9 @@ Changelog
 1.0.0rc3 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+Improvements
+
+- `Issue: 6 <https://github.com/nazrulworld/plone.app.fhirfield/issues/6>`_ A major improvement has been done, now very slim version (`id`, `resourceType`, `meta`) of FHIR json resource has been indexed in ZCatalog (zope index) version, however previously whole fhir resource was stored as a result now huge storage savings, perhaps improves indexing performance. [nazrulworld]
 
 
 1.0.0rc2 (2018-08-29)
@@ -12,7 +14,7 @@ Changelog
 
 Bugfixes
 
-- Issue 5: `https://github.com/nazrulworld/plone.app.fhirfield/issues/5<https://github.com/nazrulworld/plone.app.fhirfield/issues/5>`_
+- Issue 5: `FHIR search's modifier 'missing' is not working for nested mapping <https://github.com/nazrulworld/plone.app.fhirfield/issues/5>`_
 
 1.0.0rc1 (2018-08-27)
 ---------------------

@@ -11,6 +11,8 @@ from collective.elasticsearch.es import ElasticSearchCatalog
 from DateTime import DateTime
 from plone import api
 from plone.app.fhirfield.exc import SearchQueryValidationError
+from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import FhirFieldIndex
+from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import make_fhir_index_datum  # noqa: E501
 from plone.app.fhirfield.testing import IS_TRAVIS
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING  # noqa: E501
 from plone.app.testing import SITE_OWNER_NAME
@@ -610,6 +612,32 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertEqual(
             settings['index']['mapping']['nested_fields']['limit'],
             '100')
+
+    def test_issue_6(self):
+        """[FhirFieldIndex stores whole FHIR resources json as indexed value]
+        https://github.com/nazrulworld/plone.app.fhirfield/issues/6"""
+        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
+            = 'Test Hospital'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        self.admin_browser.getControl(name='form.widgets.organization_resource').value \
+            = json.dumps(fhir_json)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        self.assertIn('fftestorganization/view', self.admin_browser.url)
+
+        rid = api.content.find(portal_type='FFTestOrganization')[0].getRID()
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        indexed_data = portal_catalog.getIndexDataForRID(rid)['organization_resource']
+
+        index_datum = make_fhir_index_datum(FhirFieldIndex.mapping, fhir_json)
+
+        self.assertEqual(indexed_data, index_datum)
 
     def tearDown(self):
         """ """

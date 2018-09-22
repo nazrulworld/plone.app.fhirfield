@@ -6,7 +6,9 @@
 # All imports here
 from .helpers import build_elasticsearch_query
 from .helpers import get_elasticsearch_mapping
+from collective.elasticsearch import logger
 from collective.elasticsearch.indexes import BaseIndex
+from Missing import MV
 from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST
@@ -44,9 +46,24 @@ class EsFhirFieldIndex(BaseIndex):
 
     def get_value(self, object):
         """ """
-        value = super(EsFhirFieldIndex, self).get_value(object)
+        value = None
+        attrs = self.index.getIndexSourceNames()
+        if len(attrs) > 0:
+            attr = attrs[0]
+        else:
+            attr = ''
+
+        if getattr(self.index, 'index_object', None):
+            value = self.index._get_object_datum(object, attr, es_datum=True)
+        else:
+            logger.info(
+                'catalogObject was passed bad index '
+                'object {0!s}.'.format(self.index),
+            )
+        if value == MV:
+            return None
+
         if IFhirResourceValue.providedBy(value):
-            # should be sim value based on mapping?
             value = value.as_json()
 
         return value

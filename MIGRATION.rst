@@ -1,6 +1,12 @@
 Migration
 =========
 
+1.0.0b6 to 1.0.0rc3
+-------------------
+
+1. Keep backup of existing Data.fs (important)
+
+2. Just `Clear and Rebuild` existing catalogs. Go to site management -> portal_catalog -> Advanced Tab and click the `Clear and Rebuild` button. Caution: this activity could take longer time.
 
 
 1.0.0bx to 1.0.0b6
