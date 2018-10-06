@@ -386,11 +386,11 @@ class ElasticsearchQueryBuilder(object):
             }
         self.query_tree['and'].append(query)
 
-    def add_cotactpoint_query(self,
-                              field,
-                              modifier,
-                              path,
-                              nested):
+    def add_contactpoint_query(self,
+                               field,
+                               modifier,
+                               path,
+                               nested):
         """ """
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
@@ -516,7 +516,7 @@ class ElasticsearchQueryBuilder(object):
     def add_quantity_query(self, field, modifier):
         """ """
         raw_path = self.find_path(field)
-        # condition like: as(CodeableConcept), is(Range), .where(system='email')
+        # condition like: as(Quantity), is(Range), as(Age)
         raw_path, condition = self.normalize_path(raw_path)
         path = self.find_query_path(raw_path=raw_path)
 
@@ -536,7 +536,7 @@ class ElasticsearchQueryBuilder(object):
 
         if prefix in ('eq', 'ne'):
             value_query['range'] = {
-                path: {
+                path + '.value': {
                     FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
                     FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
                 },
@@ -544,27 +544,33 @@ class ElasticsearchQueryBuilder(object):
 
         elif prefix in ('le', 'lt', 'ge', 'gt'):
             value_query['range'] = {
-                path: {
+                path + '.value': {
                     FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
                 },
             }
+        # Potential extras
+        system = None
+        code = None
+        unit = None
 
-        try:
-            if value_parts[1]:
-                # some times could be empty
-                matches.append({
-                    'match': {path + '.system': value_parts[1]},
-                })
-                matches.append({
-                    'match': {path + '.code': value_parts[2]},
-                })
-            else:
-                matches.append({
-                    'match': {path + '.unit': value_parts[2]},
-                })
+        if len(value_parts) == 3:
+            system = value_parts[1]
+            code = value_parts[2]
+        elif len(value_parts) == 2:
+            unit = value_parts[1]
 
-        except IndexError:
-            pass
+        if system:
+            matches.append({
+                    'match': {path + '.system': system},
+                })
+        if code:
+            matches.append({
+                    'match': {path + '.code': code},
+                })
+        if unit:
+            matches.append({
+                    'match': {path + '.unit': unit},
+                })
 
         if (prefix != 'ne' and modifier == 'not') or \
                 (prefix == 'ne' and modifier != 'not'):
@@ -580,7 +586,7 @@ class ElasticsearchQueryBuilder(object):
             if 'must' not in query['query']['bool']:
                 query['query']['bool'].update({'must': list()})
 
-            query['query']['bool']['must'].extends(matches)
+            query['query']['bool']['must'].extend(matches)
 
         self.query_tree['and'].append(query)
 

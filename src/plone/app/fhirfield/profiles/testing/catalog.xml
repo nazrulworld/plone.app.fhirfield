@@ -38,4 +38,8 @@
   <indexed_attr value="procedurerequest_resource"/>
  </index>
 
+ <index name="chargeitem_resource" meta_type="FhirFieldIndex">
+  <indexed_attr value="chargeitem_resource"/>
+ </index>
+
 </object>

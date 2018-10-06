@@ -137,3 +137,16 @@ class IFFTestValueSet(model.Schema):
 @implementer(IFFTestValueSet)
 class FFTestValueSet(Item):
     """ """
+
+
+class IFFChargeItem(model.Schema):
+    """"""
+    chargeitem_resource = FhirResource(
+        title=u'Fhir ChargeItem Field',
+        model='fhirclient.models.chargeitem.ChargeItem',
+    )
+
+
+@implementer(IFFChargeItem)
+class FFChargeItem(Item):
+    """ """

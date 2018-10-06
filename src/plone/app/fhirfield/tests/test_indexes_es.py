@@ -639,6 +639,55 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(indexed_data, index_datum)
 
+    def test_quantity_type_search(self):
+        """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/7"""
+        self.load_contents()
+
+        self.admin_browser.open(self.portal_url + '/++add++FFChargeItem')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
+            = 'Test Clinical Bill'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'ChargeItem.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        self.admin_browser.getControl(name='form.widgets.chargeitem_resource').value \
+            = json.dumps(fhir_json)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        self.assertIn('ffchargeitem/view', self.admin_browser.url)
+        # Let's wait a bit
+        time.sleep(1)
+        # Test so normal
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        # Test ascending order
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'quantity': '5'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'quantity': 'lt5.1'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # Test with value code/unit and system
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'price-override': 'gt39.99|urn:iso:std:iso:4217|EUR'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # Test with code/unit and system
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'price-override': '40|EUR'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

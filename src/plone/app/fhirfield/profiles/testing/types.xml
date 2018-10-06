@@ -13,4 +13,5 @@
   <object meta_type="Dexterity FTI" name="FFTestProcedureRequest"/>
   <object meta_type="Dexterity FTI" name="FFTestDevice"/>
   <object meta_type="Dexterity FTI" name="FFTestDeviceRequest"/>
+  <object meta_type="Dexterity FTI" name="FFChargeItem" />
 </object>
