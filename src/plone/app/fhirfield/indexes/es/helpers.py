@@ -195,18 +195,28 @@ class ElasticsearchQueryBuilder(object):
         path = self.find_query_path(field=field)
         value = self.params.get(org_field)
 
+        mapping = get_elasticsearch_mapping(self.resource_type)
+        mapped_field = path.replace(self.field_name + '.', '').split('.')[0]
+        mapped_definition = mapping['properties'][mapped_field]
+
+        # Sometimes number could be
         if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
             prefix = value[0:2]
             value = value[2:]
-        if '.' in value:
-            value = float(value)
-        else:
-            value = int(value)
+        if 'type' in mapped_definition:
+            if mapped_definition['type'] == 'float':
+                value = float(value)
+            else:
+                value = int(value)
 
-        q = dict()
+        elif 'properties' in mapped_definition:
+            if 'value' in mapped_definition['properties']:
+                path += '.value'
+
+        query = dict()
 
         if prefix in ('eq', 'ne'):
-            q['range'] = {
+            query['range'] = {
                 path: {
                     FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
                     FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
@@ -214,7 +224,7 @@ class ElasticsearchQueryBuilder(object):
             }
 
         elif prefix in ('le', 'lt', 'ge', 'gt'):
-            q['range'] = {
+            query['range'] = {
                 path: {
                     FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
                 },
@@ -222,9 +232,9 @@ class ElasticsearchQueryBuilder(object):
 
         if (prefix != 'ne' and modifier == 'not') or \
                 (prefix == 'ne' and modifier != 'not'):
-            self.query_tree['and'].append({'query': {'not': q}})
+            self.query_tree['and'].append({'query': {'not': query}})
         else:
-            self.query_tree['and'].append(q)
+            self.query_tree['and'].append(query)
 
     def add_codeableconcept_query(self,
                                   field,

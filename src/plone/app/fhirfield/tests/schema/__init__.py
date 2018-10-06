@@ -150,3 +150,16 @@ class IFFChargeItem(model.Schema):
 @implementer(IFFChargeItem)
 class FFChargeItem(Item):
     """ """
+
+
+class IFFEncounter(model.Schema):
+    """"""
+    encounter_resource = FhirResource(
+        title=u'Fhir FFEncounter Field',
+        model='fhirclient.models.encounter.Encounter',
+    )
+
+
+@implementer(IFFEncounter)
+class FFEncounter(Item):
+    """ """

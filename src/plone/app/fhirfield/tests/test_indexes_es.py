@@ -688,6 +688,63 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
+    def test_number_type_search(self):
+        """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/8"""
+        self.load_contents()
+
+        self.admin_browser.open(self.portal_url + '/++add++FFChargeItem')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
+            = 'Test Clinical Bill'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'ChargeItem.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        self.admin_browser.getControl(name='form.widgets.chargeitem_resource').value \
+            = json.dumps(fhir_json)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+
+        # Let's wait a bit
+        time.sleep(1)
+        # Test so normal
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        # Test normal float value order
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'factor-override': '0.8'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'factor-override': 'gt0.79'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # Test for Encounter
+        self.admin_browser.open(self.portal_url + '/++add++FFEncounter')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
+            = 'Test FFEncounter'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Encounter.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        self.admin_browser.getControl(name='form.widgets.encounter_resource').value \
+            = json.dumps(fhir_json)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        # Let's wait a bit
+        time.sleep(1)
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            encounter_resource={'length': 'gt139'},
+            portal_type='FFEncounter',
+        )
+        self.assertEqual(len(brains), 1)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

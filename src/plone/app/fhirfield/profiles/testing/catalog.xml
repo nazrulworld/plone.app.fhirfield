@@ -42,4 +42,8 @@
   <indexed_attr value="chargeitem_resource"/>
  </index>
 
+<index name="encounter_resource" meta_type="FhirFieldIndex">
+  <indexed_attr value="encounter_resource"/>
+ </index>
+
 </object>
