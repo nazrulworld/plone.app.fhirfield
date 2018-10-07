@@ -20,6 +20,7 @@ import mappings
 import os
 import pathlib
 import pprint
+import re
 import shutil
 import sys
 import tempfile
@@ -36,6 +37,8 @@ async def get_searchable_resources(table_data):
     # make searchable version
     searchable_data = defaultdict()
     # format-> key: value: [Type, Paths]
+
+    with_dot_as = re.compile(r'\.as\([a-z]+\)$', re.I)
 
     for group in table_data.keys():
         for row in table_data.get(group):
@@ -58,8 +61,20 @@ async def get_searchable_resources(table_data):
             resource = path.split('.')[0]
             if resource not in searchable_resources:
                 searchable_resources[resource] = set()
+            # Issue9
+            # check if .as() available
+            match = with_dot_as.search(path)
+            if match:
+                word = match.group()
+                # replace with unique
+                unique = 'XXXXXXX'
+                path = path.replace(word, unique)
+
+                new_word = word[4].upper() + word[5:-1]
+                path = path.replace(unique, new_word)
 
             searchable_resources[resource].add(path)
+
     return searchable_resources
 
 
@@ -149,7 +164,8 @@ async def add_mapping(resource, schema, paths, container):
                         mapped[field].update({'type': 'nested'})
                 except AttributeError:
                     sys.stderr.write(
-                        'Unknown attribute `{2} for {0}.{1}` in mappings module\n'.
+                        'Unknown attribute `{2} for {0}.{1}` '
+                        'in mappings module\n'.
                         format(resource, field, ref))
             else:
                 map_ = await create_basic_datatype_map(

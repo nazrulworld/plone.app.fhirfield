@@ -236,11 +236,87 @@
                         "type": "string"
                     }
                 }
+            },
+            "valueCodeableConcept": {
+                "properties": {
+                    "coding": {
+                        "properties": {
+                            "code": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            },
+                            "display": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            },
+                            "system": {
+                                "index": "not_analyzed",
+                                "store": false,
+                                "type": "string"
+                            }
+                        },
+                        "type": "nested"
+                    },
+                    "text": {
+                        "index": "analyzed",
+                        "store": false,
+                        "type": "string"
+                    }
+                }
+            },
+            "valueDateTime": {
+                "format": "date_time_no_millis||date_optional_time",
+                "store": false,
+                "type": "date"
+            },
+            "valuePeriod": {
+                "properties": {
+                    "end": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    },
+                    "start": {
+                        "format": "date_time_no_millis||date_optional_time",
+                        "store": false,
+                        "type": "date"
+                    }
+                }
+            },
+            "valueQuantity": {
+                "properties": {
+                    "code": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "system": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "unit": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
+                    },
+                    "value": {
+                        "store": false,
+                        "type": "float"
+                    }
+                }
+            },
+            "valueString": {
+                "index": "not_analyzed",
+                "store": false,
+                "type": "string"
             }
         }
     },
     "meta": {
-        "lastUpdated": "2018-08-25T12:21:19+02:00",
+        "lastUpdated": "2018-10-07T21:04:11+02:00",
         "versionId": "STU3"
     },
     "resourceType": "Observation"
