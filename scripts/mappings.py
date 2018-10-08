@@ -128,6 +128,7 @@ Range = {
     }
 }
 
+Age = Quantity
 Address = {
     'properties': {
         'city': Token,

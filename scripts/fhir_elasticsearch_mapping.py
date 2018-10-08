@@ -38,7 +38,8 @@ async def get_searchable_resources(table_data):
     searchable_data = defaultdict()
     # format-> key: value: [Type, Paths]
 
-    with_dot_as = re.compile(r'\.as\([a-z]+\)$', re.I)
+    with_dot_as_or_is = \
+        re.compile(r'(\.as\([a-z]+\)$)|(\.is\([a-z]+\)$)', re.I)
 
     for group in table_data.keys():
         for row in table_data.get(group):
@@ -63,7 +64,7 @@ async def get_searchable_resources(table_data):
                 searchable_resources[resource] = set()
             # Issue9
             # check if .as() available
-            match = with_dot_as.search(path)
+            match = with_dot_as_or_is.search(path)
             if match:
                 word = match.group()
                 # replace with unique
