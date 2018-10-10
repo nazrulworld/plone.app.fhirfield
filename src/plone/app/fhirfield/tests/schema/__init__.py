@@ -163,3 +163,16 @@ class IFFEncounter(model.Schema):
 @implementer(IFFEncounter)
 class FFEncounter(Item):
     """ """
+
+
+class IFFMedicationRequest(model.Schema):
+    """"""
+    medicationrequest_resource = FhirResource(
+        title=u'Fhir MedicationRequest Field',
+        model='fhirclient.models.medicationrequest.MedicationRequest',
+    )
+
+
+@implementer(IFFMedicationRequest)
+class FFMedicationRequest(Item):
+    """ """

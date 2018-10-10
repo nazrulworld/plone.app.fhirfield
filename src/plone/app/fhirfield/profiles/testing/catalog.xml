@@ -46,4 +46,8 @@
   <indexed_attr value="encounter_resource"/>
  </index>
 
+ <index name="medicationrequest_resource" meta_type="FhirFieldIndex">
+  <indexed_attr value="medicationrequest_resource" />
+ </index>
+
 </object>

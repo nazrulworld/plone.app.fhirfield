@@ -4,8 +4,11 @@ Changelog
 1.0.0rc4 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+Improvements
 
+- Mappings are more enriched, so many missing mappings are added, like `valueString`, `valueQuantity` and so on.[nazrulworld]
+
+- Issue#12 Full support for `code` search param type has been added, it also opens up for other search parameters (y).
 
 1.0.0rc3 (2018-09-22)
 ---------------------

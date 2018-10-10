@@ -21,10 +21,15 @@ from plone.app.fhirfield.variables import SEARCH_PARAM_MODIFIERS
 
 import mapping_types
 import os
+import re
 import six
 
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+
+PATH_WITH_DOT_AS = re.compile(r'\.as\([a-z]+\)$', re.I)
+PATH_WITH_DOT_IS = re.compile(r'\.is\([a-z]+\)$', re.I)
+PATH_WITH_DOT_WHERE = re.compile(r'\.where\([a-z]+\=\'[a-z]+\'\)$', re.I)
 
 
 class ElasticsearchQueryBuilder(object):
@@ -104,7 +109,7 @@ class ElasticsearchQueryBuilder(object):
             elif param_type == 'number':
                 self.add_number_query(field, modifier)
 
-        # unofficial but tricky
+        # unofficial but tricky!
         query = {'term': {self.field_name + '.resourceType': self.resource_type}}
         # XXX multiple resources?
         self.query_tree['and'].append(query)
@@ -141,7 +146,6 @@ class ElasticsearchQueryBuilder(object):
 
             elif mapped_definition.get('properties') == \
                     mapping_types.Coding.get('properties'):
-
                 self.add_coding_query(
                         field, modifier,
                         path, nested)
@@ -236,11 +240,13 @@ class ElasticsearchQueryBuilder(object):
         else:
             self.query_tree['and'].append(query)
 
-    def add_codeableconcept_query(self,
-                                  field,
-                                  modifier,
-                                  path,
-                                  nested):
+    def add_codeableconcept_query(
+            self,
+            field,
+            modifier,
+            path,
+            nested,
+            condition=None):
         """ """
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
@@ -261,7 +267,6 @@ class ElasticsearchQueryBuilder(object):
         matches = list()
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
-        has_pipe = '|' in value
 
         if modifier == 'text':
             # make CodeableConcept.text query
@@ -269,44 +274,44 @@ class ElasticsearchQueryBuilder(object):
                 'match': {path + '.text': value},
                 })
 
-        elif has_pipe:
-
-            pipe_matches = list()
-
-            if value.startswith('|'):
-                pipe_matches.append({
+        else:
+            coding_matches = list()
+            has_pipe = '|' in value
+            if not has_pipe:
+                # any value without | and modifier not eq text represents coding.code
+                coding_matches.append({
+                    'match': {path + '.coding.code': value},
+                })
+            elif value.startswith('|'):
+                coding_matches.append({
                     'match': {path + '.coding.code': value[1:]},
                 })
             elif value.endswith('|'):
-                pipe_matches.append({
+                coding_matches.append({
                     'match': {path + '.coding.system': value[:-1]},
                 })
             else:
                 parts = value.split('|')
                 try:
-                    pipe_matches.append({
+                    coding_matches.append({
                         'match': {path + '.coding.system': parts[0]},
                     })
 
-                    pipe_matches.append({
+                    coding_matches.append({
                         'match': {path + '.coding.code': parts[1]},
                     })
 
                 except IndexError:
+                    # we know what we are doing..
                     pass
 
-            pipe_query = {
+            coding_query = {
                 'nested': {
                     'path': path + '.coding',
-                    'query': {'bool': {'must': pipe_matches}},
+                    'query': {'bool': {'must': coding_matches}},
                 },
             }
-            matches.append(pipe_query)
-
-        else:
-            matches.append({
-                'match': {path + '.text': value},
-                })
+            matches.append(coding_query)
 
         if nested:
             query = {
@@ -319,13 +324,16 @@ class ElasticsearchQueryBuilder(object):
             query = {
                 'query': {'bool': {match_key: matches}},
             }
+
         self.query_tree['and'].append(query)
 
-    def add_coding_query(self,
-                         field,
-                         modifier,
-                         path,
-                         nested):
+    def add_coding_query(
+            self,
+            field,
+            modifier,
+            path,
+            nested,
+            condition=None):
         """ """
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
@@ -476,7 +484,7 @@ class ElasticsearchQueryBuilder(object):
                        modifier):
         """ """
         raw_path = self.find_path(field)
-        # condition like: as(CodeableConcept), is(Range), .where(system='email')
+        # condition like: None, exists, where......
         raw_path, condition = self.normalize_path(raw_path)
         path = self.find_query_path(raw_path=raw_path)
 
@@ -604,7 +612,11 @@ class ElasticsearchQueryBuilder(object):
                             field,
                             modifier):
         """ """
-        path = self.find_query_path(field)
+        raw_path = self.find_path(field)
+        # condition: None|exists|where....
+        raw_path, condition = self.normalize_path(raw_path)
+        path = self.find_query_path(raw_path=raw_path)
+
         org_field = modifier and ':'.join([field, modifier]) or field
 
         mapping = get_elasticsearch_mapping(self.resource_type)
@@ -652,6 +664,7 @@ class ElasticsearchQueryBuilder(object):
         """https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
         """
         raw_path = self.find_path(field)
+        raw_path, condition = self.normalize_path(raw_path)
         path = self.find_query_path(raw_path=raw_path)
 
         mapping = get_elasticsearch_mapping(self.resource_type)
@@ -960,11 +973,29 @@ class ElasticsearchQueryBuilder(object):
     def normalize_path(self, path):
         """Seprates if any condition is provided"""
         condition = None
+        # replace with unique
+        replacer = 'XXXXXXX'
 
-        if '.where(' in path or '.as(' in path or '.is(' in path:
-            parts = path.split('.')
-            condition = parts[-1]
-            path = '.'.join(parts[:-1])
+        if PATH_WITH_DOT_AS.search(path):
+            word = PATH_WITH_DOT_AS.search(path).group()
+            path = path.replace(word, replacer)
+
+            new_word = word[4].upper() + word[5:-1]
+            path = path.replace(replacer, new_word)
+
+        elif PATH_WITH_DOT_IS.search(path):
+            word = PATH_WITH_DOT_IS.search(path).group()
+            path = path.replace(word, replacer)
+
+            new_word = word[4].upper() + word[5:-1]
+            path = path.replace(replacer, new_word)
+
+            condition = 'exists'
+        elif PATH_WITH_DOT_WHERE.search(path):
+            word = PATH_WITH_DOT_WHERE.search(path).group()
+            path = path.replace(word, '')
+            parts = word[7:-1].split('=')
+            condition = '|'.join('where', parts[0]. parts[1])
 
         return path, condition
 

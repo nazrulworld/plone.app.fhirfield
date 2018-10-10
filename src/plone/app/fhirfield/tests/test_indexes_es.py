@@ -745,6 +745,91 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
+    def test_issue_12(self):
+        """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/12"""
+        self.load_contents()
+
+        self.admin_browser.open(self.portal_url + '/++add++FFChargeItem')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
+            = 'Test Clinical Bill'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'ChargeItem.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        self.admin_browser.getControl(name='form.widgets.chargeitem_resource').value \
+            = json.dumps(fhir_json)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        # Let's wait a bit
+        time.sleep(1)
+
+        # Test code (Coding)
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'code': 'F01510'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # Test with system+code
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'code': 'http://snomed.info/sct|F01510'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # test with code only
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'code': '|F01510'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # test with system only
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'code': 'http://snomed.info/sct|'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # test with text
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={'code:text': 'Nice Code'},
+            portal_type='FFChargeItem',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # test with .as(
+        self.admin_browser.open(self.portal_url + '/++add++FFMedicationRequest')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
+            = 'Test Clinical Bill'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'MedicationRequest.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        self.admin_browser.getControl(name='form.widgets.medicationrequest_resource').value \
+            = json.dumps(fhir_json)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        # Let's wait a bit
+        time.sleep(1)
+
+        # test with only code
+        brains = portal_catalog.unrestrictedSearchResults(
+            medicationrequest_resource={'code': '322254008'},
+            portal_type='FFMedicationRequest',
+        )
+        self.assertEqual(len(brains), 1)
+        # test with system and code
+        brains = portal_catalog.unrestrictedSearchResults(
+            medicationrequest_resource={'code': 'http://snomed.info/sct|'},
+            portal_type='FFMedicationRequest',
+        )
+        self.assertEqual(len(brains), 1)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
