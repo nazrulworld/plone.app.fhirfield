@@ -63,6 +63,326 @@ class ElasticsearchQueryBuilder(object):
 
         self.query_tree = {'and': list()}
 
+#       => Private methods stared from here <=
+
+    def _make_codeableconcept_query(
+            self,
+            path,
+            value,
+            nested=None,
+            modifier=None,
+            condition=None):
+        """ """
+        if modifier == 'not':
+            match_key = 'must_not'
+
+        elif modifier == 'text':
+            match_key = 'must'
+
+        elif modifier in ('above', 'below'):
+            # xxx: not implemnted yet
+            match_key = 'must'
+
+        else:
+            match_key = 'must'
+
+        matches = list()
+
+        if modifier == 'text':
+            # make CodeableConcept.text query
+            matches.append({
+                'match': {path + '.text': value},
+                })
+        else:
+            coding_query = self._make_coding_query(
+                path + '.coding',
+                value,
+                nested=True,
+                condition=condition)
+
+            matches.append(coding_query)
+
+        if nested:
+            query = {
+                'nested': {
+                    'path': path,
+                    'query': {'bool': {match_key: matches}},
+                },
+            }
+        else:
+            query = {
+                'query': {'bool': {match_key: matches}},
+            }
+        return query
+
+    def _make_coding_query(self,
+                           path,
+                           value,
+                           nested=None,
+                           modifier=None,
+                           condition=None):
+        """ """
+        if modifier == 'not':
+            match_key = 'must_not'
+        elif modifier == 'text':
+            match_key = 'must'
+        elif modifier in ('above', 'below'):
+            # xxx: not implemnted yet
+            match_key = 'must'
+        else:
+            match_key = 'must'
+
+        matches = list()
+        has_pipe = '|' in value
+
+        if modifier == 'text':
+
+            matches.append({
+                'match': {path + '.display': value},
+                })
+
+        elif has_pipe:
+
+            if value.startswith('|'):
+                matches.append({
+                    'match': {path + '.code': value[1:]},
+                })
+            elif value.endswith('|'):
+                matches.append({
+                    'match': {path + '.system': value[:-1]},
+                })
+            else:
+                parts = value.split('|')
+                try:
+                    matches.append({
+                        'match': {path + '.system': parts[0]},
+                    })
+
+                    matches.append({
+                        'match': {path + '.code': parts[1]},
+                    })
+
+                except IndexError:
+                    pass
+
+        else:
+            matches.append({
+                'match': {path + '.code': value},
+                })
+
+        if nested:
+            query = {
+                'nested': {
+                    'path': path,
+                    'query': {'bool': {match_key: matches}},
+                },
+            }
+        else:
+            query = {
+                'query': {'bool': {match_key: matches}},
+            }
+
+        return query
+
+    def _make_date_query(
+           self,
+           path,
+           value,
+           modifier=None):
+        """ """
+        prefix = 'eq'
+
+        if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
+            prefix = value[0:2]
+            value = value[2:]
+        _iso8601 = DateTime(value).ISO8601()
+
+        if '+' in _iso8601:
+            parts = _iso8601.split('+')
+            timezone = '+{0!s}'.format(parts[1])
+            value = parts[0]
+        else:
+            timezone = None
+            value = _iso8601
+
+        query = dict()
+
+        if prefix in ('eq', 'ne'):
+            query['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
+                    FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
+                },
+            }
+
+        elif prefix in ('le', 'lt', 'ge', 'gt'):
+            query['range'] = {
+                path: {
+                    FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
+                },
+            }
+
+        if timezone:
+            query['range'][path]['time_zone'] = timezone
+
+        if (prefix != 'ne' and modifier == 'not') or \
+                (prefix == 'ne' and modifier != 'not'):
+            query = {'query': {'not': query}}
+
+        return query
+
+    def _make_exists_query(
+           self,
+           path,
+           value,
+           nested,
+           modifier=None):
+        """ """
+        query = dict()
+        exists_q = {
+            'exists': {'field': path},
+        }
+
+        if (modifier == 'missing' and value == 'true') or \
+                (modifier == 'exists' and value == 'false'):
+            query['bool'] = \
+                {
+                    'must_not': exists_q,
+                }
+        elif (modifier == 'missing' and value == 'false') or \
+                (modifier == 'exists' and value == 'true'):
+
+            query['exists'] = {'field': path}
+
+        if nested:
+            nested_query = {
+                    'nested': {
+                        'path': path,
+                        'query': exists_q,
+                    },
+                }
+
+            if 'bool' in query:
+                query['bool']['must_not'] = nested_query
+            else:
+                query = {
+                    'bool': {
+                        'must': nested_query,
+                    },
+                }
+
+        return {'query': query}
+
+    def _make_identifier_query(
+           self,
+           path,
+           value,
+           nested=None,
+           modifier=None):
+        """ """
+        matches = list()
+        has_pipe = '|' in value
+
+        if modifier == 'not':
+            match_key = 'must_not'
+        else:
+            match_key = 'must'
+
+        if modifier == 'text':
+            # make dentifier.type.text query
+            matches.append({
+                'match': {path + '.type.text': value},
+                })
+
+        elif has_pipe:
+            if value.startswith('|'):
+                matches.append({
+                    'match': {path + '.value': value[1:]},
+                })
+            elif value.endswith('|'):
+                matches.append({
+                    'match': {path + '.system': value[:-1]},
+                })
+            else:
+                parts = value.split('|')
+                try:
+                    matches.append({
+                        'match': {path + '.system': parts[0]},
+                    })
+
+                    matches.append({
+                        'match': {path + '.value': parts[1]},
+                    })
+
+                except IndexError:
+                    pass
+        else:
+            matches.append({
+                'match': {path + '.value': value},
+                })
+
+        if nested:
+            query = {
+                'nested': {
+                    'path': path,
+                    'query': {'bool': {match_key: matches}},
+                },
+            }
+        else:
+            query = {
+                'query': {'bool': {match_key: matches}},
+            }
+
+        return query
+
+    def _make_reference_query(
+           self,
+           path,
+           value,
+           nested=None,
+           modifier=None):
+        """ """
+        query = dict()
+
+        fullpath = path + '.reference'
+
+        term = {fullpath: value}
+
+        if nested:
+            if modifier == 'not':
+                match_key = 'must_not'
+            else:
+                match_key = 'must'
+            query = {
+                'nested': {
+                    'path': path,
+                    'query': {'bool': {match_key: [
+                        {'match': term},
+                    ]}},
+                },
+            }
+        else:
+            if modifier == 'not':
+                query['query'] = {
+                    'not': {
+                        'term': term,
+                    },
+                }
+            else:
+                query['term'] = {fullpath: value}
+
+        return query
+
+    def _make_token_query(
+           self,
+           path,
+           value,
+           nested=None,
+           modifier=None):
+        """ """
+
+#       =>     Private methods ended        <=
+
     def build(self):
         """
         https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
@@ -109,6 +429,9 @@ class ElasticsearchQueryBuilder(object):
             elif param_type == 'number':
                 self.add_number_query(field, modifier)
 
+            elif param_type == 'composite':
+                self.add_composite_query(field, modifier)
+
         # unofficial but tricky!
         query = {'term': {self.field_name + '.resourceType': self.resource_type}}
         # XXX multiple resources?
@@ -124,7 +447,7 @@ class ElasticsearchQueryBuilder(object):
             return self.add_identifier_query(field, modifier)
 
         raw_path = self.find_path(field)
-        # condition like: as(CodeableConcept), is(Range), .where(system='email')
+
         raw_path, condition = self.normalize_path(raw_path)
         path = self.find_query_path(raw_path=raw_path)
 
@@ -251,79 +574,12 @@ class ElasticsearchQueryBuilder(object):
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
 
-        if modifier == 'not':
-            match_key = 'must_not'
-
-        elif modifier == 'text':
-            match_key = 'must'
-
-        elif modifier in ('above', 'below'):
-            # xxx: not implemnted yet
-            match_key = 'must'
-
-        else:
-            match_key = 'must'
-
-        matches = list()
-        org_field = modifier and ':'.join([field, modifier]) or field
-        value = self.params.get(org_field)
-
-        if modifier == 'text':
-            # make CodeableConcept.text query
-            matches.append({
-                'match': {path + '.text': value},
-                })
-
-        else:
-            coding_matches = list()
-            has_pipe = '|' in value
-            if not has_pipe:
-                # any value without | and modifier not eq text represents coding.code
-                coding_matches.append({
-                    'match': {path + '.coding.code': value},
-                })
-            elif value.startswith('|'):
-                coding_matches.append({
-                    'match': {path + '.coding.code': value[1:]},
-                })
-            elif value.endswith('|'):
-                coding_matches.append({
-                    'match': {path + '.coding.system': value[:-1]},
-                })
-            else:
-                parts = value.split('|')
-                try:
-                    coding_matches.append({
-                        'match': {path + '.coding.system': parts[0]},
-                    })
-
-                    coding_matches.append({
-                        'match': {path + '.coding.code': parts[1]},
-                    })
-
-                except IndexError:
-                    # we know what we are doing..
-                    pass
-
-            coding_query = {
-                'nested': {
-                    'path': path + '.coding',
-                    'query': {'bool': {'must': coding_matches}},
-                },
-            }
-            matches.append(coding_query)
-
-        if nested:
-            query = {
-                'nested': {
-                    'path': path,
-                    'query': {'bool': {match_key: matches}},
-                },
-            }
-        else:
-            query = {
-                'query': {'bool': {match_key: matches}},
-            }
+        query = self._make_codeableconcept_query(
+            path,
+            value,
+            nested=nested,
+            modifier=modifier,
+            condition=condition)
 
         self.query_tree['and'].append(query)
 
@@ -338,70 +594,13 @@ class ElasticsearchQueryBuilder(object):
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
 
-        if modifier == 'not':
-            match_key = 'must_not'
+        query = self._make_coding_query(
+            path,
+            value,
+            nested=nested,
+            modifier=modifier,
+            condition=condition)
 
-        elif modifier == 'text':
-            match_key = 'must'
-
-        elif modifier in ('above', 'below'):
-            # xxx: not implemnted yet
-            match_key = 'must'
-
-        else:
-            match_key = 'must'
-
-        matches = list()
-        org_field = modifier and ':'.join([field, modifier]) or field
-        value = self.params.get(org_field)
-        has_pipe = '|' in value
-
-        if modifier == 'text':
-            # make CodeableConcept.text query
-            matches.append({
-                'match': {path + '.display': value},
-                })
-
-        elif has_pipe:
-
-            if value.startswith('|'):
-                matches.append({
-                    'match': {path + '.code': value[1:]},
-                })
-            elif value.endswith('|'):
-                matches.append({
-                    'match': {path + '.system': value[:-1]},
-                })
-            else:
-                parts = value.split('|')
-                try:
-                    matches.append({
-                        'match': {path + '.system': parts[0]},
-                    })
-
-                    matches.append({
-                        'match': {path + '.code': parts[1]},
-                    })
-
-                except IndexError:
-                    pass
-
-        else:
-            matches.append({
-                'match': {path + '.code': value},
-                })
-
-        if nested:
-            query = {
-                'nested': {
-                    'path': path,
-                    'query': {'bool': {match_key: matches}},
-                },
-            }
-        else:
-            query = {
-                'query': {'bool': {match_key: matches}},
-            }
         self.query_tree['and'].append(query)
 
     def add_contactpoint_query(self,
@@ -490,46 +689,10 @@ class ElasticsearchQueryBuilder(object):
 
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
-        prefix = 'eq'
 
-        if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
-            prefix = value[0:2]
-            value = value[2:]
-        _iso8601 = DateTime(value).ISO8601()
+        query = self._make_date_query(path, value, modifier)
 
-        if '+' in _iso8601:
-            parts = _iso8601.split('+')
-            timezone = '+{0!s}'.format(parts[1])
-            value = parts[0]
-        else:
-            timezone = None
-            value = _iso8601
-
-        q = dict()
-
-        if prefix in ('eq', 'ne'):
-            q['range'] = {
-                path: {
-                    FSPR_VALUE_PRIFIXES_MAP.get('ge'): value,
-                    FSPR_VALUE_PRIFIXES_MAP.get('le'): value,
-                },
-            }
-
-        elif prefix in ('le', 'lt', 'ge', 'gt'):
-            q['range'] = {
-                path: {
-                    FSPR_VALUE_PRIFIXES_MAP.get(prefix): value,
-                },
-            }
-
-        if timezone:
-            q['range'][path]['time_zone'] = timezone
-
-        if (prefix != 'ne' and modifier == 'not') or \
-                (prefix == 'ne' and modifier != 'not'):
-            self.query_tree['and'].append({'query': {'not': q}})
-        else:
-            self.query_tree['and'].append(q)
+        self.query_tree['and'].append(query)
 
     def add_quantity_query(self, field, modifier):
         """ """
@@ -618,7 +781,7 @@ class ElasticsearchQueryBuilder(object):
         path = self.find_query_path(raw_path=raw_path)
 
         org_field = modifier and ':'.join([field, modifier]) or field
-
+        value = self.params.get(org_field)
         mapping = get_elasticsearch_mapping(self.resource_type)
         mapped_field = path.replace(self.field_name + '.', '').split('.')[0]
 
@@ -627,38 +790,12 @@ class ElasticsearchQueryBuilder(object):
         else:
             nested = False
 
-        q = dict()
-        if '.reference' not in path:
-            fullpath = path + '.reference'
-        else:
-            fullpath = path
-
-        term = {fullpath: self.params.get(org_field)}
-
-        if nested:
-            if modifier == 'not':
-                match_key = 'must_not'
-            else:
-                match_key = 'must'
-            q = {
-                'nested': {
-                    'path': path,
-                    'query': {'bool': {match_key: [
-                        {'match': term},
-                    ]}},
-                },
-            }
-        else:
-            if modifier == 'not':
-                q['query'] = {
-                    'not': {
-                        'term': term,
-                    },
-                }
-            else:
-                q['term'] = {fullpath: self.params.get(org_field)}
-
-        self.query_tree['and'].append(q)
+        query = self._make_reference_query(
+            path,
+            value,
+            nested=nested,
+            modifier=modifier)
+        self.query_tree['and'].append(query)
 
     def add_exists_query(self, field, modifier):
         """https://www.elastic.co/guide/en/elasticsearch/reference/2.4/query-dsl-exists-query.html
@@ -679,45 +816,19 @@ class ElasticsearchQueryBuilder(object):
         org_field = ':'.join([field, modifier])
         value = self.params.get(org_field)
 
-        query = dict()
-        exists_q = {
-            'exists': {'field': path},
-        }
+        query = self._make_exists_query(
+            path,
+            value,
+            nested=nested,
+            modifier=modifier)
 
-        if (modifier == 'missing' and value == 'true') or \
-                (modifier == 'exists' and value == 'false'):
-            query['bool'] = \
-                {
-                    'must_not': exists_q,
-                }
-        elif (modifier == 'missing' and value == 'false') or \
-                (modifier == 'exists' and value == 'true'):
-
-            query['exists'] = {'field': path}
-
-        if nested:
-            nested_query = {
-                    'nested': {
-                        'path': path,
-                        'query': exists_q,
-                    },
-                }
-
-            if 'bool' in query:
-                query['bool']['must_not'] = nested_query
-            else:
-                query = {
-                    'bool': {
-                        'must': nested_query,
-                    },
-                }
-
-        self.query_tree['and'].append({'query': query})
+        self.query_tree['and'].append(query)
 
     def add_uri_query(self, field, modifier):
         """ """
         # XXX: we not sure all could be List of URI???
         raw_path = self.find_path(field)
+        raw_path, condition = self.normalize_path(raw_path)
         path = self.find_query_path(raw_path=raw_path)
         # js_name, is_list, of_many = fhir_search_path_meta_info(path)
         info = fhir_search_path_meta_info(raw_path)
@@ -746,62 +857,19 @@ class ElasticsearchQueryBuilder(object):
         else:
             nested = False
 
-        path = self.find_query_path(field)
-        matches = list()
+        raw_path = self.find_path(field)
+        raw_path, condition = self.normalize_path(raw_path)
+        path = self.find_query_path(raw_path=raw_path)
 
         org_field = modifier and ':'.join([field, modifier]) or field
         value = self.params.get(org_field)
-        has_pipe = '|' in value
 
-        if modifier == 'not':
-            match_key = 'must_not'
-        else:
-            match_key = 'must'
+        query = self._make_identifier_query(
+            path,
+            value,
+            nested=nested,
+            modifier=modifier)
 
-        if modifier == 'text':
-            # make dentifier.type.text query
-            matches.append({
-                'match': {path + '.type.text': value},
-                })
-
-        elif has_pipe:
-            if value.startswith('|'):
-                matches.append({
-                    'match': {path + '.value': value[1:]},
-                })
-            elif value.endswith('|'):
-                matches.append({
-                    'match': {path + '.system': value[:-1]},
-                })
-            else:
-                parts = value.split('|')
-                try:
-                    matches.append({
-                        'match': {path + '.system': parts[0]},
-                    })
-
-                    matches.append({
-                        'match': {path + '.value': parts[1]},
-                    })
-
-                except IndexError:
-                    pass
-        else:
-            matches.append({
-                'match': {path + '.value': value},
-                })
-
-        if nested:
-            query = {
-                'nested': {
-                    'path': path,
-                    'query': {'bool': {match_key: matches}},
-                },
-            }
-        else:
-            query = {
-                'query': {'bool': {match_key: matches}},
-            }
         self.query_tree['and'].append(query)
 
     def clean_params(self):
@@ -998,6 +1066,22 @@ class ElasticsearchQueryBuilder(object):
             condition = '|'.join('where', parts[0]. parts[1])
 
         return path, condition
+
+    def add_composite_query(self, field, modifier):
+        """ """
+        raw_path = self.find_path(field)
+        raw_path, condition = self.normalize_path(raw_path)
+        # path = self.find_query_path(raw_path=raw_path)
+
+        # code_path, value_path = None, None
+
+        if field.startswith('code-'):
+            parts = field.split('-')
+            # code_path = parts[0]
+            value_path = parts[1]
+
+            for p in parts[2:]:
+                value_path += p[0].upper() + p[1:]
 
 
 def build_elasticsearch_query(params,
