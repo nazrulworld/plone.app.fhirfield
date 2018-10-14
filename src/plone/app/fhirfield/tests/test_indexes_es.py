@@ -830,6 +830,42 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
+    def test_issue13_address_telecom(self):
+        """https://github.com/nazrulworld/plone.app.fhirfield/issues/13"""
+        self.load_contents()
+
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        brains = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'email': 'demo1@example.com'},
+            portal_type='FFTestPatient',
+        )
+
+        self.assertEqual(len(brains), 1)
+
+        # Test address with multiple paths and value for city
+        brains = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'address': 'Indianapolis'},
+            portal_type='FFTestPatient',
+        )
+
+        self.assertEqual(len(brains), 1)
+
+        # Test address with multiple paths and value for postCode
+        brains = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'address': '46240'},
+            portal_type='FFTestPatient',
+        )
+
+        self.assertEqual(len(brains), 1)
+
+        # Test with single path for state
+        brains = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'address-state': 'IN'},
+            portal_type='FFTestPatient',
+        )
+
+        self.assertEqual(len(brains), 1)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

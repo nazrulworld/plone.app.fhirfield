@@ -19,6 +19,7 @@ from plone.app.fhirfield.variables import FSPR_VALUE_PRIFIXES_MAP
 from plone.app.fhirfield.variables import LOGGER
 from plone.app.fhirfield.variables import SEARCH_PARAM_MODIFIERS
 
+import ast
 import mapping_types
 import os
 import re
@@ -65,13 +66,64 @@ class ElasticsearchQueryBuilder(object):
 
 #       => Private methods stared from here <=
 
+    def _make_address_query(
+            self,
+            path,
+            value,
+            logic_in_path=None,
+            nested=None,
+            modifier=None):
+        """ """
+        multiple_paths = len(path.split('.')) == 2
+        nested_path = path
+
+        if multiple_paths:
+            match_key = 'should'
+
+        else:
+            nested_path = '.'.join(path.split('.')[:-1])
+            match_key = 'must'
+
+        matches = list()
+        if multiple_paths:
+            matches.append({
+                    'match': {path + '.city': value},
+            })
+            matches.append({
+                    'match': {path + '.country': value},
+            })
+            matches.append({
+                    'match': {path + '.postalCode': value},
+            })
+            matches.append({
+                    'match': {path + '.state': value},
+            })
+        else:
+            matches.append({
+                    'match': {path: value},
+            })
+
+        if nested:
+            query = {
+                'nested': {
+                    'path': nested_path,
+                    'query': {'bool': {match_key: matches}},
+                },
+            }
+        else:
+            query = {
+                'query': {'bool': {match_key: matches}},
+            }
+
+        return query
+
     def _make_codeableconcept_query(
             self,
             path,
             value,
             nested=None,
             modifier=None,
-            condition=None):
+            logic_in_path=None):
         """ """
         if modifier == 'not':
             match_key = 'must_not'
@@ -98,7 +150,7 @@ class ElasticsearchQueryBuilder(object):
                 path + '.coding',
                 value,
                 nested=True,
-                condition=condition)
+                logic_in_path=logic_in_path)
 
             matches.append(coding_query)
 
@@ -120,7 +172,7 @@ class ElasticsearchQueryBuilder(object):
                            value,
                            nested=None,
                            modifier=None,
-                           condition=None):
+                           logic_in_path=None):
         """ """
         if modifier == 'not':
             match_key = 'must_not'
@@ -169,6 +221,52 @@ class ElasticsearchQueryBuilder(object):
             matches.append({
                 'match': {path + '.code': value},
                 })
+
+        if nested:
+            query = {
+                'nested': {
+                    'path': path,
+                    'query': {'bool': {match_key: matches}},
+                },
+            }
+        else:
+            query = {
+                'query': {'bool': {match_key: matches}},
+            }
+
+        return query
+
+    def _make_contactpoint_query(
+            self,
+            path,
+            value,
+            logic_in_path=None,
+            nested=None,
+            modifier=None):
+        """ """
+        if modifier == 'not':
+            match_key = 'must_not'
+
+        elif modifier == 'text':
+            match_key = 'must'
+
+        elif modifier in ('above', 'below'):
+            # xxx: not implemnted yet
+            match_key = 'must'
+
+        else:
+            match_key = 'must'
+
+        matches = list()
+        matches.append({
+                'match': {path + '.value': value},
+        })
+
+        if logic_in_path:
+            parts = logic_in_path.split('|')
+            matches.append({
+                    'match': {path + '.' + parts[1]: parts[2]},
+            })
 
         if nested:
             query = {
@@ -517,7 +615,7 @@ class ElasticsearchQueryBuilder(object):
             except IndexError:
                 modifier = None
 
-            path, raw_path, param_type, condition, map_cls = \
+            path, raw_path, param_type, logic_in_path, map_cls = \
                 self.resolve_query_meta(param_name)
 
             if modifier in ('missing', 'exists'):
@@ -562,14 +660,12 @@ class ElasticsearchQueryBuilder(object):
                 # For now we are using literal string search
                 # in future there could be searchable text like
                 # search
-                meta_info = \
-                    fhir_search_path_meta_info(raw_path)
-                array_ = meta_info[1] is True
-
-                query = self._make_token_query(
-                    path,
+                query = self.build_token_query(
                     value,
-                    array_=array_,
+                    path,
+                    raw_path,
+                    logic_in_path=logic_in_path,
+                    map_cls=map_cls,
                     modifier=modifier)
 
             elif param_type == 'quantity':
@@ -610,7 +706,7 @@ class ElasticsearchQueryBuilder(object):
                     value,
                     path,
                     raw_path,
-                    condition=condition,
+                    logic_in_path=logic_in_path,
                     map_cls=map_cls,
                     modifier=modifier)
 
@@ -634,7 +730,7 @@ class ElasticsearchQueryBuilder(object):
             value,
             path,
             raw_path,
-            condition=None,
+            logic_in_path=None,
             map_cls=None,
             modifier=None):
         """ """
@@ -658,7 +754,7 @@ class ElasticsearchQueryBuilder(object):
                     value,
                     nested=nested,
                     modifier=modifier,
-                    condition=condition)
+                    logic_in_path=logic_in_path)
 
         elif map_properties == \
                 mapping_types.Coding.get('properties') or \
@@ -669,18 +765,29 @@ class ElasticsearchQueryBuilder(object):
                     value,
                     nested=nested,
                     modifier=modifier,
-                    condition=condition)
+                    logic_in_path=logic_in_path)
 
         elif map_properties == \
                 mapping_types.Address.get('properties') or \
                 map_cls == 'Address':
-                # address query
-                pass
+            # address query
+            query = self._make_address_query(
+                path,
+                value,
+                logic_in_path=logic_in_path,
+                nested=nested,
+                modifier=modifier)
+
         elif map_properties == \
                 mapping_types.ContactPoint.get('properties') or \
                 map_cls == 'ContactPoint':
-                # address query
-                pass
+            # contact point query
+            query = self._make_contactpoint_query(
+                path,
+                value,
+                logic_in_path=logic_in_path,
+                nested=nested,
+                modifier=modifier)
 
         else:
             path_info = fhir_search_path_meta_info(raw_path)
@@ -692,81 +799,6 @@ class ElasticsearchQueryBuilder(object):
                 modifier=modifier)
 
         return query
-
-    def add_contactpoint_query(self,
-                               field,
-                               modifier,
-                               path,
-                               nested):
-        """ """
-        org_field = modifier and ':'.join([field, modifier]) or field
-        value = self.params.get(org_field)
-
-        if modifier == 'not':
-            match_key = 'must_not'
-
-        elif modifier == 'text':
-            match_key = 'must'
-
-        elif modifier in ('above', 'below'):
-            # xxx: not implemnted yet
-            match_key = 'must'
-
-        else:
-            match_key = 'must'
-
-        matches = list()
-        org_field = modifier and ':'.join([field, modifier]) or field
-        value = self.params.get(org_field)
-        has_pipe = '|' in value
-
-        if modifier == 'text':
-            # make CodeableConcept.text query
-            matches.append({
-                'match': {path + '.value': value},
-                })
-
-        elif has_pipe:
-
-            if value.startswith('|'):
-                matches.append({
-                    'match': {path + '.value': value[1:]},
-                })
-            elif value.endswith('|'):
-                matches.append({
-                    'match': {path + '.use': value[:-1]},
-                })
-            else:
-                parts = value.split('|')
-                try:
-                    matches.append({
-                        'match': {path + '.use': parts[0]},
-                    })
-
-                    matches.append({
-                        'match': {path + '.value': parts[1]},
-                    })
-
-                except IndexError:
-                    pass
-
-        else:
-            matches.append({
-                'match': {path + '.value': value},
-                })
-
-        if nested:
-            query = {
-                'nested': {
-                    'path': path,
-                    'query': {'bool': {match_key: matches}},
-                },
-            }
-        else:
-            query = {
-                'query': {'bool': {match_key: matches}},
-            }
-        self.query_tree['and'].append(query)
 
     def clean_params(self):
         """ """
@@ -921,11 +953,11 @@ class ElasticsearchQueryBuilder(object):
                     return path
 
     def resolve_query_meta(self, param_name):
-        """Seprates if any condition is provided
-        and also change the field type based on condition"""
+        """Seprates if any logic_in_path is provided
+        and also change the field type based on logic_in_path"""
         param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[param_name][0]
         map_cls = None
-        condition = None
+        logic_in_path = None
         # replace with unique
         replacer = 'XXXXXXX'
         raw_path = self.find_path(param_name)
@@ -937,7 +969,7 @@ class ElasticsearchQueryBuilder(object):
             new_word = word[4].upper() + word[5:-1]
             path = path.replace(replacer, new_word)
 
-            condition = 'AS'
+            logic_in_path = 'AS'
 
         elif PATH_WITH_DOT_IS.search(raw_path):
 
@@ -947,20 +979,24 @@ class ElasticsearchQueryBuilder(object):
             new_word = word[4].upper() + word[5:-1]
             path = path.replace(replacer, new_word)
 
-            condition = 'IS'
+            logic_in_path = 'IS'
+
         elif PATH_WITH_DOT_WHERE.search(raw_path):
 
             word = PATH_WITH_DOT_WHERE.search(raw_path).group()
             path = raw_path.replace(word, '')
             parts = word[7:-1].split('=')
 
-            condition = '|'.join('WHERE', parts[0]. parts[1])
+            logic_in_path = '|'.join([
+                'WHERE',
+                parts[0],
+                ast.literal_eval(parts[1])])
 
         else:
             path = raw_path
 
-        if condition in ('AS', 'IS'):
-            # with condition try to find appropriate param type
+        if logic_in_path in ('AS', 'IS'):
+            # with logic_in_path try to find appropriate param type
             map_name = path.split('.')[1]
 
             if re.search(r'(Age)|(Quantity)|(Range)', map_name):
@@ -991,7 +1027,7 @@ class ElasticsearchQueryBuilder(object):
         else:
             path = path.replace(self.resource_type, self.field_name)
 
-        return path, raw_path, param_type, condition, map_cls
+        return path, raw_path, param_type, logic_in_path, map_cls
 
     def get_mapped_definition(self, path):
         """ """
@@ -1027,7 +1063,7 @@ class ElasticsearchQueryBuilder(object):
     def add_composite_query(self, field, modifier):
         """ """
         raw_path = self.find_path(field)
-        raw_path, condition = self.normalize_path(raw_path)
+        raw_path, logic_in_path = self.normalize_path(raw_path)
         # path = self.find_query_path(raw_path=raw_path)
 
         # code_path, value_path = None, None

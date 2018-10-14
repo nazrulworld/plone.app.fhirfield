@@ -11,6 +11,16 @@
             "family": "Full"
         }
     ],
+    "address": [
+        {
+            "use": "work",
+            "text": "1050 W Wishard Blvd RG 5th floor Indianapolis, IN 46240",
+            "line": ["1050 W Wishard Blvd", "RG 5th floor"],
+            "city": "Indianapolis",
+            "state": "IN",
+            "postalCode": "46240"
+        }
+    ],
     "language": "en",
     "telecom": [
         {

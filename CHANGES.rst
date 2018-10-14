@@ -6,6 +6,8 @@ Changelog
 
 Improvements
 
+- Issue#13 Add support for `Address` and `ContactPoint` mapping. It opens up many search params.
+
 - Mappings are more enriched, so many missing mappings are added, like `valueString`, `valueQuantity` and so on.[nazrulworld]
 
 - Issue#12 Full support for `code` search param type has been added, it also opens up for other search parameters (y).
