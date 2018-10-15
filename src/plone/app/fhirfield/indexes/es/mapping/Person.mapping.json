@@ -110,19 +110,10 @@
                         "store": false,
                         "type": "string"
                     },
-                    "period": {
-                        "properties": {
-                            "end": {
-                                "format": "date_time_no_millis||date_optional_time",
-                                "store": false,
-                                "type": "date"
-                            },
-                            "start": {
-                                "format": "date_time_no_millis||date_optional_time",
-                                "store": false,
-                                "type": "date"
-                            }
-                        }
+                    "given": {
+                        "index": "not_analyzed",
+                        "store": false,
+                        "type": "string"
                     },
                     "prefix": {
                         "index": "not_analyzed",
@@ -188,7 +179,7 @@
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-13T19:58:12+02:00",
+        "lastUpdated": "2018-10-15T08:00:48+02:00",
         "versionId": "STU3"
     },
     "resourceType": "Person"

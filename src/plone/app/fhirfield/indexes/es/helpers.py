@@ -371,6 +371,45 @@ class ElasticsearchQueryBuilder(object):
 
         return {'query': query}
 
+    def _make_humanname_query(
+            self,
+            path,
+            value,
+            nested=None,
+            modifier=None):
+        """ """
+        fullpath = path + '.text'
+        if len(path.split('.')) == 2:
+            fullpath = path + '.text'
+        else:
+            fullpath = path
+            path = '.'.join(path.split('.')[:-1])
+
+        if fullpath.split('.')[-1] == 'given':
+            array_ = True
+        else:
+            array_ = False
+
+        if fullpath.split('.')[-1] == 'text':
+            query = self._make_match_query(fullpath, value, modifier)
+
+        else:
+
+            query = self._make_token_query(
+                fullpath,
+                value,
+                array_=array_,
+                modifier=modifier)
+
+        if nested:
+            query = {
+                'nested': {
+                    'path': path,
+                    'query': query,
+                },
+            }
+        return query
+
     def _make_identifier_query(
            self,
            path,
@@ -432,6 +471,18 @@ class ElasticsearchQueryBuilder(object):
             }
 
         return query
+
+    def _make_match_query(self, path, value, modifier=None):
+        """ """
+
+        if modifier == 'not':
+            match_key = 'must_not'
+        else:
+            match_key = 'must'
+
+        query = {'match': {path: value}}
+
+        return {'query': {'bool': {match_key: [query]}}}
 
     def _make_number_query(
             self,
@@ -569,6 +620,33 @@ class ElasticsearchQueryBuilder(object):
 
         return query
 
+    def _make_term_query(
+            self,
+            path,
+            value,
+            array_=None):
+        """ """
+
+        if array_:
+            # check Array type
+            query = {
+                'query': {
+                    'terms': {
+                        path: [value],
+                    },
+                },
+            }
+        else:
+            query = {
+                'query': {
+                    'term': {
+                        path: value,
+                    },
+                },
+            }
+
+        return query
+
     def _make_token_query(
            self,
            path,
@@ -576,22 +654,22 @@ class ElasticsearchQueryBuilder(object):
            array_=None,
            modifier=None):
         """ """
-        query = dict()
         if value in ('true', 'false'):
             if value == 'true':
                     value = True
             else:
                 value = False
-        if array_:
-            # check Array type
-            query['terms'] = {path: [value]}
-        else:
-            query['term'] = {path: value}
 
         if modifier == 'not':
-            query = {
-                'query': {'not': query},
-            }
+            match_key = 'must_not'
+        else:
+            match_key = 'must'
+
+        term_query = self._make_term_query(path, value, array_)
+
+        query = {
+                'query': {'bool': {match_key: [term_query]}},
+        }
         return query
 
 #       =>     Private methods ended        <=
@@ -660,7 +738,7 @@ class ElasticsearchQueryBuilder(object):
                 # For now we are using literal string search
                 # in future there could be searchable text like
                 # search
-                query = self.build_token_query(
+                query = self.build_string_query(
                     value,
                     path,
                     raw_path,
@@ -719,7 +797,10 @@ class ElasticsearchQueryBuilder(object):
                 self.query_tree['and'].append(query)
 
         # unofficial but tricky!
-        query = {'term': {self.field_name + '.resourceType': self.resource_type}}
+        query = self._make_term_query(
+            self.field_name + '.resourceType',
+            self.resource_type)
+
         # XXX multiple resources?
         self.query_tree['and'].append(query)
 
@@ -786,6 +867,66 @@ class ElasticsearchQueryBuilder(object):
                 path,
                 value,
                 logic_in_path=logic_in_path,
+                nested=nested,
+                modifier=modifier)
+
+        elif map_properties == \
+                mapping_types.HumanName.get('properties') or \
+                map_cls == 'HumanName':
+            # contact HumanName query
+            query = self._make_humanname_query(
+                path,
+                value,
+                nested=nested,
+                modifier=modifier)
+
+        else:
+            path_info = fhir_search_path_meta_info(raw_path)
+            array_ = path_info[1] is True
+            query = self._make_token_query(
+                path,
+                value,
+                array_=array_,
+                modifier=modifier)
+
+        return query
+
+    def build_string_query(
+            self,
+            value,
+            path,
+            raw_path,
+            logic_in_path=None,
+            map_cls=None,
+            modifier=None):
+        """ """
+        mapped_definition = self.get_mapped_definition(path)
+        map_properties = mapped_definition.get('properties', None)
+        nested = self.is_nested_mapping(mapped_definition=mapped_definition)
+
+        if map_properties in \
+                (mapping_types.SearchableText, mapping_types.Text):
+
+            query = self._make_match_query(path, value, modifier)
+
+        elif map_properties == \
+                mapping_types.Address.get('properties') or \
+                map_cls == 'Address':
+            # address query
+            query = self._make_address_query(
+                path,
+                value,
+                logic_in_path=logic_in_path,
+                nested=nested,
+                modifier=modifier)
+
+        elif map_properties == \
+                mapping_types.HumanName.get('properties') or \
+                map_cls == 'HumanName':
+            # contact HumanName query
+            query = self._make_humanname_query(
+                path,
+                value,
                 nested=nested,
                 modifier=modifier)
 

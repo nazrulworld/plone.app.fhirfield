@@ -144,7 +144,7 @@ HumanName = {
         'family': Token,
         'text': Text,
         'prefix': Token,
-        'period': Period,
+        'given': Token,
         'use': Token
     }
 }

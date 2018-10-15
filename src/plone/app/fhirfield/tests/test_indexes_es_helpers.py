@@ -28,7 +28,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
                 'resource.meta.lastUpdated': {
                     'lte': '2011-09-17T00:00:00',
                     'gte': '2011-09-17T00:00:00'}}},
-            {'term': {'resource.resourceType': 'Organization'}},
+            {'query': {'term': {'resource.resourceType': 'Organization'}}},
           ]
         query = builder.build()
         # resourceType should be auto included
@@ -115,8 +115,9 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
             'Organization')
         query = builder.build()
         compare = {'and': [
-            {'terms': {'resource.meta.profile': ['https://www.hl7.org/fhir/search.html']}},
-            {'term': {'resource.resourceType': 'Organization'}}]}
+            {'query': {'bool': {'must': [{'query': {'terms': {
+                'resource.meta.profile': ['https://www.hl7.org/fhir/search.html']}}}]}}},
+            {'query': {'term': {'resource.resourceType': 'Organization'}}}]}
 
         self.assertEqual(query, compare)
 

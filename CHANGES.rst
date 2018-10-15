@@ -12,6 +12,8 @@ Improvements
 
 - Issue#12 Full support for `code` search param type has been added, it also opens up for other search parameters (y).
 
+- Issue#15 support for `Humanane` mapping in search.
+
 1.0.0rc3 (2018-09-22)
 ---------------------
 

@@ -866,6 +866,37 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(len(brains), 1)
 
+    def test_issue15_address_telecom(self):
+        """https://github.com/nazrulworld/plone.app.fhirfield/issues/15"""
+        self.load_contents()
+
+        # test with family name
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        brains = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'family': 'Saint'},
+            portal_type='FFTestPatient',
+        )
+
+        self.assertEqual(len(brains), 1)
+
+        # test with given name (array)
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        brains = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'given': 'Eelector'},
+            portal_type='FFTestPatient',
+        )
+
+        self.assertEqual(len(brains), 1)
+
+        # test with full name represent as text
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        brains = portal_catalog.unrestrictedSearchResults(
+            patient_resource={'name': 'Patient Saint'},
+            portal_type='FFTestPatient',
+        )
+
+        self.assertEqual(len(brains), 1)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))
