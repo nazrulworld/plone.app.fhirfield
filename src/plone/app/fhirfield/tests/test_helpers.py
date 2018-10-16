@@ -112,3 +112,36 @@ class HelperIntegrationTest(unittest.TestCase):
             helpers.fhir_search_path_meta_info('ActivityDefinition.url')
 
         self.assertFalse(is_list)
+
+    def test_translate_param_name_to_real_path(self):
+        """Test param translation"""
+
+        path = \
+            helpers.translate_param_name_to_real_path('related-target', 'Observation')
+
+        self.assertIsNotNone(path, 'Observation')
+        self.assertEqual(path, 'Observation.related.target')
+
+        # test with logic in path (AS)
+        path = \
+            helpers.translate_param_name_to_real_path('value-date', 'Observation')
+
+        self.assertEqual(path, 'Observation.valueDateTime')
+
+        # test with logic in path (IS)
+        path = \
+            helpers.translate_param_name_to_real_path('abatement-boolean', 'Condition')
+
+        self.assertEqual(path, 'Condition.abatementRange')
+
+        # test with logic in path (WHERE)
+        path = \
+            helpers.translate_param_name_to_real_path('email', 'RelatedPerson')
+
+        self.assertEqual(path, 'RelatedPerson.telecom')
+
+        # test with missing
+        path = \
+            helpers.translate_param_name_to_real_path('fake-param')
+
+        self.assertIsNone(path)

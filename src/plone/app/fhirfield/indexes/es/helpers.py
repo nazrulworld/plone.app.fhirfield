@@ -6,6 +6,9 @@ from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.exc import SearchQueryValidationError
 from plone.app.fhirfield.helpers import fhir_search_path_meta_info
+from plone.app.fhirfield.helpers import PATH_WITH_DOT_AS
+from plone.app.fhirfield.helpers import PATH_WITH_DOT_IS
+from plone.app.fhirfield.helpers import PATH_WITH_DOT_WHERE
 from plone.app.fhirfield.variables import ERROR_MESSAGES
 from plone.app.fhirfield.variables import ERROR_PARAM_UNKNOWN
 from plone.app.fhirfield.variables import ERROR_PARAM_UNSUPPORTED
@@ -27,10 +30,6 @@ import six
 
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
-
-PATH_WITH_DOT_AS = re.compile(r'\.as\([a-z]+\)$', re.I)
-PATH_WITH_DOT_IS = re.compile(r'\.is\([a-z]+\)$', re.I)
-PATH_WITH_DOT_WHERE = re.compile(r'\.where\([a-z]+\=\'[a-z]+\'\)$', re.I)
 
 
 class ElasticsearchQueryBuilder(object):
@@ -806,6 +805,22 @@ class ElasticsearchQueryBuilder(object):
 
         return self.query_tree.copy()
 
+    def build_composite_query(self, field, modifier):
+        """ """
+        raw_path = self.find_path(field)
+        raw_path, logic_in_path = self.normalize_path(raw_path)
+        # path = self.find_query_path(raw_path=raw_path)
+
+        # code_path, value_path = None, None
+
+        if field.startswith('code-'):
+            parts = field.split('-')
+            # code_path = parts[0]
+            value_path = parts[1]
+
+            for p in parts[2:]:
+                value_path += p[0].upper() + p[1:]
+
     def build_token_query(
             self,
             value,
@@ -1200,22 +1215,6 @@ class ElasticsearchQueryBuilder(object):
             prefix = default
 
         return prefix, value
-
-    def add_composite_query(self, field, modifier):
-        """ """
-        raw_path = self.find_path(field)
-        raw_path, logic_in_path = self.normalize_path(raw_path)
-        # path = self.find_query_path(raw_path=raw_path)
-
-        # code_path, value_path = None, None
-
-        if field.startswith('code-'):
-            parts = field.split('-')
-            # code_path = parts[0]
-            value_path = parts[1]
-
-            for p in parts[2:]:
-                value_path += p[0].upper() + p[1:]
 
 
 def build_elasticsearch_query(params,
