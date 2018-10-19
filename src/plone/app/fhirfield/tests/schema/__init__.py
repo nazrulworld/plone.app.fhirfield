@@ -176,3 +176,16 @@ class IFFMedicationRequest(model.Schema):
 @implementer(IFFMedicationRequest)
 class FFMedicationRequest(Item):
     """ """
+
+
+class IFFObservation(model.Schema):
+    """"""
+    observation_resource = FhirResource(
+        title=u'Fhir Observation Field',
+        model='fhirclient.models.observation.Observation',
+    )
+
+
+@implementer(IFFObservation)
+class FFObservation(Item):
+    """ """

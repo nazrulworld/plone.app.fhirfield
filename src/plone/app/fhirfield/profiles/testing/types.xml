@@ -16,4 +16,5 @@
   <object meta_type="Dexterity FTI" name="FFChargeItem" />
   <object meta_type="Dexterity FTI" name="FFEncounter" />
   <object meta_type="Dexterity FTI" name="FFMedicationRequest" />
+  <object meta_type="Dexterity FTI" name="FFObservation" />
 </object>

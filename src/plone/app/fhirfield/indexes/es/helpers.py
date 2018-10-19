@@ -692,105 +692,15 @@ class ElasticsearchQueryBuilder(object):
             except IndexError:
                 modifier = None
 
-            path, raw_path, param_type, logic_in_path, map_cls = \
-                self.resolve_query_meta(param_name)
-
-            if modifier in ('missing', 'exists'):
-
-                nested = self.is_nested_mapping(path=path)
-
-                query = self._make_exists_query(
-                    path=path,
-                    value=value,
-                    nested=nested,
-                    modifier=modifier)
-
-            elif param_type == 'date':
-                query = self._make_date_query(
-                    path,
-                    value,
-                    modifier)
-
-            elif param_type == 'reference':
-
-                nested = self.is_nested_mapping(path)
-
-                query = self._make_reference_query(
-                        path,
-                        value,
-                        nested=nested,
-                        modifier=modifier)
-
-            elif param_type == 'uri':
-
-                meta_info = \
-                    fhir_search_path_meta_info(raw_path)
-                array_ = meta_info[1] is True
-
-                query = self._make_token_query(
-                    path,
-                    value,
-                    array_=array_,
-                    modifier=modifier)
-
-            elif param_type == 'string':
-                # For now we are using literal string search
-                # in future there could be searchable text like
-                # search
-                query = self.build_string_query(
-                    value,
-                    path,
-                    raw_path,
-                    logic_in_path=logic_in_path,
-                    map_cls=map_cls,
-                    modifier=modifier)
-
-            elif param_type == 'quantity':
-
-                prefix, value = self.parse_prefix(value)
-
-                query = self._make_quantity_query(
-                    path,
-                    value,
-                    prefix=prefix,
-                    modifier=modifier)
-
-            elif param_type == 'number':
-
-                prefix, value = self.parse_prefix(value)
-                mapped_definition = self.get_mapped_definition(path)
-
-                if 'type' in mapped_definition:
-                    if mapped_definition['type'] == 'float':
-                        value = float(value)
-                    else:
-                        value = int(value)
-
-                elif 'properties' in mapped_definition:
-                    if 'value' in mapped_definition['properties']:
-                        path += '.value'
-
-                query = self._make_number_query(
-                    path,
-                    value,
-                    prefix=prefix,
-                    modifier=modifier)
-
-            elif param_type == 'token':
-                # One of most complex param type
-
-                query = self.build_token_query(
-                    value,
-                    path,
-                    raw_path,
-                    logic_in_path=logic_in_path,
-                    map_cls=map_cls,
-                    modifier=modifier)
-
-            elif param_type == 'composite':
-                self.add_composite_query(param_name, modifier)
+            query_meta = self.resolve_query_meta(param_name)
+            query = self._build_query(
+                param_name,
+                value,
+                modifier,
+                query_meta=query_meta)
 
             # add generated field query in list
+            assert query, 'Query `{0}` must not be empty!'.format(query)
             if query:
                 # xxx: OR query?
                 self.query_tree['and'].append(query)
@@ -805,21 +715,159 @@ class ElasticsearchQueryBuilder(object):
 
         return self.query_tree.copy()
 
-    def build_composite_query(self, field, modifier):
+    def _build_query(self, param_name, value, modifier, query_meta):
         """ """
-        raw_path = self.find_path(field)
-        raw_path, logic_in_path = self.normalize_path(raw_path)
-        # path = self.find_query_path(raw_path=raw_path)
+        path, raw_path, param_type, logic_in_path, map_cls = \
+            query_meta
 
-        # code_path, value_path = None, None
+        if modifier in ('missing', 'exists'):
 
-        if field.startswith('code-'):
-            parts = field.split('-')
-            # code_path = parts[0]
-            value_path = parts[1]
+            nested = self.is_nested_mapping(path=path)
 
-            for p in parts[2:]:
-                value_path += p[0].upper() + p[1:]
+            query = self._make_exists_query(
+                path=path,
+                value=value,
+                nested=nested,
+                modifier=modifier)
+
+        elif param_type == 'date':
+            query = self._make_date_query(
+                path,
+                value,
+                modifier)
+
+        elif param_type == 'reference':
+
+            nested = self.is_nested_mapping(path)
+
+            query = self._make_reference_query(
+                    path,
+                    value,
+                    nested=nested,
+                    modifier=modifier)
+
+        elif param_type == 'uri':
+
+            meta_info = \
+                fhir_search_path_meta_info(raw_path)
+            array_ = meta_info[1] is True
+
+            query = self._make_token_query(
+                path,
+                value,
+                array_=array_,
+                modifier=modifier)
+
+        elif param_type == 'string':
+            # For now we are using literal string search
+            # in future there could be searchable text like
+            # search
+            query = self.build_string_query(
+                value,
+                path,
+                raw_path,
+                logic_in_path=logic_in_path,
+                map_cls=map_cls,
+                modifier=modifier)
+
+        elif param_type == 'quantity':
+
+            prefix, value = self.parse_prefix(value)
+
+            query = self._make_quantity_query(
+                path,
+                value,
+                prefix=prefix,
+                modifier=modifier)
+
+        elif param_type == 'number':
+
+            prefix, value = self.parse_prefix(value)
+            mapped_definition = self.get_mapped_definition(path)
+
+            if 'type' in mapped_definition:
+                if mapped_definition['type'] == 'float':
+                    value = float(value)
+                else:
+                    value = int(value)
+
+            elif 'properties' in mapped_definition:
+                if 'value' in mapped_definition['properties']:
+                    path += '.value'
+
+            query = self._make_number_query(
+                path,
+                value,
+                prefix=prefix,
+                modifier=modifier)
+
+        elif param_type == 'token':
+            # One of most complex param type
+
+            query = self.build_token_query(
+                value,
+                path,
+                raw_path,
+                logic_in_path=logic_in_path,
+                map_cls=map_cls,
+                modifier=modifier)
+
+        elif param_type == 'composite':
+            query = self.build_composite_query(
+                value,
+                param_name,
+                path)
+
+        return query
+
+    def build_composite_query(
+            self,
+            value,
+            param_name,
+            path):
+        """ """
+        params = None
+        queries = list()
+        if param_name.startswith('code-'):
+            parts = param_name.split('-')
+            params = (
+                (
+                    parts[0],
+                    self.resolve_query_meta(parts[0]),
+                ),
+                (
+                    '-'.join(parts[1:]),
+                    self.resolve_query_meta('-'.join(parts[1:])),
+                ))
+
+        assert params is not None
+
+        for composite_val in value.split(','):
+            value_parts = composite_val.split('&')
+
+            query1 = self._build_query(
+                params[0][0],
+                value_parts[0],
+                modifier=None,
+                query_meta=params[0][1])
+
+            query2 = self._build_query(
+                params[1][0],
+                value_parts[1],
+                modifier=None,
+                query_meta=params[1][1])
+            queries.append(self.merge_query(query1, query2))
+
+        if len(queries) == 1:
+            return queries[0]
+        else:
+
+            query = dict(query=dict(bool=dict(should=list())))
+
+            for qr in queries:
+                query['query']['bool']['should'].append(qr)
+
+            return query
 
     def build_token_query(
             self,
@@ -1215,6 +1263,32 @@ class ElasticsearchQueryBuilder(object):
             prefix = default
 
         return prefix, value
+
+    def merge_query(self, *queries):
+        """ """
+        assert len(queries) > 1, 'Number of queries must be more than one!'
+        first_query = queries[0]
+
+        for query in queries[1:]:
+            if 'must' in query['query']['bool']:
+                if 'must' not in first_query['query']['bool']:
+                    first_query['query']['bool']['must'] = list()
+                first_query['query']['bool']['must'].\
+                    extend(first_query['query']['bool']['must'])
+
+            if 'must_not' in query['query']['bool']:
+                if 'must_not' not in first_query['query']['bool']:
+                    first_query['query']['bool']['must_not'] = list()
+                first_query['query']['bool']['must_not'].\
+                    extend(first_query['query']['bool']['must_not'])
+
+            if 'should' in query['query']['bool']:
+                if 'should' not in first_query['query']['bool']:
+                    first_query['query']['bool']['should'] = list()
+                first_query['query']['bool']['should'].\
+                    extend(first_query['query']['bool']['should'])
+
+        return first_query
 
 
 def build_elasticsearch_query(params,

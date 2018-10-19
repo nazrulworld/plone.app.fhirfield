@@ -897,6 +897,43 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(len(brains), 1)
 
+    def test_issue_10(self):
+        """Composite type param:
+        https://github.com/nazrulworld/plone.app.fhirfield/issues/10"""
+        self.load_contents()
+
+        self.admin_browser.open(self.portal_url + '/++add++FFObservation')
+
+        self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
+            = 'Carbon dioxide in blood'
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Observation.json'), 'r') as f:
+            fhir_json = json.load(f)
+
+        self.admin_browser.getControl(name='form.widgets.observation_resource').value \
+            = json.dumps(fhir_json)
+        self.admin_browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', self.admin_browser.contents)
+        # take a tiny snap
+        time.sleep(1)
+        portal_catalog = api.portal.get_tool('portal_catalog')
+
+        # Test simple composite
+        brains = portal_catalog.unrestrictedSearchResults(
+            observation_resource={'code-value-quantity': 'http://loinc.org|11557-6&6.2'},
+            portal_type='FFObservation',
+        )
+        self.assertEqual(len(brains), 1)
+
+        # Test complex composite
+        brains = portal_catalog.unrestrictedSearchResults(
+            observation_resource={
+                'code-value-quantity':
+                'http://loinc.org|11557-6&lt7.0,http://kbc.org|11557-6&gt6.1'},
+            portal_type='FFObservation',
+        )
+        self.assertEqual(len(brains), 1)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

@@ -6,6 +6,8 @@ Changelog
 
 Improvements
 
+- Issue#10 Add support for `Composite` type FHIR search param.
+
 - Issue#13 Add support for `Address` and `ContactPoint` mapping. It opens up many search params.
 
 - Mappings are more enriched, so many missing mappings are added, like `valueString`, `valueQuantity` and so on.[nazrulworld]
