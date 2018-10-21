@@ -1,5 +1,5 @@
-FHIR SEARCH
-===========
+FHIR Search Query
+=================
 
 This product has a query builder helper, that is actually transforming `fhir search`_ params into `Plone's search compatible <https://docs.plone.org/develop/plone/searching_and_indexing/query.html>`_ params so that PortalCatalog tool understand what to do. Each of FHIR Indexes provided by this product, by default using this query builder but it is possible to provide prepared query.
 
@@ -69,7 +69,7 @@ This product has been got all battery included to be integrated with plone.resta
 +----------------------+--------------------------+---------------------------------+
 | `address-city`   |                              | Yes                             |
 +----------------------+--------------------------+---------------------------------+
-| `address-country`|                              | Yes                             |
+| `address-country`    |                          | Yes                             |
 +----------------------+--------------------------+---------------------------------+
 | `address-postalcode` |                          | Yes                             |
 +----------------------+--------------------------+---------------------------------+
@@ -87,7 +87,7 @@ This product has been got all battery included to be integrated with plone.resta
 +----------------------+--------------------------+---------------------------------+
 | `family`         |                              | Yes                             |
 +----------------------+--------------------------+---------------------------------+
-| `given`          |                              | Yes                             |
+| `given`              |                          | Yes                             |
 +----------------------+--------------------------+---------------------------------+
 | `code-value-concept` |                          | Yes                             |
 +----------------------+--------------------------+---------------------------------+
@@ -95,7 +95,7 @@ This product has been got all battery included to be integrated with plone.resta
 +----------------------+--------------------------+---------------------------------+
 | `code-value-quantity` |                         | Yes                             |
 +-----------------------+-------------------------+---------------------------------+
-| `code-value-string`          |                  | Yes                             |
+| `code-value-string`   |                         | Yes                             |
 +-----------------------+-------------------------+---------------------------------+
 
 

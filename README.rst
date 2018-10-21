@@ -23,8 +23,6 @@
     :alt: License
 
 
-.. contents::
-
 Background (plone.app.fhirfield)
 ================================
 

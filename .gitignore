@@ -4,6 +4,7 @@
 *.mo
 *.py?
 *.swp
+
 # dirs
 bin/
 buildout-cache/
@@ -17,6 +18,7 @@ parts/
 src/*
 test.plone_addon/
 var/
+
 # files
 .installed.cfg
 .mr.developer.cfg
@@ -25,11 +27,19 @@ log.html
 output.xml
 pip-selfcheck.json
 report.html
+
+# Docs
+docs/Makefile
+docs/make.bat
+docs/doctrees
+docs/html
+
 # Editors
 *.sublime-*
 .Python
 .DS_Store
 .vscode
+
 # excludes
 !.coveragerc
 !.editorconfig
