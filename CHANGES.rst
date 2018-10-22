@@ -6,6 +6,8 @@ Changelog
 
 Improvements
 
+- Issue#18 `api` module to make available for all publicly usable methods, functions, classes.
+
 - Issue#17 Add suports for duplicate param names into query string. It is now possible to provide multiple condition for same param type. For example `?_lastUpdated=gt2015-10-15T06:31:18+00:00&_lastUpdated=lt2018-01-15T06:31:18+00:00`
 
 - Issue#10 Add support for `Composite` type FHIR search param.
@@ -17,6 +19,7 @@ Improvements
 - Issue#12 Full support for `code` search param type has been added, it also opens up for other search parameters (y).
 
 - Issue#15 support for `Humanane` mapping in search.
+
 
 1.0.0rc3 (2018-09-22)
 ---------------------
