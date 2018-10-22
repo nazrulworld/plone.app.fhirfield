@@ -77,19 +77,14 @@ class EsFhirFieldIndex(BaseIndex):
         if value in (None, ''):
             return
 
-        if value.get('query'):
+        if isinstance(value, dict) and value.get('query'):
             query = {'and': value.get('query')}
             # need query validation???
             return query
 
         params = None
 
-        if value.get('params'):
-            params = value.get('params')
-
-        resource_type = value.pop(
-            'resource_type',
-            FHIR_RESOURCE_LIST[name.split('_')[0].lower()]['name'])
+        resource_type = FHIR_RESOURCE_LIST[name.split('_')[0].lower()]['name']
         if params is None:
             params = value
 

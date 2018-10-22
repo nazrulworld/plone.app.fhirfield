@@ -6,6 +6,8 @@ Changelog
 
 Improvements
 
+- Issue#17 Add suports for duplicate param names into query string. It is now possible to provide multiple condition for same param type. For example `?_lastUpdated=gt2015-10-15T06:31:18+00:00&_lastUpdated=lt2018-01-15T06:31:18+00:00`
+
 - Issue#10 Add support for `Composite` type FHIR search param.
 
 - Issue#13 Add support for `Address` and `ContactPoint` mapping. It opens up many search params.

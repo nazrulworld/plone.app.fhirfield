@@ -934,6 +934,23 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
+    def test_issue_17(self):
+        """Support for duplicate param name/value
+        https://github.com/nazrulworld/plone.app.fhirfield/issues/17"""
+        self.load_contents()
+        portal_catalog = api.portal.get_tool('portal_catalog')
+        query = {
+            'task_resource': [
+                ('_lastUpdated',
+                    'gt2015-10-15T06:31:18+00:00'),
+                ('_lastUpdated',
+                    'lt2018-01-15T06:31:18+00:00')
+                ],
+        }
+        brains = portal_catalog.unrestrictedSearchResults(**query)
+
+        self.assertEqual(len(brains), 1)
+
     def tearDown(self):
         """ """
         es = ElasticSearchCatalog(api.portal.get_tool('portal_catalog'))

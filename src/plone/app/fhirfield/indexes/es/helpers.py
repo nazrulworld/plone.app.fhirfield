@@ -23,6 +23,7 @@ from plone.app.fhirfield.variables import LOGGER
 from plone.app.fhirfield.variables import SEARCH_PARAM_MODIFIERS
 
 import ast
+import copy
 import mapping_types
 import os
 import re
@@ -55,9 +56,13 @@ class ElasticsearchQueryBuilder(object):
         self.field_name = field_name
         self.resource_type = resource_type
         self.handling = handling
-        self.params = params
-        # Although we are not supporting Multiple Resources Query yet!
-        self.resource_types = params.pop('_type', None)
+
+        if isinstance(params, dict):
+            self.params = six.iteritems(params)
+
+        else:
+            # might be list or tuple or None
+            self.params = params
 
         self.validate()
 
@@ -680,10 +685,9 @@ class ElasticsearchQueryBuilder(object):
         https://www.elastic.co/guide/en/elasticsearch/guide/current/_finding_multiple_exact_values.html
         https://stackoverflow.com/questions/16243496/nested-boolean-queries-in-elastic-search
         """
-        for param_name in self.params.keys():
+        for param_name, value in self.params:
             """ """
             query = None
-            value = self.params.get(param_name)
 
             parts = param_name.split(':')
             try:
@@ -1007,9 +1011,9 @@ class ElasticsearchQueryBuilder(object):
     def clean_params(self):
         """ """
         unwanted = list()
-
-        for param, value in self.params.items():
-
+        cleaned_params = list()
+        for index, item in enumerate(self.params):
+            param, value = item
             # Clean escape char in value.
             # https://www.hl7.org/fhir/search.html#escaping
             if value and '\\' in value:
@@ -1019,12 +1023,14 @@ class ElasticsearchQueryBuilder(object):
 
             if parts[0] not in FHIR_SEARCH_PARAMETER_SEARCHABLE:
                 unwanted.append((param, ERROR_PARAM_UNKNOWN))
-                del self.params[param]
                 continue
 
             if parts[0] in ('_content', '_id', '_lastUpdated',
                             '_profile', '_query', '_security',
                             '_tag', '_text'):
+
+                cleaned_params.append(item)
+
                 continue
 
             supported_paths = \
@@ -1032,9 +1038,9 @@ class ElasticsearchQueryBuilder(object):
 
             for path in supported_paths:
                 if path.startswith(self.resource_type):
+                    cleaned_params.append(item)
                     break
             else:
-                del self.params[param]
                 unwanted.append((param, ERROR_PARAM_UNSUPPORTED))
 
         FHIR_FIELD_DEBUG and \
@@ -1042,6 +1048,10 @@ class ElasticsearchQueryBuilder(object):
             LOGGER.info(
                 'ElasticsearchQueryBuilder: unwanted {0!s} parameter(s) '
                 'have been cleaned'.format(unwanted))
+
+        # reset clened version
+        self.params = cleaned_params
+
         return unwanted
 
     def validate(self):
@@ -1059,7 +1069,7 @@ class ElasticsearchQueryBuilder(object):
 
         error_fields = list()
 
-        for param, value in six.iteritems(self.params):
+        for param, value in self.params:
             """ """
             parts = param.split(':')
             try:
@@ -1297,12 +1307,12 @@ def build_elasticsearch_query(params,
                               handling='strict'):
     """This is the helper method for making elasticsearch compatiable query from
     HL7 FHIR search standard request params"""
-    if not isinstance(params, dict):
+    if not isinstance(params, (dict, list, tuple)):
         raise TypeError(
-            'parameters must be dict data type, but got {0}'.
+            'parameters must be dict or list data type, but got {0}'.
             format(type(params)))
 
-    builder = ElasticsearchQueryBuilder(params.copy(),
+    builder = ElasticsearchQueryBuilder(copy.copy(params),
                                         field_name,
                                         resource_type,
                                         handling)

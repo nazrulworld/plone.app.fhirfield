@@ -3,6 +3,7 @@ from . import FHIR_FIXTURE_PATH
 from plone.app.fhirfield import compat
 from plone.app.fhirfield import helpers
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
+from six.moves.urllib.parse import urlencode
 from zope.interface import Invalid
 
 import inspect
@@ -145,3 +146,33 @@ class HelperIntegrationTest(unittest.TestCase):
             helpers.translate_param_name_to_real_path('fake-param')
 
         self.assertIsNone(path)
+
+    def test_parse_query_string(self):
+        """ """
+        request = dict()
+        params = [
+            ('patient', 'P001'),
+            ('lastUpdated', '2018-01-01'),
+            ('lastUpdated', 'lt2018-09-10')]
+
+        request['QUERY_STRING'] = urlencode(params)
+
+        results = helpers.parse_query_string(request)
+
+        items = [p[0] for p in results if p[0] == 'lastUpdated']
+        self.assertEqual(len(items), 2)
+
+        # Test with empty value [allowed]
+        request['QUERY_STRING'] = urlencode(params) + '&lastUpdated'
+
+        results = helpers.parse_query_string(request, True)
+        items = [p[0] for p in results if p[0] == 'lastUpdated']
+        self.assertEqual(len(items), 3)
+
+        # Test with empty value [not allowed]
+        request['QUERY_STRING'] = urlencode(params) + '&lastUpdated'
+
+        results = helpers.parse_query_string(request)
+        items = [p[0] for p in results if p[0] == 'lastUpdated']
+
+        self.assertEqual(len(items), 2)
