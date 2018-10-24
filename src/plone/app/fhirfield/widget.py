@@ -2,7 +2,6 @@
 from plone import api
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
-from Products.CMFPlone.resources import add_resource_on_request
 from z3c.form.browser.textarea import TextAreaWidget
 from z3c.form.browser.widget import addFieldClass
 from z3c.form.converter import BaseDataConverter
@@ -18,6 +17,12 @@ from zope.interface import implementer_only
 
 import six
 
+
+try:
+    from Products.CMFPlone.resources import add_resource_on_request
+except ImportError:
+    # Plone 4.x.x
+    add_resource_on_request = None
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
