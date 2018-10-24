@@ -2,7 +2,6 @@
 from __future__ import print_function  # noqa: I001
 from . import FHIR_FIXTURE_PATH
 from .schema import ITestOrganization
-from plone import api
 from plone.app.fhirfield import widget
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
@@ -269,26 +268,16 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.open(view_url)
         contents = browser.contents
 
-        if api.env.plone_version().startswith('4'):
-            # make sure static resources are not injected for plone version 4
-            self.assertNotIn(
-                '++plone++plone.app.fhirfield/css/jquery.json-viewer.css',
-                contents)
-            self.assertNotIn(
-                '++plone++plone.app.fhirfield/js/jquery.json-viewer.js',
-                contents)
-            self.assertNotIn(
-                '#form-widgets-organization_resource-json-viewer',
-                contents)
-        else:
-            # make sure static resources are injected
-            self.assertIn(
-                '++plone++plone.app.fhirfield/css/jquery.json-viewer.css',
-                contents)
-            self.assertIn(
-                '++plone++plone.app.fhirfield/js/jquery.json-viewer.js',
-                contents)
-            # Make sure json viewer plugin script generated
-            self.assertIn(
-                '#form-widgets-organization_resource-json-viewer',
-                contents)
+        with open('/tmp/output.html', 'w') as f:
+            f.write(contents)
+        # make sure static resources are injected
+        self.assertIn(
+            '++plone++plone.app.fhirfield/css/jquery.json-viewer.css',
+            contents)
+        self.assertIn(
+            '++plone++plone.app.fhirfield/js/jquery.json-viewer.js',
+            contents)
+        # Make sure json viewer plugin script generated
+        self.assertIn(
+            '#form-widgets-organization_resource-json-viewer',
+            contents)

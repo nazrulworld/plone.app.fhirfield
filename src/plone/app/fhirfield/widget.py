@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
-from plone import api
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
+from Products.CMFPlone.resources import add_resource_on_request
 from z3c.form.browser.textarea import TextAreaWidget
 from z3c.form.browser.widget import addFieldClass
 from z3c.form.converter import BaseDataConverter
@@ -18,12 +18,6 @@ from zope.interface import implementer_only
 import six
 
 
-try:
-    from Products.CMFPlone.resources import add_resource_on_request
-except ImportError:
-    # Plone 4.x.x
-    add_resource_on_request = None
-
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 
@@ -37,19 +31,13 @@ class FhirResourceWidget(TextAreaWidget):
     klass = u'fhirResourceWidget'
     value = None
 
-    @property
-    def is_plone4(self):
-        """ """
-        return api.env.plone_version().startswith('4')
-
     def update(self):
         """ """
         super(FhirResourceWidget, self).update()
         # register
         addFieldClass(self)
 
-        if self.is_plone4 is False and self.mode == DISPLAY_MODE:
-            # Not working for plone 4.x.x
+        if self.mode == DISPLAY_MODE:
             # add the registered resource on condition
             add_resource_on_request(
                 self.request,

@@ -18,6 +18,7 @@ Welcome to plone.app.fhirfield's documentation!
 .. toctree::
    :maxdepth: 1
 
+   migration
    changes
    contribute
    contributors

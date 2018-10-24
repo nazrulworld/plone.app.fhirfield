@@ -4,6 +4,10 @@ Changelog
 1.0.0rc4 (unreleased)
 ---------------------
 
+Breaking
+
+- Drop support for Plone 4.xx (sorry).
+
 Improvements
 
 - Issue#10 JSON Viewer added in display mode.
