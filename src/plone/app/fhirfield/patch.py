@@ -17,7 +17,7 @@ def fix_resource_registry_import_error():
     import Products.CMFPlone.interfaces
     try:
         Products.CMFPlone.interfaces.IResourceRegistry
-    except ImportError:
+    except AttributeError:
         from zope.interface import Interface
 
         class IResourceRegistry(Interface):
