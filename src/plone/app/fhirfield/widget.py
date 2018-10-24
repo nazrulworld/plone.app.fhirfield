@@ -1,4 +1,5 @@
 # _*_ coding: utf-8 _*_
+from plone import api
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from Products.CMFPlone.resources import add_resource_on_request
@@ -31,13 +32,19 @@ class FhirResourceWidget(TextAreaWidget):
     klass = u'fhirResourceWidget'
     value = None
 
+    @property
+    def is_plone4(self):
+        """ """
+        return api.env.plone_version().startswith('4')
+
     def update(self):
         """ """
         super(FhirResourceWidget, self).update()
         # register
         addFieldClass(self)
 
-        if self.mode == DISPLAY_MODE:
+        if self.is_plone4 is False and self.mode == DISPLAY_MODE:
+            # Not working for plone 4.x.x
             # add the registered resource on condition
             add_resource_on_request(
                 self.request,

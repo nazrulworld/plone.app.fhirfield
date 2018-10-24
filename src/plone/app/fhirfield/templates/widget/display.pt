@@ -14,13 +14,19 @@
           <tal:block  content="view/value/stringify" />
         </noscript>
         <tal:metal condition="view/value">
-            <script type="text/javascript">
-              $(function() {
-                  $('#<span tal:replace="el_id" />').jsonViewer(
-                    <tal:block condition="view/value" content="view/value/stringify" />,
-                    {collapsed: false, withQuotes: true})
-              });
-            </script>
+            <tal:block condition="not: view/is_plone4">
+              <script type="text/javascript">
+                $(function() {
+                    $('#<span tal:replace="el_id" />').jsonViewer(
+                      <tal:block condition="view/value" content="view/value/stringify" />,
+                      {collapsed: false, withQuotes: true})
+                });
+              </script>
+            </tal:block>
+
+            <tal:block condition="view/is_plone4">
+              <span tal:replace="view/value/stringify" />
+            </tal:block>
         </tal:metal>
     </code>
 </html>
