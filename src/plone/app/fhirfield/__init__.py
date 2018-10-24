@@ -2,6 +2,7 @@
 """ """
 from plone.app.fhirfield import patch  # noqa: I001
 patch.monkey_patch_fhir_base_model()  # noqa: I003
+patch.fix_resource_registry_import_error()  # noqa: I003
 
 
 from .exc import SearchQueryError  # noqa: I001,F401
