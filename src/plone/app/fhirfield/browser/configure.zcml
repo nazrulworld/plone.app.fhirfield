@@ -9,6 +9,6 @@
       name="plone.app.fhirfield"
       type="plone"
       directory="static"
-      />
+  />
 
 </configure>

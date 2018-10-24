@@ -1,9 +1,11 @@
 # _*_ coding: utf-8 _*_
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
+from Products.CMFPlone.resources import add_resource_on_request
 from z3c.form.browser.textarea import TextAreaWidget
 from z3c.form.browser.widget import addFieldClass
 from z3c.form.converter import BaseDataConverter
+from z3c.form.interfaces import DISPLAY_MODE
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer
 from z3c.form.interfaces import ITextAreaWidget
@@ -30,8 +32,19 @@ class FhirResourceWidget(TextAreaWidget):
     value = None
 
     def update(self):
+        """ """
         super(FhirResourceWidget, self).update()
+        # register
         addFieldClass(self)
+
+        if self.mode == DISPLAY_MODE:
+            # add the registered resource on condition
+            add_resource_on_request(
+                self.request,
+                'fhirfield-json-viewer-js')
+            add_resource_on_request(
+                self.request,
+                'fhirfield-json-viewer-style')
 
     def extract(self, default=NOVALUE):
         raw = self.request.get(self.name, default)

@@ -4,21 +4,23 @@
       i18n:domain="plone.app.fhirfield"
       tal:omit-tag="">
     <code id="" class=""
-          tal:attributes="id view/id;
+          tal:define="el_id python: view.id + '-json-viewer'"
+          tal:attributes="id python: view.id + '-json-viewer';
                           class view/klass;
                           style view/style;
                           title view/title;
-                          lang view/lang;
-                          onclick view/onclick;
-                          ondblclick view/ondblclick;
-                          onmousedown view/onmousedown;
-                          onmouseup view/onmouseup;
-                          onmouseover view/onmouseover;
-                          onmousemove view/onmousemove;
-                          onmouseout view/onmouseout;
-                          onkeypress view/onkeypress;
-                          onkeydown view/onkeydown;
-                          onkeyup view/onkeyup">
-            <tal:block condition="view/value" content="view/value/stringify" />
+                          lang view/lang">
+        <noscript condition="view/value">
+          <tal:block  content="view/value/stringify" />
+        </noscript>
+        <tal:metal condition="view/value">
+            <script type="text/javascript">
+              $(function() {
+                  $('#<span tal:replace="el_id" />').jsonViewer(
+                    <tal:block condition="view/value" content="view/value/stringify" />,
+                    {collapsed: false, withQuotes: true})
+              });
+            </script>
+        </tal:metal>
     </code>
 </html>

@@ -944,7 +944,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
                 ('_lastUpdated',
                     'gt2015-10-15T06:31:18+00:00'),
                 ('_lastUpdated',
-                    'lt2018-01-15T06:31:18+00:00')
+                    'lt2018-01-15T06:31:18+00:00'),
                 ],
         }
         brains = portal_catalog.unrestrictedSearchResults(**query)

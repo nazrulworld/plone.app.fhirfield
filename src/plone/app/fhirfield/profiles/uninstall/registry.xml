@@ -9,4 +9,12 @@
     <record name="fhirfield.es.index.mapping.total_fields.limit"
             remove="True">
     </record>
+    <records prefix="plone.resources/fhirfield-json-viewer-style"
+             interface="Products.CMFPlone.interfaces.IResourceRegistry"
+             remove="True">
+     </records>
+     <records prefix="plone.resources/fhirfield-json-viewer-js"
+              interface="Products.CMFPlone.interfaces.IResourceRegistry"
+              remove="True">
+     </records>
 </registry>

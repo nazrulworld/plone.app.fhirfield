@@ -6,6 +6,8 @@ Changelog
 
 Improvements
 
+- Issue#10 JSON Viewer added in display mode.
+
 - Issue#18 `api` module to make available for all publicly usable methods, functions, classes.
 
 - Issue#17 Add suports for duplicate param names into query string. It is now possible to provide multiple condition for same param type. For example `?_lastUpdated=gt2015-10-15T06:31:18+00:00&_lastUpdated=lt2018-01-15T06:31:18+00:00`

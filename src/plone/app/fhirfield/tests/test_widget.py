@@ -248,3 +248,36 @@ class WidgetFunctionalTest(unittest.TestCase):
         self.assertIn('class="portalMessage info"', browser.contents)
         self.assertIn('Changes saved', browser.contents)
         self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/testorganization')
+
+    def test_issue_11(self):
+        """Better default view for FHIR field in view mode"""
+        self.login_as_admin()
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+            fhir_str = f.read()
+
+        browser = self.browser
+        browser.open(self.portal_url + '/++add++FFTestOrganization')
+        browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
+        # After solving that problem, this again value assign not need
+        browser.getControl(name='form.widgets.organization_resource').value = fhir_str
+        browser.getControl(name='form.buttons.save').click()
+        self.assertIn('Item created', browser.contents)
+
+        view_url = browser.mech_browser.geturl()
+        browser.open(view_url)
+        contents = browser.contents
+
+        with open('/tmp/output.html', 'w') as f:
+            f.write(contents)
+        # make sure static resources are injected
+        self.assertIn(
+            '++plone++plone.app.fhirfield/css/jquery.json-viewer.css',
+            contents)
+        self.assertIn(
+            '++plone++plone.app.fhirfield/js/jquery.json-viewer.js',
+            contents)
+        # Make sure json viewer plugin script generated
+        self.assertIn(
+            '#form-widgets-organization_resource-json-viewer',
+            contents)
