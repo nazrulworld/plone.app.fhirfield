@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.0rc4 (unreleased)
+1.0.0rc4 (2018-10-25)
 ---------------------
 
 Breaking
