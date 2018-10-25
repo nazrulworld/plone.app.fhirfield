@@ -1,6 +1,15 @@
 Migration
 =========
 
+1.0.0rc3 to 1.0.0rc4
+--------------------
+
+1. Keep backup of existing Data.fs (nice to have)
+
+2. Go to plone control panel's Addon settings
+
+3. Uninstall and Install again `plone.app.fhirfield`
+
 1.0.0b6 to 1.0.0rc3
 -------------------
 

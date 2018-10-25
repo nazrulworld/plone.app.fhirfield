@@ -830,7 +830,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
-    def test_issue13_address_telecom(self):
+    def test_issue_13_address_telecom(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/13"""
         self.load_contents()
 
@@ -866,7 +866,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(len(brains), 1)
 
-    def test_issue15_address_telecom(self):
+    def test_issue_15_address_telecom(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/15"""
         self.load_contents()
 
