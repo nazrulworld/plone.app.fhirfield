@@ -9,7 +9,8 @@
             "basedOn": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -78,7 +79,8 @@
             "context": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -87,7 +89,8 @@
             "definition": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -155,7 +158,8 @@
             "performer": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -198,7 +202,8 @@
             "replaces": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -241,7 +246,8 @@
             "specimen": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -256,7 +262,8 @@
             "subject": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -265,7 +272,7 @@
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-15T08:00:48+02:00",
+        "lastUpdated": "2018-10-25T20:48:34+02:00",
         "versionId": "STU3"
     },
     "resourceType": "ProcedureRequest"

@@ -38,7 +38,8 @@
             "endpoint": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -48,7 +49,8 @@
             "healthcareService": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -92,7 +94,8 @@
             "location": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -121,7 +124,8 @@
             "organization": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -144,7 +148,8 @@
             "practitioner": {
                 "properties": {
                     "reference": {
-                        "index": "not_analyzed",
+                        "analyzer": "keyword",
+                        "index": "analyzed",
                         "store": false,
                         "type": "string"
                     }
@@ -226,7 +231,7 @@
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-15T08:00:48+02:00",
+        "lastUpdated": "2018-10-25T20:48:34+02:00",
         "versionId": "STU3"
     },
     "resourceType": "PractitionerRole"

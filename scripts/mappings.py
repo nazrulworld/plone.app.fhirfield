@@ -34,6 +34,13 @@ Token = {
     'store': False
 }
 
+KeywordToken = {
+    'type': 'string',
+    'index': 'analyzed',
+    'analyzer': 'keyword',
+    'store': False
+}
+
 Text = {
     'type': 'string',
     'index': 'analyzed',
@@ -62,7 +69,7 @@ Timing = {
 
 Reference = {
     'properties': {
-        'reference': Token
+        'reference': KeywordToken
     }
 }
 

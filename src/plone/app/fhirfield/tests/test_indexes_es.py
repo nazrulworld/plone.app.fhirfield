@@ -26,6 +26,7 @@ import six
 import sys
 import time
 import unittest
+import uuid
 
 
 __author__ = 'Md Nazrul Islam (email2nazrul@gmail.com)'
@@ -413,6 +414,14 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # should be now only single
         result = portal_catalog(**query)
         self.assertEqual(len(result), 1)
+
+        # Test with negetive
+        query = {
+            'task_resource': {'owner:not': 'Practitioner/fake-ac0-821d-46d9-9d40-a61f2578cadf'},
+        }
+        result = portal_catalog(**query)
+        # should get all tasks
+        self.assertEqual(len(result), 3)
 
     def test_catalogsearch__profile(self):
         """solve me first: TransportError(400, u'search_phase_execution_exception',

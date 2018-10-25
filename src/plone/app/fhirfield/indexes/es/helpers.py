@@ -593,34 +593,28 @@ class ElasticsearchQueryBuilder(object):
            nested=None,
            modifier=None):
         """ """
-        query = dict()
+        query = dict(bool=dict())
 
         fullpath = path + '.reference'
 
-        term = {fullpath: value}
+        matches = [dict(term={fullpath: value})]
+
+        if modifier == 'not':
+            match_key = 'must_not'
+        else:
+            match_key = 'must'
+
+        query['bool'][match_key] = matches
 
         if nested:
-            if modifier == 'not':
-                match_key = 'must_not'
-            else:
-                match_key = 'must'
             query = {
                 'nested': {
                     'path': path,
-                    'query': {'bool': {match_key: [
-                        {'match': term},
-                    ]}},
+                    'query': query,
                 },
             }
         else:
-            if modifier == 'not':
-                query['query'] = {
-                    'not': {
-                        'term': term,
-                    },
-                }
-            else:
-                query['term'] = {fullpath: value}
+            query = {'query': query}
 
         return query
 
