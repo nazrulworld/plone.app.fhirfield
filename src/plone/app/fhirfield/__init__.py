@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 """ """
-try:
-    from plone.app.fhirfield import patch  # noqa: I001
-    patch.monkey_patch_fhir_base_model()  # noqa: I003
-except ImportError:
-    # for readdocs
-    pass
+from plone.app.fhirfield import patch  # noqa: I001
+patch.monkey_patch_fhir_base_model()  # noqa: I003
 
 
 from .exc import SearchQueryError  # noqa: I001,F401
