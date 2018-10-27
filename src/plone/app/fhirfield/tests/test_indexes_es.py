@@ -26,7 +26,6 @@ import six
 import sys
 import time
 import unittest
-import uuid
 
 
 __author__ = 'Md Nazrul Islam (email2nazrul@gmail.com)'

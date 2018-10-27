@@ -38,7 +38,7 @@ KeywordToken = {
     'type': 'string',
     'index': 'analyzed',
     'analyzer': 'keyword',
-    'store': False
+    'store': False,
 }
 
 Text = {
