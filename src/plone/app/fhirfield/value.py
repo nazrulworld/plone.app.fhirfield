@@ -51,6 +51,7 @@ class ObjectStorage(Persistent):
 class FhirResourceValue(object):
     """FhirResourceValue is a proxy class for holding any object derrived from
     fhirclient.models.resource.Resource"""
+
     __slot__ = ('_storage', '_encoding')
 
     def foreground_origin(self):
@@ -61,9 +62,7 @@ class FhirResourceValue(object):
             return None
 
     def patch(self, patch_data):
-        """:@links:
-        https://www.hl7.org/fhir/fhirpatch.html
-        https://python-json-patch.readthedocs.io/en/latest/tutorial.html#creating-a-patch"""
+
         if not isinstance(patch_data, (list, tuple)):
             raise WrongType('patch value must be list or tuple type! but got `{0}` type.'.format(type(patch_data)))
 

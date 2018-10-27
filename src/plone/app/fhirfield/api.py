@@ -11,5 +11,4 @@ from .helpers import resource_type_str_to_fhir_model  # noqa: F401 # pragma: no 
 from .interfaces import IFhirResource  # noqa: F401 # pragma: no cover
 from .interfaces import IFhirResourceModel  # noqa: F401 # pragma: no cover
 from .interfaces import IFhirResourceValue  # noqa: F401 # pragma: no cover
-from .interfaces import IFieldSerializer  # noqa: F401 # pragma: no cover
 from .value import FhirResourceValue  # noqa: F401 # pragma: no cover
