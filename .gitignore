@@ -18,6 +18,8 @@ parts/
 src/*
 test.plone_addon/
 var/
+build/
+dist/
 
 # files
 .installed.cfg
