@@ -87,7 +87,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         logger.root.addHandler(logging.StreamHandler(sys.stdout))
 
     def test_resource_index_created(self):
-        """resource is attribute of TestOrganization content
+        """resource is attribute of FFOrganization content
         that is indexed as FhirFieldIndex"""
         self.admin_browser.open(self.portal_catalog_url + '/manage_catalogIndexes')
 
@@ -99,7 +99,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
     def test_content_object_index(self):
         """Test indexes added for newly inserted indexes"""
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
@@ -108,7 +108,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
-        self.assertIn('fftestorganization/view', self.admin_browser.url)
+        self.assertIn('fforganization/view', self.admin_browser.url)
 
         # Let's check one item should be for resource item
         self.admin_browser.open(self.portal_catalog_url + '/Indexes/organization_resource/manage_main')
@@ -129,7 +129,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         form = self.admin_browser.getForm(action=self.portal_catalog_url + '/@@elastic-convert')
         form.getControl(name='convert').click()
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
@@ -149,7 +149,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         """We will need to make sure that elastic server is taking responsibilities
         for indexing, querying"""
         self.convert_to_elasticsearch(['organization_resource'])
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
@@ -158,7 +158,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Hamid Patuary University'
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_value = json.load(f)
@@ -203,7 +203,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         """ """
         self.convert_to_elasticsearch(['organization_resource', 'patient_resource', 'task_resource'])
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
 
@@ -212,7 +212,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Hamid Patuary University'
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_value = json.load(f)
@@ -224,7 +224,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Call trun University'
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             json_value = json.load(f)
@@ -237,7 +237,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertIn('Item created', self.admin_browser.contents)
 
         # add patient
-        self.admin_browser.open(self.portal_url + '/++add++FFTestPatient')
+        self.admin_browser.open(self.portal_url + '/++add++FFPatient')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Patient'
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Patient.json'), 'r') as f:
@@ -247,7 +247,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertIn('Item created', self.admin_browser.contents)
 
         # add tasks
-        self.admin_browser.open(self.portal_url + '/++add++FFTestTask')
+        self.admin_browser.open(self.portal_url + '/++add++FFTask')
         with open(os.path.join(FHIR_FIXTURE_PATH, 'ParentTask.json'), 'r') as f:
             json_value = json.load(f)
             self.admin_browser.getControl(name='form.widgets.task_resource')\
@@ -259,7 +259,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestTask')
+        self.admin_browser.open(self.portal_url + '/++add++FFTask')
         with open(os.path.join(FHIR_FIXTURE_PATH, 'SubTask_HAQ.json'), 'r') as f:
             json_value = json.load(f)
             self.admin_browser.getControl(name='form.widgets.task_resource')\
@@ -271,7 +271,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
 
-        self.admin_browser.open(self.portal_url + '/++add++FFTestTask')
+        self.admin_browser.open(self.portal_url + '/++add++FFTask')
         with open(os.path.join(FHIR_FIXTURE_PATH, 'SubTask_CRP.json'), 'r') as f:
             json_value = json.load(f)
             self.admin_browser.getControl(name='form.widgets.task_resource')\
@@ -308,7 +308,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # test:3 less than
         result = portal_catalog(
             organization_resource={'_lastUpdated': 'lt' + DateTime().ISO8601()},
-            portal_type='FFTestOrganization')
+            portal_type='FFOrganization')
         # result should contains three items, all are less than current time
         self.assertEqual(len(result), 3)
 
@@ -337,7 +337,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         query = {
             'task_resource': {'status': 'ready'},
-            'portal_type': 'FFTestTask',
+            'portal_type': 'FFTask',
         }
         result = portal_catalog(**query)
 
@@ -438,7 +438,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         """ """
         self.load_contents()
         # add another patient
-        self.admin_browser.open(self.portal_url + '/++add++FFTestPatient')
+        self.admin_browser.open(self.portal_url + '/++add++FFPatient')
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value = 'Test Patient'
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Patient.json'), 'r') as f:
@@ -583,7 +583,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # Test ascending order
         result = portal_catalog.unrestrictedSearchResults(
             task_resource={'status:missing': 'false'},
-            portal_type='FFTestTask',
+            portal_type='FFTask',
             _sort='_lastUpdated',
         )
 
@@ -624,7 +624,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
     def test_issue_6(self):
         """[FhirFieldIndex stores whole FHIR resources json as indexed value]
         https://github.com/nazrulworld/plone.app.fhirfield/issues/6"""
-        self.admin_browser.open(self.portal_url + '/++add++FFTestOrganization')
+        self.admin_browser.open(self.portal_url + '/++add++FFOrganization')
 
         self.admin_browser.getControl(name='form.widgets.IBasic.title').value \
             = 'Test Hospital'
@@ -636,9 +636,9 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             = json.dumps(fhir_json)
         self.admin_browser.getControl(name='form.buttons.save').click()
         self.assertIn('Item created', self.admin_browser.contents)
-        self.assertIn('fftestorganization/view', self.admin_browser.url)
+        self.assertIn('fforganization/view', self.admin_browser.url)
 
-        rid = api.content.find(portal_type='FFTestOrganization')[0].getRID()
+        rid = api.content.find(portal_type='FFOrganization')[0].getRID()
         portal_catalog = api.portal.get_tool('portal_catalog')
 
         indexed_data = portal_catalog.getIndexDataForRID(rid)['organization_resource']
@@ -845,7 +845,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         brains = portal_catalog.unrestrictedSearchResults(
             patient_resource={'email': 'demo1@example.com'},
-            portal_type='FFTestPatient',
+            portal_type='FFPatient',
         )
 
         self.assertEqual(len(brains), 1)
@@ -853,7 +853,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # Test address with multiple paths and value for city
         brains = portal_catalog.unrestrictedSearchResults(
             patient_resource={'address': 'Indianapolis'},
-            portal_type='FFTestPatient',
+            portal_type='FFPatient',
         )
 
         self.assertEqual(len(brains), 1)
@@ -861,7 +861,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # Test address with multiple paths and value for postCode
         brains = portal_catalog.unrestrictedSearchResults(
             patient_resource={'address': '46240'},
-            portal_type='FFTestPatient',
+            portal_type='FFPatient',
         )
 
         self.assertEqual(len(brains), 1)
@@ -869,7 +869,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # Test with single path for state
         brains = portal_catalog.unrestrictedSearchResults(
             patient_resource={'address-state': 'IN'},
-            portal_type='FFTestPatient',
+            portal_type='FFPatient',
         )
 
         self.assertEqual(len(brains), 1)
@@ -882,7 +882,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         brains = portal_catalog.unrestrictedSearchResults(
             patient_resource={'family': 'Saint'},
-            portal_type='FFTestPatient',
+            portal_type='FFPatient',
         )
 
         self.assertEqual(len(brains), 1)
@@ -891,7 +891,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         brains = portal_catalog.unrestrictedSearchResults(
             patient_resource={'given': 'Eelector'},
-            portal_type='FFTestPatient',
+            portal_type='FFPatient',
         )
 
         self.assertEqual(len(brains), 1)
@@ -900,7 +900,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         portal_catalog = api.portal.get_tool('portal_catalog')
         brains = portal_catalog.unrestrictedSearchResults(
             patient_resource={'name': 'Patient Saint'},
-            portal_type='FFTestPatient',
+            portal_type='FFPatient',
         )
 
         self.assertEqual(len(brains), 1)

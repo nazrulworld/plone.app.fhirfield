@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="FFTestValueSet"
+    name="FFQuestionnaireResponse"
     meta_type="Dexterity FTI"
     i18n:domain="plone.app.fhirfield">
 
   <!-- Basic properties -->
   <property
       i18n:translate=""
-      name="title">ValueSet</property>
+      name="title">QuestionnaireResponse</property>
   <property
       i18n:translate=""
-      name="description">FHIR ValueSet Resource</property>
+      name="description">FHIR QuestionnaireResponse Resource</property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">FFTestValueSet</property>
+  <property name="factory">FFQuestionnaireResponse</property>
   <property name="icon_expr"></property>
   <property name="link_target"></property>
 
@@ -24,10 +24,10 @@
 
   <!-- Schema, class and security -->
   <property name="add_permission">cmf.ManagePortal</property>
-  <property name="klass">plone.app.fhirfield.tests.schema.FFTestValueSet</property>
+  <property name="klass">plone.app.fhirfield.tests.schema.FFQuestionnaireResponse</property>
   <property name="model_file"></property>
   <property name="model_source"></property>
-  <property name="schema">plone.app.fhirfield.tests.schema.IFFTestValueSet</property>
+  <property name="schema">plone.app.fhirfield.tests.schema.IFFQuestionnaireResponse</property>
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
@@ -35,7 +35,7 @@
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++FFTestValueSet</property>
+  <property name="add_view_expr">string:${folder_url}/++add++FFQuestionnaireResponse</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>

@@ -2,17 +2,16 @@
 <object name="portal_types" meta_type="Plone Types Tool">
   <property name="title">Controls the available contenttypes in your portal</property>
   <!--<object name="example_ct" meta_type="Dexterity FTI"/>-->
-  <object meta_type="Dexterity FTI" name="TestOrganization"/>
-  <object meta_type="Dexterity FTI" name="FFTestOrganization"/>
-  <object meta_type="Dexterity FTI" name="FFTestPatient"/>
-  <object meta_type="Dexterity FTI" name="FFTestQuestionnaire"/>
-  <object meta_type="Dexterity FTI" name="FFTestValueSet"/>
-  <object meta_type="Dexterity FTI" name="FFTestQuestionnaireResponse"/>
-  <object meta_type="Dexterity FTI" name="FFTestPatient"/>
-  <object meta_type="Dexterity FTI" name="FFTestTask"/>
-  <object meta_type="Dexterity FTI" name="FFTestProcedureRequest"/>
-  <object meta_type="Dexterity FTI" name="FFTestDevice"/>
-  <object meta_type="Dexterity FTI" name="FFTestDeviceRequest"/>
+  <object meta_type="Dexterity FTI" name="FFOrganization"/>
+  <object meta_type="Dexterity FTI" name="FFPatient"/>
+  <object meta_type="Dexterity FTI" name="FFQuestionnaire"/>
+  <object meta_type="Dexterity FTI" name="FFValueSet"/>
+  <object meta_type="Dexterity FTI" name="FFQuestionnaireResponse"/>
+  <object meta_type="Dexterity FTI" name="FFPractitioner"/>
+  <object meta_type="Dexterity FTI" name="FFTask"/>
+  <object meta_type="Dexterity FTI" name="FFProcedureRequest"/>
+  <object meta_type="Dexterity FTI" name="FFDevice"/>
+  <object meta_type="Dexterity FTI" name="FFDeviceRequest"/>
   <object meta_type="Dexterity FTI" name="FFChargeItem" />
   <object meta_type="Dexterity FTI" name="FFEncounter" />
   <object meta_type="Dexterity FTI" name="FFMedicationRequest" />

@@ -1,6 +1,6 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
-from .schema import ITestOrganization
+from .schema import IFFOrganization
 from plone import api
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
@@ -36,11 +36,11 @@ class SerializerIntegrationTest(unittest.TestCase):
     def add_item(self):
         """ """
         body = {
-            '@type': 'TestOrganization',
+            '@type': 'FFOrganization',
             'title': 'Test Organization xxx',
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            body['resource'] = json.load(f)
+            body['organization_resource'] = json.load(f)
 
         request = TestRequest(BODY=json.dumps(body))
         obj = create(self.portal, body['@type'], id_=None, title=body['title'])
@@ -59,11 +59,11 @@ class SerializerIntegrationTest(unittest.TestCase):
 
         context = api.content.create(
                 container=self.portal,
-                type='TestOrganization',
+                type='FFOrganization',
                 id=None,
                 title='Test Organization xxx',
             )
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(IFFOrganization)['organization_resource']
         fhir_value = fhir_field.from_dict(json_dict)
         fhir_field.set(context, fhir_value)
 
@@ -78,7 +78,7 @@ class SerializerIntegrationTest(unittest.TestCase):
         self.assertEqual(json_dict['resourceType'], value['resourceType'])
 
         # Test with None value
-        serializer.context.resource = None
+        serializer.context.organization_resource = None
         self.assertIsNone(serializer())
 
     def test_serialize(self):
@@ -87,7 +87,9 @@ class SerializerIntegrationTest(unittest.TestCase):
         serializer = queryMultiAdapter((context, self.request), ISerializeToJson)
         result = serializer()
 
-        self.assertEqual(result['resource']['resourceType'], context.resource.resource_type)
+        self.assertEqual(
+            result['organization_resource']['resourceType'],
+            context.organization_resource.resource_type)
 
 
 class SerializerFunctionalTest(unittest.TestCase):
@@ -106,12 +108,12 @@ class SerializerFunctionalTest(unittest.TestCase):
         """" """
         id_ = 'test-hospital'
         json_body = {
-            '@type': 'TestOrganization',
+            '@type': 'FFOrganization',
             'title': 'Test Organization xxx',
             'id': id_,
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            json_body['resource'] = json.load(f)
+            json_body['organization_resource'] = json.load(f)
 
         response = self.api_session.post(
              self.portal_url,
@@ -121,4 +123,6 @@ class SerializerFunctionalTest(unittest.TestCase):
         response = self.api_session.get(self.portal_url + '/' + id_)
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.json()['resource']['resourceType'], json_body['resource']['resourceType'])
+        self.assertEqual(
+            response.json()['organization_resource']['resourceType'],
+            json_body['organization_resource']['resourceType'])

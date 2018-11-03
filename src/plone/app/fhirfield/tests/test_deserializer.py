@@ -1,6 +1,6 @@
 # _*_ coding: utf-8 _*_
 from . import FHIR_FIXTURE_PATH
-from .schema import ITestOrganization
+from .schema import IFFOrganization
 from plone import api
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
@@ -64,12 +64,12 @@ class DeserializerIntegrationTest(unittest.TestCase):
 
         context = api.content.create(
                 container=self.portal,
-                type='TestOrganization',
+                type='FFOrganization',
                 id=None,
                 title='Test Organization xxx',
             )
 
-        for name, field in getFields(ITestOrganization).items():
+        for name, field in getFields(IFFOrganization).items():
 
             if not IFhirResource.providedBy(field):
                 continue
@@ -78,11 +78,11 @@ class DeserializerIntegrationTest(unittest.TestCase):
     def test_deserializer(self):
         """ """
         body = {
-            '@type': 'TestOrganization',
+            '@type': 'FFOrganization',
             'title': 'Test Organization xxx',
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            body['resource'] = json.load(f)
+            body['organization_resource'] = json.load(f)
 
         request = TestRequest(BODY=json.dumps(body))
         obj = create(self.portal, body['@type'], id_=None, title=body['title'])
@@ -93,10 +93,10 @@ class DeserializerIntegrationTest(unittest.TestCase):
         deserializer(validate_all=True)
         rename(obj)
 
-        self.assertTrue(IFhirResourceValue.providedBy(obj.resource))
+        self.assertTrue(IFhirResourceValue.providedBy(obj.organization_resource))
 
         # Test error handling
-        body['resource'] = {'data': 'FakeID'}
+        body['organization_resource'] = {'data': 'FakeID'}
         request = TestRequest(BODY=json.dumps(body))
         obj = create(self.portal, body['@type'], id_=None, title=body['title'])
 
@@ -123,22 +123,24 @@ class DeserializerFunctionalTest(unittest.TestCase):
     def test_deserializer(self):
         """ """
         json_body = {
-            '@type': 'TestOrganization',
+            '@type': 'FFOrganization',
             'title': 'Test Organization xxx',
             'id': 'test-hospital',
         }
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            json_body['resource'] = json.load(f)
+            json_body['organization_resource'] = json.load(f)
 
         response = self.api_session.post(
              self.portal_url,
              json=json_body,
         )
         self.assertEqual(201, response.status_code)
-        self.assertEqual(response.json()['resource']['resourceType'], json_body['resource']['resourceType'])
+        self.assertEqual(
+          response.json()['organization_resource']['resourceType'],
+          json_body['organization_resource']['resourceType'])
 
         # Test with mismatched fhir json, I mean mismatcged resource
-        json_body['resource'] = """{
+        json_body['organization_resource'] = """{
           "resourceType": "ValueSet",
           "id": "yesnodontknow",
           "url": "http://hl7.org/fhir/ValueSet/yesnodontknow",
@@ -186,7 +188,8 @@ class DeserializerFunctionalTest(unittest.TestCase):
           }
         }
         """
-        json_body['resource'] = json.loads(json_body['resource'])
+        json_body['organization_resource'] = \
+            json.loads(json_body['organization_resource'])
         json_body['id'] = 'another-hospital'
 
         response = self.api_session.post(

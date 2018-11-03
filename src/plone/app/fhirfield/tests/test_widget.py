@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
 from __future__ import print_function  # noqa: I001
 from . import FHIR_FIXTURE_PATH
-from .schema import ITestOrganization
+from .schema import IFFOrganization
 from plone.app.fhirfield import widget
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
@@ -38,14 +38,14 @@ class WidgetIntegrationTest(unittest.TestCase):
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             fhir_str = f.read()
 
-        request = TestRequest(form={'resource': fhir_str})
+        request = TestRequest(form={'organization_resource': fhir_str})
         fhir_widget = widget.FhirResourceWidget(request)
-        fhir_widget.name = 'resource'
+        fhir_widget.name = 'organization_resource'
         self.assertTrue(widget.IFhirResourceWidget.providedBy(fhir_widget))
         self.assertIsNone(fhir_widget.value)
         fhir_widget.update()
         self.assertEqual(fhir_widget.value, fhir_str)
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(IFFOrganization)['organization_resource']
 
         field_widget = widget.FhirResourceFieldWidget(fhir_field, request)
         self.assertTrue(IFieldWidget.providedBy(field_widget))
@@ -55,8 +55,8 @@ class WidgetIntegrationTest(unittest.TestCase):
         """ """
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             fhir_str = f.read()
-        request = TestRequest(form={'resource': fhir_str})
-        fhir_field = getFields(ITestOrganization)['resource']
+        request = TestRequest(form={'organization_resource': fhir_str})
+        fhir_field = getFields(IFFOrganization)['organization_resource']
         field_widget = widget.FhirResourceFieldWidget(fhir_field, request)
 
         converter = queryMultiAdapter((fhir_field, field_widget), IDataConverter)
@@ -99,8 +99,8 @@ class WidgetIntegrationTest(unittest.TestCase):
 
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             fhir_str = f.read()
-        request = TestRequest(form={'resource': fhir_str})
-        fhir_field = getFields(ITestOrganization)['resource']
+        request = TestRequest(form={'organization_resource': fhir_str})
+        fhir_field = getFields(IFFOrganization)['organization_resource']
         field_widget = TextAreaWidget(request)
 
         converter = queryMultiAdapter((fhir_field, field_widget), IDataConverter)
@@ -189,14 +189,14 @@ class WidgetFunctionalTest(unittest.TestCase):
             fhir_str = f.read()
 
         browser = self.browser
-        browser.open(self.portal_url + '/++add++TestOrganization')
+        browser.open(self.portal_url + '/++add++FFOrganization')
         # ** CONTROLS
         # for x in browser.getForm(index=1).mech_form.controls: print  x.name
         # form.widgets.IBasic.title
         # form.widgets.IBasic.description
         # form.widgets.IDublinCore.title
         # form.widgets.IDublinCore.description
-        # form.widgets.resource
+        # form.widgets.organization_resource
         # form.widgets.IDublinCore.subjects
         # form.widgets.IDublinCore.language:list
         # form.widgets.IDublinCore.language-empty-marker
@@ -221,33 +221,41 @@ class WidgetFunctionalTest(unittest.TestCase):
         # form.widgets.IDublinCore.rights
         # form.buttons.save
         # form.buttons.cancel
-        browser.getControl(name='form.widgets.resource').value = fhir_str
+        browser.getControl(name='form.widgets.organization_resource').value = fhir_str
         browser.getControl(name='form.buttons.save').click()
         # There must be form error! as required title is missing so url is unchanged
-        self.assertEqual(browser.mech_browser.geturl(), self.portal_url + '/++add++TestOrganization')
+        self.assertEqual(
+            browser.mech_browser.geturl(),
+            self.portal_url + '/++add++FFOrganization')
         # Test Value exist, even form resubmit
-        self.assertEqual(json.loads(browser.getControl(name='form.widgets.resource').value), json.loads(fhir_str))
+        self.assertEqual(
+            json.loads(browser.getControl(name='form.widgets.organization_resource').value),
+            json.loads(fhir_str))
 
         # Let's fullfill required
         browser.getControl(name='form.widgets.IBasic.title').value = 'hello organization'
         # After solving that problem, this again value assign not need
-        browser.getControl(name='form.widgets.resource').value = fhir_str
+        browser.getControl(name='form.widgets.organization_resource').value = fhir_str
         browser.getControl(name='form.buttons.save').click()
         # should suceess now and redirect to view page
-        self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/testorganization/view')
+        self.assertEqual(
+            browser.mech_browser.geturl(),
+            'http://localhost:55001/plone/fforganization/view')
 
         # let's try edit
-        browser.open('http://localhost:55001/plone/testorganization/edit')
-        fhir_str = browser.getControl(name='form.widgets.resource').value
+        browser.open('http://localhost:55001/plone/fforganization/edit')
+        fhir_str = browser.getControl(name='form.widgets.organization_resource').value
 
         fhir_json = json.loads(fhir_str)
         fhir_json['text']['div'] = '<div>modified</div>'
-        browser.getControl(name='form.widgets.resource').value = json.dumps(fhir_json)
+        browser.getControl(name='form.widgets.organization_resource').value = json.dumps(fhir_json)
         browser.getControl(name='form.buttons.save').click()
         # should sucess
         self.assertIn('class="portalMessage info"', browser.contents)
         self.assertIn('Changes saved', browser.contents)
-        self.assertEqual(browser.mech_browser.geturl(), 'http://localhost:55001/plone/testorganization')
+        self.assertEqual(
+            browser.mech_browser.geturl(),
+            'http://localhost:55001/plone/fforganization')
 
     def test_issue_11(self):
         """Better default view for FHIR field in view mode"""
@@ -257,7 +265,7 @@ class WidgetFunctionalTest(unittest.TestCase):
             fhir_str = f.read()
 
         browser = self.browser
-        browser.open(self.portal_url + '/++add++FFTestOrganization')
+        browser.open(self.portal_url + '/++add++FFOrganization')
         browser.getControl(name='form.widgets.IBasic.title').value = 'Test Hospital'
         # After solving that problem, this again value assign not need
         browser.getControl(name='form.widgets.organization_resource').value = fhir_str

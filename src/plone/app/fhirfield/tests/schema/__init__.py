@@ -9,20 +9,7 @@ from zope.interface import implementer
 __author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
 
 
-class ITestOrganization(model.Schema):
-    """ """
-    resource = FhirResource(
-        title=u'Fhir Resource Field',
-        model='fhirclient.models.organization.Organization',
-    )
-
-
-@implementer(ITestOrganization)
-class TestOrganization(Container):
-    """ """
-
-
-class IFFTestOrganization(model.Schema):
+class IFFOrganization(model.Schema):
     """ """
     organization_resource = FhirResource(
         title=u'Fhir Organization Field',
@@ -30,12 +17,12 @@ class IFFTestOrganization(model.Schema):
     )
 
 
-@implementer(IFFTestOrganization)
-class FFTestOrganization(Container):
+@implementer(IFFOrganization)
+class FFOrganization(Container):
     """ """
 
 
-class IFFTestPatient(model.Schema):
+class IFFPatient(model.Schema):
     """ """
     patient_resource = FhirResource(
         title=u'Fhir Patient Field',
@@ -43,12 +30,25 @@ class IFFTestPatient(model.Schema):
     )
 
 
-@implementer(IFFTestPatient)
-class FFTestPatient(Container):
+@implementer(IFFPatient)
+class FFPatient(Container):
     """ """
 
 
-class IFFTestQuestionnaire(model.Schema):
+class IFFPractitioner(model.Schema):
+    """ """
+    practitioner_resource = FhirResource(
+        title=u'Fhir Practitioner Field',
+        model='fhirclient.models.practitioner.Practitioner',
+    )
+
+
+@implementer(IFFPractitioner)
+class FFPractitioner(Container):
+    """ """
+
+
+class IFFQuestionnaire(model.Schema):
     """ """
     questionnaire_resource = FhirResource(
         title=u'Fhir Questionnaire Field',
@@ -56,12 +56,12 @@ class IFFTestQuestionnaire(model.Schema):
     )
 
 
-@implementer(IFFTestQuestionnaire)
-class FFTestQuestionnaire(Container):
+@implementer(IFFQuestionnaire)
+class FFQuestionnaire(Container):
     """ """
 
 
-class IFFTestQuestionnaireResponse(model.Schema):
+class IFFQuestionnaireResponse(model.Schema):
     """ """
     questionnaireresponse_resource = FhirResource(
         title=u'Fhir QuestionnaireResponse Field',
@@ -69,12 +69,12 @@ class IFFTestQuestionnaireResponse(model.Schema):
     )
 
 
-@implementer(IFFTestQuestionnaireResponse)
-class FFTestQuestionnaireResponse(Container):
+@implementer(IFFQuestionnaireResponse)
+class FFQuestionnaireResponse(Container):
     """ """
 
 
-class IFFTestTask(model.Schema):
+class IFFTask(model.Schema):
     """ """
     task_resource = FhirResource(
         title=u'Fhir Task Field',
@@ -82,12 +82,12 @@ class IFFTestTask(model.Schema):
     )
 
 
-@implementer(IFFTestTask)
-class FFTestTask(Container):
+@implementer(IFFTask)
+class FFTask(Container):
     """ """
 
 
-class IFFTestProcedureRequest(model.Schema):
+class IFFProcedureRequest(model.Schema):
     """ """
     procedurerequest_resource = FhirResource(
         title=u'Fhir ProcedureRequest Field',
@@ -95,12 +95,12 @@ class IFFTestProcedureRequest(model.Schema):
     )
 
 
-@implementer(IFFTestProcedureRequest)
-class FFTestProcedureRequest(Item):
+@implementer(IFFProcedureRequest)
+class FFProcedureRequest(Item):
     """ """
 
 
-class IFFTestDevice(model.Schema):
+class IFFDevice(model.Schema):
     """ """
     device_resource = FhirResource(
         title=u'Fhir Device Field',
@@ -108,12 +108,12 @@ class IFFTestDevice(model.Schema):
     )
 
 
-@implementer(IFFTestDevice)
-class FFTestDevice(Item):
+@implementer(IFFDevice)
+class FFDevice(Item):
     """ """
 
 
-class IFFTestDeviceRequest(model.Schema):
+class IFFDeviceRequest(model.Schema):
     """ """
     task_resource = FhirResource(
         title=u'Fhir DeviceRequest Field',
@@ -121,12 +121,12 @@ class IFFTestDeviceRequest(model.Schema):
     )
 
 
-@implementer(IFFTestDeviceRequest)
-class FFTestDeviceRequest(Item):
+@implementer(IFFDeviceRequest)
+class FFDeviceRequest(Item):
     """ """
 
 
-class IFFTestValueSet(model.Schema):
+class IFFValueSet(model.Schema):
     """ """
     valueset_resource = FhirResource(
         title=u'Fhir ValueSet Field',
@@ -134,8 +134,8 @@ class IFFTestValueSet(model.Schema):
     )
 
 
-@implementer(IFFTestValueSet)
-class FFTestValueSet(Item):
+@implementer(IFFValueSet)
+class FFValueSet(Item):
     """ """
 
 

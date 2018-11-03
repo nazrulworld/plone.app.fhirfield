@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
 from . import BASE_TEST_PATH
 from . import FHIR_FIXTURE_PATH
-from .schema import ITestOrganization
+from .schema import IFFOrganization
 from plone.app.fhirfield import FhirResource
 from plone.app.fhirfield import handler
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
@@ -34,7 +34,7 @@ class HandlerIntegrationTest(unittest.TestCase):
         with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
             fhir_str = f.read()
 
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(IFFOrganization)['organization_resource']
         # Test: available as adapter
         resource_handler = queryMultiAdapter((fhir_field, ), IToUnicode)
 
@@ -46,15 +46,19 @@ class HandlerIntegrationTest(unittest.TestCase):
         self.assertIsInstance(resource_handler.toUnicode(fhir_value), unicode)
 
         # Test: available as Uitility
-        fhir_hanlder_util = queryUtility(IFieldExportImportHandler, name='plone.app.fhirfield.field.FhirResource')
+        fhir_hanlder_util = queryUtility(
+            IFieldExportImportHandler,
+            name='plone.app.fhirfield.field.FhirResource')
         self.assertIsNotNone(fhir_hanlder_util)
         self.assertEqual(fhir_hanlder_util, handler.FhirResourceHandler)
 
         class ITestPatient(model.Schema):
             model.load(os.path.join(BASE_TEST_PATH, 'schema', 'patient.xml'))
 
-        fhir_field2 = getFields(ITestOrganization)['resource']
+        fhir_field2 = getFields(ITestPatient)['resource']
         self.assertEqual(fhir_field2.__class__, fhir_field.__class__)
 
-        xml_schema = serializeSchema(ITestOrganization)
-        self.assertIn('<field name="resource" type="plone.app.fhirfield.field.FhirResource">', xml_schema)
+        xml_schema = serializeSchema(ITestPatient)
+        self.assertIn(
+            '<field name="resource" type="plone.app.fhirfield.field.FhirResource">',
+            xml_schema)

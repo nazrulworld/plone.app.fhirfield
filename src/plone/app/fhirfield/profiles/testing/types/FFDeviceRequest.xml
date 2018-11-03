@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <object xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    name="FFTestDevice"
+    name="FFDeviceRequest"
     meta_type="Dexterity FTI"
     i18n:domain="plone.app.fhirfield">
 
   <!-- Basic properties -->
   <property
       i18n:translate=""
-      name="title">FFTestDevice</property>
+      name="title">FFDeviceRequest</property>
   <property
       i18n:translate=""
-      name="description">FHIR FFTestDevice Resource</property>
+      name="description">FHIR FFDeviceRequest Resource</property>
 
   <property name="allow_discussion">False</property>
-  <property name="factory">FFTestDevice</property>
+  <property name="factory">FFDeviceRequest</property>
   <property name="icon_expr"></property>
   <property name="link_target"></property>
 
@@ -24,10 +24,10 @@
 
   <!-- Schema, class and security -->
   <property name="add_permission">cmf.ManagePortal</property>
-  <property name="klass">plone.app.fhirfield.tests.schema.FFTestDevice</property>
+  <property name="klass">plone.app.fhirfield.tests.schema.FFDeviceRequest</property>
   <property name="model_file"></property>
   <property name="model_source"></property>
-  <property name="schema">plone.app.fhirfield.tests.schema.IFFTestDevice</property>
+  <property name="schema">plone.app.fhirfield.tests.schema.IFFDeviceRequest</property>
 
   <!-- Enabled behaviors -->
   <property name="behaviors" purge="false">
@@ -35,7 +35,7 @@
   </property>
 
   <!-- View information -->
-  <property name="add_view_expr">string:${folder_url}/++add++FFTestDevice</property>
+  <property name="add_view_expr">string:${folder_url}/++add++FFDeviceRequest</property>
   <property name="default_view">view</property>
   <property name="default_view_fallback">False</property>
   <property name="immediate_view">view</property>

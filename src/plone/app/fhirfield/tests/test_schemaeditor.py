@@ -1,5 +1,5 @@
 # _*_ coding: utf-8 _*_
-from .schema import ITestOrganization
+from .schema import IFFOrganization
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
@@ -28,7 +28,7 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
 
     def test_editor(self):
         """ """
-        fhir_field = getFields(ITestOrganization)['resource']
+        fhir_field = getFields(IFFOrganization)['organization_resource']
         # Test: available as adapter
         field_factory = queryUtility(IFieldFactory, name='plone.app.fhirfield.field.FhirResource')
 
@@ -38,7 +38,8 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
             model='fhirclient.models.organization.Organization')
 
         self.assertEqual(fhir_field.model, fhir_field2.model)
-        self.assertEqual(fhir_field, fhir_field2)
+
+        self.assertEqual(fhir_field.__class__, fhir_field2.__class__)
 
         field_list = [x for x in getUtilitiesFor(IFieldFactory) if x[0] == 'plone.app.fhirfield.field.FhirResource']
         self.assertEqual(1, len(field_list))
@@ -86,14 +87,14 @@ class SchemaeditorFunctionalTest(unittest.TestCase):
         browser.open(self.portal_url + '/dexterity-types/@@add-type?ajax_load={0!s}'.format(time.time()))
 
         browser.getControl(name='form.widgets.title').value = 'test organization'
-        browser.getControl(name='form.widgets.id').value = 'testorganization'
+        browser.getControl(name='form.widgets.id').value = 'FFOrganization'
         browser.getControl(name='form.widgets.description').value = 'Test Organization Content Type'
         browser.getControl(name='form.buttons.add').click()
         # There must be form error! as required title is missing so url is unchanged
 
         # Let's fullfill required
         browser.open(
-            '{0}/dexterity-types/testorganization/@@add-field?ajax_load={1}'.format(
+            '{0}/dexterity-types/FFOrganization/@@add-field?ajax_load={1}'.format(
                 self.portal_url,
                 time.time(),
                 ),
