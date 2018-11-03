@@ -26,11 +26,6 @@ FhirResourceValue
 .. autoclass:: FhirResourceValue
    :members:
 
-import_string
--------------
-
-.. autofunction:: import_string
-
 
 parse_query_string
 ------------------

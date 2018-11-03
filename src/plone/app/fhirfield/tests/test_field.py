@@ -130,7 +130,7 @@ class FieldIntegrationTest(unittest.TestCase):
         fhir_field = field.FhirResource(title=six.text_type('Organization resource'))
 
         try:
-            fhir_field.pre_value_validate(json_str)
+            fhir_field._pre_value_validate(json_str)
         except Invalid as e:
             raise AssertionError('Code should not come here!\n{0!s}'.format(e))
 
@@ -138,7 +138,7 @@ class FieldIntegrationTest(unittest.TestCase):
         resource_type = fhir_dict.pop('resourceType')
 
         try:
-            fhir_field.pre_value_validate(fhir_dict)
+            fhir_field._pre_value_validate(fhir_dict)
             raise AssertionError('Code should not come here! As `resourceType` is not exists.')
         except Invalid:
             pass
@@ -146,14 +146,14 @@ class FieldIntegrationTest(unittest.TestCase):
         fhir_dict.pop('id')
         fhir_dict['resourceType'] = resource_type
         try:
-            fhir_field.pre_value_validate(fhir_dict)
+            fhir_field._pre_value_validate(fhir_dict)
             raise AssertionError('Code should not come here! As `id` is not exists.')
         except Invalid:
             pass
 
         fhir_dict.pop('resourceType')
         try:
-            fhir_field.pre_value_validate(fhir_dict)
+            fhir_field._pre_value_validate(fhir_dict)
             raise AssertionError('Code should not come here! As both `id` and `resourceType` are not exists.')
         except Invalid:
             pass

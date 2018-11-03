@@ -33,17 +33,35 @@ __author__ = 'Md Nazrul Islam<nazrul@zitelab.dk>'
 
 @implementer(IFhirResource, IFromUnicode)
 class FhirResource(Object):
-    """FHIR Resource field"""
+    """FhirResource also known as FHIR field is the schema field derrived from z3c.form's field.
+
+    It takes all initilial arguments those are derrived from standard schema field, with additionally
+    ``model``, ``resource_type`` and ``model_interface``
+
+    .. note::
+        field name must be start with lowercase name of FHIR Resource.
+    """
     _type = FhirResourceValue
 
-    def __init__(self, model=None, resource_type=None, model_interface=None, **kw):
+    def __init__(self,
+                 model=None,
+                 resource_type=None,
+                 model_interface=None,
+                 **kw):
+        """
+        :arg model: dotted path of FHIR Model class
+
+        :arg resource_type:
+
+        :arg model_interface
+        """
 
         self.schema = IFhirResourceValue
         self.model = model
         self.resource_type = resource_type
         self.model_interface = model_interface
 
-        self.init_validate()
+        self._init_validate()
 
         if 'default' in kw:
             default = kw['default']
@@ -73,10 +91,10 @@ class FhirResource(Object):
         return value
 
     def from_none(self):
-        """" """
+        """"""
         return FhirResourceValue()
 
-    def init_validate(self):
+    def _init_validate(self):
         """ """
         if self.resource_type and self.model is not None:
             raise Invalid(_('Either `model` or `resource_type` value is acceptable! you cannot provide both!'))
@@ -126,7 +144,7 @@ class FhirResource(Object):
 
             self.model_interface = klass
 
-    def pre_value_validate(self, fhir_json):
+    def _pre_value_validate(self, fhir_json):
         """ """
         fhir_dict = None
         if isinstance(fhir_json, six.string_types):
@@ -143,7 +161,7 @@ class FhirResource(Object):
 
     def _from_dict(self, dict_value):
         """ """
-        self.pre_value_validate(dict_value)
+        self._pre_value_validate(dict_value)
         klass = None
 
         if self.model:
