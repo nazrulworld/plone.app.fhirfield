@@ -1,0 +1,26 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    xmlns:zcml="http://namespaces.zope.org/zcml">
+
+
+    <include package="plone.rest" file="configure.zcml" />
+    <plone:service  method="GET"
+                    name="@fhir"
+                    for="Products.CMFCore.interfaces.ISiteRoot"
+                    factory=".get.FHIRSearchService"
+                    permission="zope2.View" />
+
+    <plone:service  method="POST"
+                    name="@fhir"
+                    for="Products.CMFCore.interfaces.ISiteRoot"
+                    factory=".post.FHIRResourceAdd"
+                    permission="zope2.View" />
+
+    <plone:service  method="PATCH"
+                    name="@fhir"
+                    for="Products.CMFCore.interfaces.ISiteRoot"
+                    factory=".patch.FHIRResourcePatch"
+                    permission="zope2.View" />
+
+</configure>

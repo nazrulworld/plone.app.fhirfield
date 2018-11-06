@@ -5,11 +5,13 @@ from email.message import Message
 from plone.app.fhirfield import marshaler
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.restapi.interfaces import IDeserializeFromJson
+from plone.restapi.services.content.utils import add
 from plone.restapi.services.content.utils import create
-from plone.restapi.services.content.utils import rename
 from plone.rfc822 import constructMessageFromSchema
 from plone.rfc822.interfaces import IFieldMarshaler
 from zope.component import queryMultiAdapter
+from zope.event import notify
+from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
 
@@ -45,7 +47,10 @@ class MarshalerIntegrationTest(unittest.TestCase):
         deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
         assert deserializer is not None
         deserializer(validate_all=True)
-        rename(obj)
+
+        notify(ObjectCreatedEvent(obj))
+
+        add(self.portal, obj)
 
         return obj
 

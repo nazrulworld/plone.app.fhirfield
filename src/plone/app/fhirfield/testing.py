@@ -23,7 +23,7 @@ __author__ = 'Md Nazrul Islam<email2nazrul@zitelab.dk>'
 TEST_ZCML = """\
 <configure
     xmlns="http://namespaces.zope.org/zope">
-    <include package="plone.app.fhirfield.tests.fhir_rest_service" />
+    <include package="fhirfield_rest.services" />
 </configure>
 """
 IS_TRAVIS = 'TRAVIS' in os.environ
@@ -171,6 +171,10 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         # Load any other ZCML that is required for your tests.
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
+
+        import plone.app.dexterity
+        self.loadZCML(package=plone.app.dexterity)
+
         import plone.restapi
         self.loadZCML(package=plone.restapi)
 
@@ -188,6 +192,17 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         # initialize method not calling automatically
         z2.installProduct(app, 'plone.app.fhirfield')
         # Load Custom
+        example_rest_path = os.path.join(
+            os.path.dirname(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(os.path.abspath(__file__)))))),
+            'examples')
+
+        if example_rest_path not in sys.path[:]:
+            sys.path.append(example_rest_path)
+
         xmlconfig.string(TEST_ZCML, context=configuration_context)
 
     def setUpPloneSite(self, portal):  # noqa: N802

@@ -9,10 +9,12 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.restapi.interfaces import IDeserializeFromJson
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import ISerializeToJson
+from plone.restapi.services.content.utils import add
 from plone.restapi.services.content.utils import create
-from plone.restapi.services.content.utils import rename
 from plone.restapi.testing import RelativeSession
 from zope.component import queryMultiAdapter
+from zope.event import notify
+from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
 
@@ -43,12 +45,19 @@ class SerializerIntegrationTest(unittest.TestCase):
             body['organization_resource'] = json.load(f)
 
         request = TestRequest(BODY=json.dumps(body))
-        obj = create(self.portal, body['@type'], id_=None, title=body['title'])
+        obj = create(
+            self.portal, body['@type'],
+            id_=None,
+            title=body['title'])
 
         deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
         assert deserializer is not None
+
+        notify(ObjectCreatedEvent(obj))
+
         deserializer(validate_all=True)
-        rename(obj)
+
+        obj = add(self.portal, obj, False)
 
         return obj
 
@@ -85,6 +94,7 @@ class SerializerIntegrationTest(unittest.TestCase):
         """ """
         context = self.add_item()
         serializer = queryMultiAdapter((context, self.request), ISerializeToJson)
+
         result = serializer()
 
         self.assertEqual(

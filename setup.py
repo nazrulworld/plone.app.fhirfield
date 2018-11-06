@@ -30,7 +30,8 @@ test_requires = [
     'plone.app.robotframework[debug]',
     'collective.MockMailHost',
     'Products.contentmigration',
-    'docker'
+    'docker',
+    'requests'
 ]
 
 setup(

@@ -10,11 +10,13 @@ from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.restapi.interfaces import IDeserializeFromJson
 from plone.restapi.interfaces import IFieldDeserializer
+from plone.restapi.services.content.utils import add
 from plone.restapi.services.content.utils import create
-from plone.restapi.services.content.utils import rename
 from plone.restapi.testing import RelativeSession
 from zope.component import queryMultiAdapter
+from zope.event import notify
 from zope.interface import Invalid
+from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
 
@@ -91,7 +93,10 @@ class DeserializerIntegrationTest(unittest.TestCase):
         assert deserializer is not None
 
         deserializer(validate_all=True)
-        rename(obj)
+
+        notify(ObjectCreatedEvent(obj))
+
+        add(self.portal, obj)
 
         self.assertTrue(IFhirResourceValue.providedBy(obj.organization_resource))
 
