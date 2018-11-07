@@ -19,6 +19,7 @@ Welcome to plone.app.fhirfield's documentation!
    :maxdepth: 1
 
    api
+   restapi_examples
    migration
    changes
    contribute
