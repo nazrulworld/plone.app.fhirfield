@@ -18,7 +18,7 @@ class FHIRSearchService(Service):
         """ """
         results = [getattr(
             r.getObject(),
-            '{0}_resource'.format(self.resource_type)).as_json()
+            '{0}_resource'.format(self.resource_type).lower()).as_json()
             for r in self.build_result()]
 
         if self.resource_id:
@@ -93,7 +93,5 @@ class FHIRSearchService(Service):
         """ """
         query, extra_params = self.build_query()
         results = api.content.find(**query)  # noqa: P001
-        if not results:
-            return 0, []
 
         return results

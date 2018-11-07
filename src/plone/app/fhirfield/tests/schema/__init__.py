@@ -189,3 +189,16 @@ class IFFObservation(model.Schema):
 @implementer(IFFObservation)
 class FFObservation(Item):
     """ """
+
+
+class IFFMedia(model.Schema):
+    """"""
+    media_resource = FhirResource(
+        title=u'Fhir Media Field',
+        model='fhirclient.models.media.Media',
+    )
+
+
+@implementer(IFFMedia)
+class FFMedia(Item):
+    """ """

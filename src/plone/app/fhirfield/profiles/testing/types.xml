@@ -16,4 +16,7 @@
   <object meta_type="Dexterity FTI" name="FFEncounter" />
   <object meta_type="Dexterity FTI" name="FFMedicationRequest" />
   <object meta_type="Dexterity FTI" name="FFObservation" />
+
+  <object meta_type="Dexterity FTI" name="FFMedia" />
+  <object meta_type="Dexterity FTI" name="FFProcedureRequest" />
 </object>

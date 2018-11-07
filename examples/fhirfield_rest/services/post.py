@@ -61,11 +61,14 @@ class FHIRResourceAdd(Service):
     def _create_object(self, fhir):
         """ """
         form_data = {
-            '@type': fhir['resourceType'],
+            '@type': 'FF' + fhir['resourceType'],
             'id': fhir['id'],
-            'title': '{0}-{1}'.format(self.resource_type, fhir['id'])
+            'title': '{0}-{1}'.format(
+                self.resource_type,
+                fhir['id'])
         }
-        fhir_field_name = '{0}_resource'.format(fhir['resourceType'].lower())
+        fhir_field_name = '{0}_resource'.format(
+            fhir['resourceType'].lower())
         form_data[fhir_field_name] = fhir
 
         self.request['BODY'] = json.dumps(form_data)
