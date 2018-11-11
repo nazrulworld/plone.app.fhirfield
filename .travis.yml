@@ -23,7 +23,7 @@ before_install:
   - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
   - virtualenv --clear -p `which python` .
   - bin/pip install -U pip
-  - bin/pip install -r requirements.txt
+  - bin/pip install -r plone-$PLONE_VERSION-requirements.txt
 install:
   - wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.6/elasticsearch-2.4.6.tar.gz
   - tar -xzf elasticsearch-2.4.6.tar.gz

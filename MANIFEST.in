@@ -1,9 +1,10 @@
 graft src/plone
 prune docs
+prune examples
 prune .cache
 prune scripts
 global-exclude *.pyc
 include *.rst
 include LICENSE.GPL
 exclude *.cfg
-exclude requirements.txt test-no-sphinx-warnings.in Makefile
+exclude *requirements.txt test-no-sphinx-warnings.in Makefile
