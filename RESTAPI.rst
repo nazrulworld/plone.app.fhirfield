@@ -1,5 +1,4 @@
-REST API Examples
-=================
+.. _restapi_examples_doctest:
 
 
 Simple Search: Getting single resource, here we are getting Patient resource by ID.

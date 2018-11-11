@@ -8,6 +8,8 @@ from setuptools import setup
 long_description = '\n\n'.join([
     open('README.rst').read(),
     open('MIGRATION.rst').read(),
+    open('SEARCH.rst').read(),
+    open('RESTAPI.rst').read(),
     open('CONTRIBUTORS.rst').read(),
     open('CHANGES.rst').read(),
 ])
