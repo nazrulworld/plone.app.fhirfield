@@ -12,7 +12,6 @@ from zope.component import queryMultiAdapter
 from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
-from zope.testing import doctest
 
 import io
 import json
@@ -21,6 +20,13 @@ import six
 import time
 import transaction
 import unittest
+
+
+try:  # pragma: no cover
+    from zope.testrunner import doctest
+except ImportError:  # pragma: no cover
+    # less than version 4.2.0 use standard
+    import doctest
 
 
 def make_session(portal, base_url=None):

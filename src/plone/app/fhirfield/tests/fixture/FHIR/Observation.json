@@ -1,6 +1,10 @@
 {
   "resourceType": "Observation",
   "id": "508b70ef-9b54-41c9-8ade-184f2bb237c2",
+  "meta": {
+      "versionId": "1.0.0",
+      "lastUpdated": "2017-10-15T06:31:18"
+  },
   "identifier": [
     {
       "use": "official",

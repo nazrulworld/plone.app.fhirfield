@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_base
 from Acquisition.interfaces import IAcquirer
+from plone import api
 from plone.restapi.deserializer import json_body
 from plone.restapi.exceptions import DeserializationError
 from plone.restapi.interfaces import IDeserializeFromJson
 from plone.restapi.services import Service
 from plone.restapi.services.content.utils import add as add_obj
 from plone.restapi.services.content.utils import create as create_obj
-from Products.Archetypes.interfaces import IBaseObject
 from Products.CMFPlone.utils import safe_hasattr
 from zope.component import queryMultiAdapter
 from zope.event import notify
@@ -73,7 +73,7 @@ class FHIRResourceAdd(Service):
 
         self.request['BODY'] = json.dumps(form_data)
 
-        context = self.get_container(fhir)
+        context = api.portal.get()
 
         obj = create_obj(
             context,
@@ -111,8 +111,8 @@ class FHIRResourceAdd(Service):
         if temporarily_wrapped:
             obj = aq_base(obj)
 
-        if not IBaseObject.providedBy(obj):
-            notify(ObjectCreatedEvent(obj))
+        # Notify Dexterity Created
+        notify(ObjectCreatedEvent(obj))
 
         # Adding to Container
         add_obj(context, obj, rename=False)

@@ -15,12 +15,12 @@
                     name="@fhir"
                     for="Products.CMFCore.interfaces.ISiteRoot"
                     factory=".post.FHIRResourceAdd"
-                    permission="zope2.View" />
+                    permission="cmf.ManagePortal" />
 
     <plone:service  method="PATCH"
                     name="@fhir"
                     for="Products.CMFCore.interfaces.ISiteRoot"
                     factory=".patch.FHIRResourcePatch"
-                    permission="zope2.View" />
+                    permission="cmf.ManagePortal" />
 
 </configure>
