@@ -56,6 +56,10 @@ class FHIRResourceAdd(Service):
                          plone.protect.interfaces.IDisableCSRFProtection)
 
         response = self._create_object(data)
+
+        if 'error' in response:
+            self.request.response.setStatus(400)
+
         return response
 
     def _create_object(self, fhir):
@@ -103,7 +107,7 @@ class FHIRResourceAdd(Service):
                 message='Cannot deserialize type {0}'.format(obj.portal_type)))
 
         try:
-            deserializer(validate_all=True)
+            deserializer(validate_all=True, create=True)
         except DeserializationError as e:
             self.request.response.setStatus(400)
             return dict(error=dict(type='DeserializationError', message=str(e)))
@@ -112,7 +116,8 @@ class FHIRResourceAdd(Service):
             obj = aq_base(obj)
 
         # Notify Dexterity Created
-        notify(ObjectCreatedEvent(obj))
+        if not getattr(deserializer, 'notifies_create', False):
+            notify(ObjectCreatedEvent(obj))
 
         # Adding to Container
         add_obj(context, obj, rename=False)
