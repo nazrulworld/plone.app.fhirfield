@@ -139,7 +139,7 @@ class ValueIntegrationTest(unittest.TestCase):
             fhir_resource_value._validate_object(broken_obj)
             raise AssertionError('Code should not come here! because of validation error')
         except Invalid as exc:
-            self.assertIn(' The meta attribute was not provided', str(exc))
+            self.assertIn('An object has failed to implement', str(exc))
 
     def test_fhir_resource_value_pickling(self):
         """ """

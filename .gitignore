@@ -41,6 +41,7 @@ docs/html
 .Python
 .DS_Store
 .vscode
+.idea
 
 # excludes
 !.coveragerc
