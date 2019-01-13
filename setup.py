@@ -17,7 +17,8 @@ long_description = '\n\n'.join([
 install_requires = [
     'setuptools',
     'jsonpatch',
-    'fhir-resources'
+    # important! STU3
+    'fhir.resources==3.0.1'
 ]
 elasticsearch_requires = [
     'collective.elasticsearch>=2.0.1,<2.0.5'
