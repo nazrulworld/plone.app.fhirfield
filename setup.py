@@ -16,11 +16,11 @@ long_description = '\n\n'.join([
 
 install_requires = [
     'setuptools',
-    'fhirclient',
-    'jsonpatch'
+    'jsonpatch',
+    'fhir-resources'
 ]
 elasticsearch_requires = [
-    'collective.elasticsearch>=2.0.1'
+    'collective.elasticsearch>=2.0.1,<2.0.5'
 ]
 test_requires = [
     'plone.restapi',

@@ -4,7 +4,9 @@ Changelog
 1.0.0rc5 (unreleased)
 ---------------------
 
-- Nothing changed yet.
+Breaking
+
+- Drop ``fhirclient`` dependency, instead make ``fhir.resources`` dependency.
 
 
 1.0.0rc4 (2018-10-25)

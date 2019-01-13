@@ -20,6 +20,7 @@ test.plone_addon/
 var/
 build/
 dist/
+mr-developer-src/
 
 # files
 .installed.cfg

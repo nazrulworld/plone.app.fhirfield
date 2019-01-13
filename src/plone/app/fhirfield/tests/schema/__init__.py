@@ -13,7 +13,7 @@ class IFFOrganization(model.Schema):
     """ """
     organization_resource = FhirResource(
         title=u'Fhir Organization Field',
-        model='fhirclient.models.organization.Organization',
+        model='fhir.resources.organization.Organization',
     )
 
 
@@ -26,7 +26,7 @@ class IFFPatient(model.Schema):
     """ """
     patient_resource = FhirResource(
         title=u'Fhir Patient Field',
-        model='fhirclient.models.patient.Patient',
+        model='fhir.resources.patient.Patient',
     )
 
 
@@ -39,7 +39,7 @@ class IFFPractitioner(model.Schema):
     """ """
     practitioner_resource = FhirResource(
         title=u'Fhir Practitioner Field',
-        model='fhirclient.models.practitioner.Practitioner',
+        model='fhir.resources.practitioner.Practitioner',
     )
 
 
@@ -52,7 +52,7 @@ class IFFQuestionnaire(model.Schema):
     """ """
     questionnaire_resource = FhirResource(
         title=u'Fhir Questionnaire Field',
-        model='fhirclient.models.questionnaire.Questionnaire',
+        model='fhir.resources.questionnaire.Questionnaire',
     )
 
 
@@ -65,7 +65,7 @@ class IFFQuestionnaireResponse(model.Schema):
     """ """
     questionnaireresponse_resource = FhirResource(
         title=u'Fhir QuestionnaireResponse Field',
-        model='fhirclient.models.questionnaireresponse.QuestionnaireResponse',
+        model='fhir.resources.questionnaireresponse.QuestionnaireResponse',
     )
 
 
@@ -78,7 +78,7 @@ class IFFTask(model.Schema):
     """ """
     task_resource = FhirResource(
         title=u'Fhir Task Field',
-        model='fhirclient.models.task.Task',
+        model='fhir.resources.task.Task',
     )
 
 
@@ -91,7 +91,7 @@ class IFFProcedureRequest(model.Schema):
     """ """
     procedurerequest_resource = FhirResource(
         title=u'Fhir ProcedureRequest Field',
-        model='fhirclient.models.procedurerequest.ProcedureRequest',
+        model='fhir.resources.procedurerequest.ProcedureRequest',
     )
 
 
@@ -104,7 +104,7 @@ class IFFDevice(model.Schema):
     """ """
     device_resource = FhirResource(
         title=u'Fhir Device Field',
-        model='fhirclient.models.device.Device',
+        model='fhir.resources.device.Device',
     )
 
 
@@ -117,7 +117,7 @@ class IFFDeviceRequest(model.Schema):
     """ """
     task_resource = FhirResource(
         title=u'Fhir DeviceRequest Field',
-        model='fhirclient.models.devicerequest.DeviceRequest',
+        model='fhir.resources.devicerequest.DeviceRequest',
     )
 
 
@@ -130,7 +130,7 @@ class IFFValueSet(model.Schema):
     """ """
     valueset_resource = FhirResource(
         title=u'Fhir ValueSet Field',
-        model='fhirclient.models.valueset.ValueSet',
+        model='fhir.resources.valueset.ValueSet',
     )
 
 
@@ -143,7 +143,7 @@ class IFFChargeItem(model.Schema):
     """"""
     chargeitem_resource = FhirResource(
         title=u'Fhir ChargeItem Field',
-        model='fhirclient.models.chargeitem.ChargeItem',
+        model='fhir.resources.chargeitem.ChargeItem',
     )
 
 
@@ -156,7 +156,7 @@ class IFFEncounter(model.Schema):
     """"""
     encounter_resource = FhirResource(
         title=u'Fhir FFEncounter Field',
-        model='fhirclient.models.encounter.Encounter',
+        model='fhir.resources.encounter.Encounter',
     )
 
 
@@ -169,7 +169,7 @@ class IFFMedicationRequest(model.Schema):
     """"""
     medicationrequest_resource = FhirResource(
         title=u'Fhir MedicationRequest Field',
-        model='fhirclient.models.medicationrequest.MedicationRequest',
+        model='fhir.resources.medicationrequest.MedicationRequest',
     )
 
 
@@ -182,7 +182,7 @@ class IFFObservation(model.Schema):
     """"""
     observation_resource = FhirResource(
         title=u'Fhir Observation Field',
-        model='fhirclient.models.observation.Observation',
+        model='fhir.resources.observation.Observation',
     )
 
 
@@ -195,7 +195,7 @@ class IFFMedia(model.Schema):
     """"""
     media_resource = FhirResource(
         title=u'Fhir Media Field',
-        model='fhirclient.models.media.Media',
+        model='fhir.resources.media.Media',
     )
 
 

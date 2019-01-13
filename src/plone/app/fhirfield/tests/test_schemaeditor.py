@@ -35,7 +35,7 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
         self.assertIsNotNone(field_factory)
         fhir_field2 = field_factory(
             title=u'Fhir Resource Field',
-            model='fhirclient.models.organization.Organization')
+            model='fhir.resources.organization.Organization')
 
         self.assertEqual(fhir_field.model, fhir_field2.model)
 

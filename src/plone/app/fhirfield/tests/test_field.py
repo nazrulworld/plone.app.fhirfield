@@ -33,7 +33,7 @@ class FieldIntegrationTest(unittest.TestCase):
         try:
             field.FhirResource(
                 title=six.text_type('Organization resource'),
-                model='fhirclient.models.organization.Organization',
+                model='fhir.resources.organization.Organization',
                 model_interface='plone.app.fhirfield.interfaces.IFhirResourceModel',
             )
         except Invalid as exc:
@@ -52,7 +52,7 @@ class FieldIntegrationTest(unittest.TestCase):
             field.FhirResource(
                 title=six.text_type('Organization resource'),
                 resource_type='Organization',
-                model='fhirclient.models.organization.Organization',
+                model='fhir.resources.organization.Organization',
             )
             raise AssertionError('Code should not come here! as should be invalid error')
         except Invalid:
@@ -196,7 +196,7 @@ class FieldIntegrationTest(unittest.TestCase):
         # Test model constraint
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.task.Task',
+            model='fhir.resources.task.Task',
         )
 
         try:
@@ -236,7 +236,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.organization.Organization',
+            model='fhir.resources.organization.Organization',
         )
 
         try:
@@ -285,7 +285,7 @@ class FieldIntegrationTest(unittest.TestCase):
         # Test contraint
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.task.Task',
+            model='fhir.resources.task.Task',
         )
 
         try:
@@ -303,7 +303,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.organization.Organization',
+            model='fhir.resources.organization.Organization',
         )
 
         try:
@@ -325,7 +325,7 @@ class FieldIntegrationTest(unittest.TestCase):
         """ """
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.organization.Organization',
+            model='fhir.resources.organization.Organization',
             required=False,
         )
 
@@ -336,7 +336,7 @@ class FieldIntegrationTest(unittest.TestCase):
         """ """
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.organization.Organization',
+            model='fhir.resources.organization.Organization',
         )
 
         empty_value = fhir_field.from_none()
@@ -361,14 +361,14 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.organization.Organization',
+            model='fhir.resources.organization.Organization',
             default=json_dict,
         )
         self.assertEqual(json_dict, fhir_field.default.as_json())
 
         fhir_field2 = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.organization.Organization',
+            model='fhir.resources.organization.Organization',
             default=json.dumps(json_dict),
         )
 
@@ -376,7 +376,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field3 = field.FhirResource(
             title=six.text_type('Organization resource'),
-            model='fhirclient.models.organization.Organization',
+            model='fhir.resources.organization.Organization',
             default=None,
         )
         self.assertEqual(str(fhir_field3.default), '')

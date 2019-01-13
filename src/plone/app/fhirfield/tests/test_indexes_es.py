@@ -545,6 +545,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             portal_catalog.unrestrictedSearchResults(
                 patient_resource={'identifier:text': 'Plone|Patient-UUID'},
             )
+
             raise AssertionError('Code should not come here, as validation error should raise')
         except SearchQueryValidationError as e:
             self.assertIn('Pipe (|) is not allowed', str(e))

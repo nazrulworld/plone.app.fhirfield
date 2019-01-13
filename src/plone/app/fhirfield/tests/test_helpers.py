@@ -21,7 +21,7 @@ class HelperIntegrationTest(unittest.TestCase):
     def test_search_fhir_model(self):
         """ """
         dotted_path = helpers.search_fhir_model('DeviceRequest')
-        self.assertEqual('fhirclient.models.devicerequest.DeviceRequest', dotted_path)
+        self.assertEqual('fhir.resources.devicerequest.DeviceRequest', dotted_path)
 
         dotted_path = helpers.search_fhir_model('FakeResource')
         self.assertIsNone(dotted_path)
@@ -30,7 +30,7 @@ class HelperIntegrationTest(unittest.TestCase):
         """ """
         helpers.FHIR_RESOURCE_MODEL_CACHE.clear()
         dotted_path = helpers.search_fhir_model('DeviceRequest')
-        self.assertEqual('fhirclient.models.devicerequest.DeviceRequest', dotted_path)
+        self.assertEqual('fhir.resources.devicerequest.DeviceRequest', dotted_path)
 
         self.assertEqual(len(helpers.FHIR_RESOURCE_MODEL_CACHE), 1)
 

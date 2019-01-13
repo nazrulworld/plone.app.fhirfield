@@ -50,7 +50,7 @@ class ObjectStorage(Persistent):
 @implementer(IFhirResourceValue)
 class FhirResourceValue(object):
     """FhirResourceValue is a proxy class for holding any object derrived from
-    fhirclient.models.resource.Resource"""
+    fhir.resources.resource.Resource"""
 
     __slot__ = ('_storage', '_encoding')
 

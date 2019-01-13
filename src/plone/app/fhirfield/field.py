@@ -1,5 +1,5 @@
 # _*_ coding:utf-8 _*_
-from fhirclient.models.fhirabstractbase import FHIRValidationError
+from fhir.resources.fhirabstractbase import FHIRValidationError
 from plone import api
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.helpers import import_string
