@@ -29,14 +29,8 @@ CIM.update(INDEX_MAPPING)
 
 def QueryAssembler_normalize(self, query):
     """ """
-    if 'b_size' in query:
-        del query['b_size']
-    if 'b_start' in query:
-        del query['b_start']
-    if 'sort_limit' in query:
-        del query['sort_limit']
+    sort_on = []
 
-    sort_on = ['_score']
     resources = dict()
 
     for param in query.keys():
@@ -59,28 +53,37 @@ def QueryAssembler_normalize(self, query):
         sort = query.pop('_sort', '').strip()
         if sort:
             build_elasticsearch_sortable(resources, sort.split(','), sort_on)
-            sortstr = ','.join(sort_on)
-        else:
-            sortstr = ''
+
     else:
         # _sort is useless if FHIR query (using fhir field) is not used
         if '_sort' in query:
             del query['_sort']
 
+        # Do things from original
         sort = query.pop('sort_on', None)
-        if sort:
-            sort_on.extend(sort.split(','))
-        sort_order = query.pop('sort_order', 'descending')
-        if sort_on:
-            sortstr = ','.join(sort_on)
-            if sort_order in ('descending', 'reverse', 'desc'):
-                sortstr += ':desc'
-            else:
-                sortstr += ':asc'
+        # default plone is ascending
+        sort_order = query.pop('sort_order', 'asc')
+        if sort_order in ('descending', 'reverse', 'desc'):
+            sort_order = 'desc'
         else:
-            sortstr = ''
+            sort_order = 'asc'
 
-    return query, sortstr
+        if sort:
+            for sort_str in sort.split(','):
+                sort_on.append({
+                    sort_str: {'order': sort_order},
+                })
+
+    sort_on.append('_score')
+
+    if 'b_size' in query:
+        del query['b_size']
+    if 'b_start' in query:
+        del query['b_start']
+    if 'sort_limit' in query:
+        del query['sort_limit']
+
+    return query, sort_on
 
 
 def MappingAdapter_get_index_creation_body(self):

@@ -7,6 +7,7 @@ Changelog
 Breaking
 
 - Drop ``fhirclient`` dependency, instead make ``fhir.resources`` dependency.
+- ``collective.elasticsearch`` version minimum version ``2.0.5`` has been pinned.
 
 
 1.0.0rc4 (2018-10-25)

@@ -1328,7 +1328,9 @@ class ElasticsearchSortQueryBuilder(object):
 
     def build(self, container=None):
         """ """
-        container = container or list()
+        if container is None:
+            container = []
+
         for resource_type, field in six.iteritems(self.field_definitions):
             for s_field in self.sort_fields:
 
@@ -1340,7 +1342,7 @@ class ElasticsearchSortQueryBuilder(object):
                     sort_order = 'desc'
 
                 path_ = self.find_path(cleaned_s_field, field, resource_type)
-                container.append(path_ + ':' + sort_order)
+                container.append({path_: {'order': sort_order}})
         return container
 
     def validate(self):

@@ -214,15 +214,22 @@ class ElasticsearchSortQueryBuilderIntegrationTest(unittest.TestCase):
 
     def test_build(self):
         """ """
-        sort_on = ['_score']
+        sort_on = []
 
         builder = helpers.ElasticsearchSortQueryBuilder(
             {'Task': 'task_resource'},
             '-_lastUpdated,status'.split(','))
+
         builder.build(sort_on)
-        self.assertEqual(
-            '_score,task_resource.meta.lastUpdated:desc,task_resource.status:asc',
-            ','.join(sort_on))
+
+        sort_on.append('_score')
+
+        expected = [
+            {'task_resource.meta.lastUpdated': {'order': 'desc'}},
+            {'task_resource.status': {'order': 'asc'}},
+            '_score',
+        ]
+        self.assertEqual(sort_on, expected)
 
     def test_validation(self):
         """ """
@@ -271,11 +278,17 @@ class QueryAssemblerPatchIntegrationTest(unittest.TestCase):
             'portal_type': 'Task',
             '_sort': '-_lastUpdated,status',
         }
-        query, sortstr = assembler.normalize(query)
+        expected = [
+            {'task_resource.meta.lastUpdated': {'order': 'desc'}},
+            {'task_resource.status': {'order': 'asc'}},
+            '_score',
+        ]
+        query, sort_list = assembler.normalize(query)
 
         self.assertEqual(
-            sortstr,
-            '_score,task_resource.meta.lastUpdated:desc,task_resource.status:asc')
+            sort_list,
+            expected)
+
         self.assertNotIn('_sort', query)
 
     def test_plone_sortable_obsolute(self):
@@ -291,9 +304,9 @@ class QueryAssemblerPatchIntegrationTest(unittest.TestCase):
             'sort_on': 'created',
             'sort_order': 'desc',
         }
-        query, sortstr = assembler.normalize(query)
+        query, sort_list = assembler.normalize(query)
 
-        self.assertEqual(sortstr, '')
+        self.assertEqual(sort_list, ['_score'])
         self.assertNotIn('sort_on', query)
         self.assertNotIn('sort_order', query)
 
@@ -305,6 +318,11 @@ class QueryAssemblerPatchIntegrationTest(unittest.TestCase):
             'sort_on': 'created,id',
             'sort_order': 'desc',
         }
+        expected = [
+            {'created': {'order': 'desc'}},
+            {'id': {'order': 'desc'}},
+            '_score',
+        ]
         assembler = QueryAssembler(None, self.es)
-        query, sortstr = assembler.normalize(query)
-        self.assertEqual(sortstr, '_score,created,id:desc')
+        query, sort_list = assembler.normalize(query)
+        self.assertEqual(sort_list, expected)
