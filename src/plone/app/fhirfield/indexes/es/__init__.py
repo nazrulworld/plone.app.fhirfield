@@ -30,23 +30,32 @@ CIM.update(INDEX_MAPPING)
 def QueryAssembler_normalize(self, query):
     """ """
     sort_on = []
-
     resources = dict()
+    sort_on_orig = query.pop('sort_on', None)
+    if sort_on_orig:
+        sort_on_orig = map(lambda x: x.strip(), sort_on_orig.split(','))
 
     for param in query.keys():
-        if param in ('_sort', '_count', 'sort_on', 'sort_order'):
+        if param in ('_sort', '_count', 'sort_order'):
             continue
-
         try:
             definition = FHIR_RESOURCE_LIST[param.split('_')[0].lower()]
             resources[definition.get('name')] = param
         except KeyError:
             continue
 
+    # fallback from plone style
+    if len(resources) == 0 and sort_on_orig is not None:
+
+        for sf in sort_on_orig:
+            try:
+                definition = FHIR_RESOURCE_LIST[sf.split('_')[0].lower()]
+                resources[definition.get('name')] = sf
+            except KeyError:
+                continue
+
     if resources:
         # we don't care about Plone sorting, if FHIR query is used
-        if 'sort_on' in query:
-            del query['sort_on']
         if 'sort_order' in query:
             del query['sort_order']
 
@@ -59,8 +68,6 @@ def QueryAssembler_normalize(self, query):
         if '_sort' in query:
             del query['_sort']
 
-        # Do things from original
-        sort = query.pop('sort_on', None)
         # default plone is ascending
         sort_order = query.pop('sort_order', 'asc')
         if sort_order in ('descending', 'reverse', 'desc'):
@@ -68,8 +75,8 @@ def QueryAssembler_normalize(self, query):
         else:
             sort_order = 'asc'
 
-        if sort:
-            for sort_str in sort.split(','):
+        if sort_on_orig:
+            for sort_str in sort_on_orig:
                 sort_on.append({
                     sort_str: {'order': sort_order},
                 })

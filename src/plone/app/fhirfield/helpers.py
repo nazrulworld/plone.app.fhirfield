@@ -42,7 +42,7 @@ def search_fhir_model(model_name, cache=True):
     for importer, modname, ispkg in \
             pkgutil.walk_packages(resources.__path__, resources.__name__ + '.',
                                   onerror=lambda x: None):
-        if ispkg or '.tests.' in modname:
+        if ispkg or len(modname.split('.')) > 3:
             continue
 
         mod = import_module(modname)

@@ -613,6 +613,17 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             result[1].getObject().task_resource.meta.lastUpdated.date,
             result[2].getObject().task_resource.meta.lastUpdated.date)
 
+        # Test sorting with fhir param
+        result = portal_catalog.unrestrictedSearchResults(
+            portal_type='FFTask',
+            _sort='-_lastUpdated',
+            sort_on='task_resource',
+        )
+
+        self.assertGreater(
+            result[0].getObject().task_resource.meta.lastUpdated.date,
+            result[1].getObject().task_resource.meta.lastUpdated.date)
+
     def test_mapping_adapter_patch(self):
         """collective.elasticsearch.mapping.MappingAdapter.
         The patch provides default index settings"""
