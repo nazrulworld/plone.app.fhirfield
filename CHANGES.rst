@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.0.0rc5 (unreleased)
----------------------
+1.0.0 (unreleased)
+------------------
 
 Breaking
 
