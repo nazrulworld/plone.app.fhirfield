@@ -124,7 +124,7 @@ class BaseDockerImage(object):
 
 class Elasticsearch(BaseDockerImage):
     name = 'elasticsearch_ff'
-    image = 'elasticsearch:2.4.6'
+    image = 'elasticsearch:6.6.0'
     port = 9200
 
     def get_image_options(self):

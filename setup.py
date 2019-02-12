@@ -21,7 +21,7 @@ install_requires = [
     'fhir.resources==3.0.1'
 ]
 elasticsearch_requires = [
-    'collective.elasticsearch>=2.0.5,<3.0.0'
+    'collective.elasticsearch>=3.0.2'
 ]
 test_requires = [
     'plone.restapi',
@@ -39,12 +39,12 @@ test_requires = [
 
 setup(
     name='plone.app.fhirfield',
-    version='1.0.1.dev0',
+    version='2.0.0b1.dev0',
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
         "Framework :: Plone",
         "Framework :: Plone :: 5.0",
