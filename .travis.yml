@@ -8,6 +8,9 @@ cache:
   directories:
     - $HOME/buildout-cache
 env:
+  global:
+    - ES_VERSION=6.6.0 
+    - ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
   matrix:
     - PLONE_VERSION=5.0.x  QA=true
     - PLONE_VERSION=5.1.x  QA=true
@@ -25,9 +28,9 @@ before_install:
   - bin/pip install -U pip
   - bin/pip install -r plone-$PLONE_VERSION-requirements.txt
 install:
-  - wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.6/elasticsearch-2.4.6.tar.gz
-  - tar -xzf elasticsearch-2.4.6.tar.gz
-  - ./elasticsearch-2.4.6/bin/elasticsearch &
+  - wget ${ES_DOWNLOAD_URL}
+  - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
+  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
   - sed -ie "s#plone-x.x.x.cfg#plone-$PLONE_VERSION.cfg#" travis.cfg
   - bin/buildout -N -t 3 -c travis.cfg
 script:

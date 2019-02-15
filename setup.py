@@ -34,7 +34,7 @@ test_requires = [
     'collective.MockMailHost',
     'Products.contentmigration',
     'docker',
-    'requests'
+    'requests',
 ]
 
 setup(

@@ -31,7 +31,7 @@ IS_TRAVIS = 'TRAVIS' in os.environ
 
 class BaseDockerImage(object):
     """Docker based Service image base class"""
-    docker_api_version = '1.37'
+    docker_api_version = '1.39'
     name = None
     image = None
     port = None
@@ -76,7 +76,6 @@ class BaseDockerImage(object):
         count = 1
 
         self.container_obj = docker_client.containers.get(ident)
-
         opened = False
         sys.stdout.write('\n****** Starting {0}\n'.format(self.name))
         progress = '...'
@@ -124,13 +123,15 @@ class BaseDockerImage(object):
 
 class Elasticsearch(BaseDockerImage):
     name = 'elasticsearch_ff'
-    image = 'elasticsearch:6.6.0'
+    image = 'docker.elastic.co/elasticsearch/elasticsearch:6.6.0'
     port = 9200
 
     def get_image_options(self):
         image_options = super(Elasticsearch, self).get_image_options()
         image_options.update(dict(
-            environment={},
+            environment={
+                'discovery.type': 'single-node',
+            },
             ports={
                 '{0}/tcp'.format(self.port): ('127.0.0.1', self.port),
             },

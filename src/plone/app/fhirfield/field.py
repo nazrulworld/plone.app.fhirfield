@@ -63,7 +63,7 @@ class FhirResource(Object):
 
         self._init_validate()
 
-        if 'default' in kw:
+        if "default" in kw:
             default = kw['default']
             if isinstance(default, six.string_types):
                 kw['default'] = self.fromUnicode(default)
