@@ -18,7 +18,7 @@ import sys
 import time
 
 
-__author__ = 'Md Nazrul Islam<email2nazrul@zitelab.dk>'
+__author__ = "Md Nazrul Islam<email2nazrul@zitelab.dk>"
 
 TEST_ZCML = """\
 <configure
@@ -26,23 +26,25 @@ TEST_ZCML = """\
     <include package="fhirfield_rest.services" />
 </configure>
 """
-IS_TRAVIS = 'TRAVIS' in os.environ
+IS_TRAVIS = "TRAVIS" in os.environ
 
 
 class BaseDockerImage(object):
     """Docker based Service image base class"""
-    docker_api_version = '1.39'
+
+    docker_api_version = "1.39"
     name = None
     image = None
     port = None
-    host = ''
+    host = ""
     base_image_options = dict(
-        cap_add=['IPC_LOCK'],
-        mem_limit='1g',
+        cap_add=["IPC_LOCK"],
+        mem_limit="1g",
         environment={},
         privileged=True,
         detach=True,
-        publish_all_ports=True)
+        publish_all_ports=True,
+    )
 
     def get_image_options(self):
         image_options = self.base_image_options.copy()
@@ -51,14 +53,16 @@ class BaseDockerImage(object):
     def get_port(self):
         if api.env.test_mode():
             return self.port
-        for port in self.container_obj.attrs['NetworkSettings']['Ports'].keys():
-            if port == '6543/tcp':
+        for port in self.container_obj.attrs["NetworkSettings"]["Ports"].keys():
+            if port == "6543/tcp":
                 continue
-            return self.container_obj.attrs['NetworkSettings']['Ports'][port][0]['HostPort']
+            return self.container_obj.attrs["NetworkSettings"]["Ports"][port][0][
+                "HostPort"
+            ]
 
     def get_host(self):
         if not self.host:
-            return self.container_obj.attrs['NetworkSettings']['IPAddress']
+            return self.container_obj.attrs["NetworkSettings"]["IPAddress"]
 
         return self.host
 
@@ -69,17 +73,16 @@ class BaseDockerImage(object):
         docker_client = docker.from_env(version=self.docker_api_version)
         # Create a new one
         container = docker_client.containers.run(
-            image=self.image,
-            **self.get_image_options()   # noqa: C815
+            image=self.image, **self.get_image_options()  # noqa: C815
         )
         ident = container.id
         count = 1
 
         self.container_obj = docker_client.containers.get(ident)
         opened = False
-        sys.stdout.write('\n****** Starting {0}\n'.format(self.name))
-        progress = '...'
-        sys.stdout.write(progress + '\n')
+        sys.stdout.write("\n****** Starting {0}\n".format(self.name))
+        progress = "..."
+        sys.stdout.write(progress + "\n")
         while count < 30 and not opened:
             if count > 0:
                 time.sleep(1)
@@ -87,26 +90,26 @@ class BaseDockerImage(object):
             try:
                 self.container_obj = docker_client.containers.get(ident)
             except docker.errors.NotFound:
-                sys.stdout.write('Container not found for {0}'.format(self.name))
+                sys.stdout.write("Container not found for {0}".format(self.name))
                 continue
-            if self.container_obj.status == 'exited':
+            if self.container_obj.status == "exited":
                 logs = self.container_obj.logs()
                 self.stop()
-                raise Exception('Container failed to start {0}'.format(logs))
+                raise Exception("Container failed to start {0}".format(logs))
 
-            if self.container_obj.attrs['NetworkSettings']['IPAddress'] != '':
-                self.host = '127.0.0.1'
+            if self.container_obj.attrs["NetworkSettings"]["IPAddress"] != "":
+                self.host = "127.0.0.1"
 
-            if self.host != '':
+            if self.host != "":
                 opened = self.check()
-            progress += '...'
-            sys.stdout.write(progress + '\n')
+            progress += "..."
+            sys.stdout.write(progress + "\n")
 
         if not opened:
             logs = self.container_obj.logs()
             self.stop()
-            raise Exception('Could not start {0}: {1}'.format(self.name, logs))
-        sys.stdout.write('{0} has been started ******\n'.format(self.name))
+            raise Exception("Could not start {0}: {1}".format(self.name, logs))
+        sys.stdout.write("{0} has been started ******\n".format(self.name))
         return self.host, self.get_port()
 
     def stop(self):
@@ -122,26 +125,30 @@ class BaseDockerImage(object):
 
 
 class Elasticsearch(BaseDockerImage):
-    name = 'elasticsearch_ff'
-    image = 'docker.elastic.co/elasticsearch/elasticsearch:6.6.0'
+    name = "elasticsearch_ff"
+    image = "docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0"
     port = 9200
 
     def get_image_options(self):
         image_options = super(Elasticsearch, self).get_image_options()
-        image_options.update(dict(
-            environment={
-                'discovery.type': 'single-node',
-            },
-            ports={
-                '{0}/tcp'.format(self.port): ('127.0.0.1', self.port),
-            },
-        ))
+        image_options.update(
+            dict(
+                environment={
+                    "discovery.type": "single-node",
+                    "cluster.name": "docker-cluster",
+                },
+                ports={"{0}/tcp".format(self.port): ("127.0.0.1", self.port)},
+            ),
+        )
         return image_options
 
     def check(self):
         import requests
+
         try:
-            res = requests.get('http://{0}:{1}'.format(self.get_host(), self.get_port()), timeout=1)
+            res = requests.get(
+                "http://{0}:{1}".format(self.get_host(), self.get_port()), timeout=1,
+            )
             return res.status_code == 200
         except requests.RequestException:
             return False
@@ -152,6 +159,7 @@ ELASTICSEARCH_SERVER = Elasticsearch()
 
 class ElasticsearchLayer(Layer):
     """Eleastic search server layer """
+
     def setUp(self):
         """Run the docker Elasticsearch Image"""
         ELASTICSEARCH_SERVER.run()
@@ -174,32 +182,41 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         # layer.
 
         import plone.app.dexterity
+
         self.loadZCML(package=plone.app.dexterity)
 
         import plone.restapi
+
         self.loadZCML(package=plone.restapi)
 
         import z3c.form
+
         self.loadZCML(package=z3c.form)
 
         import plone.app.z3cform
+
         self.loadZCML(package=plone.app.z3cform)
 
         import collective.elasticsearch
+
         self.loadZCML(package=collective.elasticsearch)
 
         import plone.app.fhirfield
+
         self.loadZCML(package=plone.app.fhirfield)
         # initialize method not calling automatically
-        z2.installProduct(app, 'plone.app.fhirfield')
+        z2.installProduct(app, "plone.app.fhirfield")
         # Load Custom
         example_rest_path = os.path.join(
             os.path.dirname(
                 os.path.dirname(
                     os.path.dirname(
-                        os.path.dirname(
-                            os.path.dirname(os.path.abspath(__file__)))))),
-            'examples')
+                        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                    ),
+                ),
+            ),
+            "examples",
+        )
 
         if example_rest_path not in sys.path[:]:
             sys.path.append(example_rest_path)
@@ -208,16 +225,16 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
     def setUpPloneSite(self, portal):  # noqa: N802
 
-        setRoles(portal, TEST_USER_ID, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ["Manager"])
 
-        applyProfile(portal, 'plone.restapi:default')
+        applyProfile(portal, "plone.restapi:default")
 
-        applyProfile(portal, 'collective.elasticsearch:default')
+        applyProfile(portal, "collective.elasticsearch:default")
 
-        applyProfile(portal, 'plone.app.fhirfield:default')
+        applyProfile(portal, "plone.app.fhirfield:default")
 
         # Apply Test profile
-        applyProfile(portal, 'plone.app.fhirfield:testing')
+        applyProfile(portal, "plone.app.fhirfield:testing")
 
 
 PLONE_APP_FHIRFIELD_FIXTURE = PloneAppFhirfieldLayer()
@@ -225,27 +242,27 @@ PLONE_APP_FHIRFIELD_FIXTURE = PloneAppFhirfieldLayer()
 
 PLONE_APP_FHIRFIELD_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_FHIRFIELD_FIXTURE,),
-    name='PloneAppFhirfieldLayer:IntegrationTesting',
+    name="PloneAppFhirfieldLayer:IntegrationTesting",
 )
 
 bases_ = ()
 if not IS_TRAVIS:
-    bases_ = (ELASTICSEARCH_SERVER_FIXTURE, )
+    bases_ = (ELASTICSEARCH_SERVER_FIXTURE,)
 
 PLONE_APP_FHIRFIELD_WITH_ES_INTEGRATION_TESTING = IntegrationTesting(
-    bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE, ),
-    name='PloneAppFhirfieldLayer:WithElasticsearchIntegrationTesting',
+    bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE,),
+    name="PloneAppFhirfieldLayer:WithElasticsearchIntegrationTesting",
 )
 
 
 PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_FHIRFIELD_FIXTURE, z2.ZSERVER_FIXTURE),
-    name='PloneAppFhirfieldLayer:FunctionalTesting',
+    name="PloneAppFhirfieldLayer:FunctionalTesting",
 )
 
 PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=bases_ + (PLONE_APP_FHIRFIELD_FIXTURE, z2.ZSERVER_FIXTURE),
-    name='PloneAppFhirfieldLayer:WithElasticsearchFunctionalTesting',
+    name="PloneAppFhirfieldLayer:WithElasticsearchFunctionalTesting",
 )
 
 PLONE_APP_FHIRFIELD_ACCEPTANCE_TESTING = FunctionalTesting(
@@ -254,5 +271,5 @@ PLONE_APP_FHIRFIELD_ACCEPTANCE_TESTING = FunctionalTesting(
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE,
     ),
-    name='PloneAppFhirfieldLayer:AcceptanceTesting',
+    name="PloneAppFhirfieldLayer:AcceptanceTesting",
 )

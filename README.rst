@@ -260,6 +260,10 @@ set max_map_count value (Linux)
 sudo sysctl -w vm.max_map_count=262144
 ```
 
+File "/home/nazrul/.cache/buildout/eggs/collective.elasticsearch-3.0.2-py2.7.egg/collective/elasticsearch/browser/controlpanel.py", line 67, in es_info
+    logger.warning('Error getting stats', exc_info=True)
+NameError: global name 'logger' is not defined
+
 License
 =======
 
