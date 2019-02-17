@@ -20,29 +20,27 @@ import os
 import unittest
 
 
-___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+___author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class MarshalerIntegrationTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
 
     def add_item(self):
         """ """
-        body = {
-            '@type': 'FFOrganization',
-            'title': 'Test Organization xxx',
-        }
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            body['organization_resource'] = json.load(f)
+        body = {"@type": "FFOrganization", "title": "Test Organization xxx"}
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
+            body["organization_resource"] = json.load(f)
 
         request = TestRequest(BODY=json.dumps(body))
-        obj = create(self.portal, body['@type'], id_=None, title=body['title'])
+        obj = create(self.portal, body["@type"], id_=None, title=body["title"])
 
         deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
         assert deserializer is not None
@@ -57,7 +55,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
     def test_marshaler(self):
         """ """
         context = self.add_item()
-        fhir_field = getFields(IFFOrganization)['organization_resource']
+        fhir_field = getFields(IFFOrganization)["organization_resource"]
 
         field_marshaler = queryMultiAdapter((context, fhir_field), IFieldMarshaler)
         self.assertIsNotNone(field_marshaler)
@@ -74,7 +72,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
         try:
             rfc822_msg.as_string()
         except Exception as exc:
-            raise AssertionError('Code should not come here!\n{0!s}'.format(exc))
+            raise AssertionError("Code should not come here!\n{0!s}".format(exc))
 
         # Test with None value
         value = field_marshaler.encode(None)
@@ -82,38 +80,36 @@ class MarshalerIntegrationTest(unittest.TestCase):
 
         decoded_value = field_marshaler.decode(encode_str)
         self.assertEqual(
-            decoded_value.as_json(),
-            context.organization_resource.as_json())
+            decoded_value.as_json(), context.organization_resource.as_json()
+        )
 
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            already_decoded = f.read().decode('utf-8')
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
+            already_decoded = f.read().decode("utf-8")
 
         encoding = field_marshaler.getCharset()
-        self.assertEqual(encoding, 'utf-8')
+        self.assertEqual(encoding, "utf-8")
 
         content_type = field_marshaler.getContentType()
-        self.assertEqual(content_type, 'application/json')
+        self.assertEqual(content_type, "application/json")
         try:
             already_decoded.decode(encoding)
-            raise AssertionError('Code should not come here! should raise Unicode decoding error.')
+            raise AssertionError(
+                "Code should not come here! should raise Unicode decoding error."
+            )
         except UnicodeEncodeError:
             decoded_value2 = field_marshaler.decode(
-                already_decoded,
-                charset=encoding,
-                contentType=content_type)
-            self.assertEqual(
-                decoded_value.as_json(),
-                decoded_value2.as_json())
+                already_decoded, charset=encoding, contentType=content_type
+            )
+            self.assertEqual(decoded_value.as_json(), decoded_value2.as_json())
 
         decoded_value = field_marshaler.decode(
-            '',
-            charset=encoding,
-            contentType=content_type)
+            "", charset=encoding, contentType=content_type
+        )
 
         self.assertIsInstance(decoded_value, decoded_value2.__class__)
 
         context.organization_resource = None
-        fhir_field = getFields(IFFOrganization)['organization_resource']
+        fhir_field = getFields(IFFOrganization)["organization_resource"]
 
         field_marshaler = queryMultiAdapter((context, fhir_field), IFieldMarshaler)
 

@@ -11,84 +11,95 @@ import os
 import unittest
 
 
-__author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class HelperIntegrationTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def test_search_fhir_model(self):
         """ """
-        dotted_path = helpers.search_fhir_model('DeviceRequest')
-        self.assertEqual('fhir.resources.devicerequest.DeviceRequest', dotted_path)
+        dotted_path = helpers.search_fhir_model("DeviceRequest")
+        self.assertEqual("fhir.resources.devicerequest.DeviceRequest", dotted_path)
 
-        dotted_path = helpers.search_fhir_model('FakeResource')
+        dotted_path = helpers.search_fhir_model("FakeResource")
         self.assertIsNone(dotted_path)
 
     def test_caching_of_search_fhir_model(self):
         """ """
         helpers.FHIR_RESOURCE_MODEL_CACHE.clear()
-        dotted_path = helpers.search_fhir_model('DeviceRequest')
-        self.assertEqual('fhir.resources.devicerequest.DeviceRequest', dotted_path)
+        dotted_path = helpers.search_fhir_model("DeviceRequest")
+        self.assertEqual("fhir.resources.devicerequest.DeviceRequest", dotted_path)
 
         self.assertEqual(len(helpers.FHIR_RESOURCE_MODEL_CACHE), 1)
 
     def test_resource_type_str_to_fhir_model(self):
         """ """
-        task = helpers.resource_type_str_to_fhir_model('Task')
+        task = helpers.resource_type_str_to_fhir_model("Task")
 
         self.assertTrue(inspect.isclass(task))
 
-        self.assertEqual(task.resource_type, 'Task')
+        self.assertEqual(task.resource_type, "Task")
 
         try:
-            helpers.resource_type_str_to_fhir_model('FakeResource')
-            raise AssertionError('Code shouldn\'t come here! as invalid resource type is provided')
+            helpers.resource_type_str_to_fhir_model("FakeResource")
+            raise AssertionError(
+                "Code shouldn't come here! as invalid resource type is provided"
+            )
         except Invalid as e:
-            self.assertIn('FakeResource', str(e))
+            self.assertIn("FakeResource", str(e))
 
     def test_import_string(self):
         """ """
-        current_user_func = helpers.import_string('plone.api.user.get_current')
+        current_user_func = helpers.import_string("plone.api.user.get_current")
         self.assertTrue(inspect.isfunction(current_user_func))
 
         try:
             # Invalid dotted path!
-            helpers.import_string('plone_api_user_get_current')
-            raise AssertionError('Code shouldn\'t come here! as invalid dotted path is provided')
+            helpers.import_string("plone_api_user_get_current")
+            raise AssertionError(
+                "Code shouldn't come here! as invalid dotted path is provided"
+            )
         except ImportError:
             pass
 
         try:
             # Invalid class or function!
-            helpers.import_string('plone.api.user.fake')
-            raise AssertionError('Code shouldn\'t come here! as invalid function name is provided')
+            helpers.import_string("plone.api.user.fake")
+            raise AssertionError(
+                "Code shouldn't come here! as invalid function name is provided"
+            )
         except ImportError:
             pass
 
         try:
             # Invalid pyton module!
-            helpers.import_string('fake.fake.FakeClass')
-            raise AssertionError('Code shouldn\'t come here! as invalid python module is provided')
+            helpers.import_string("fake.fake.FakeClass")
+            raise AssertionError(
+                "Code shouldn't come here! as invalid python module is provided"
+            )
         except ImportError:
             pass
 
     def test_parse_json_str(self):
         """ """
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
             json_str = f.read()
 
         dict_data = helpers.parse_json_str(json_str)
 
-        self.assertEqual(dict_data['resourceType'], 'Organization')
+        self.assertEqual(dict_data["resourceType"], "Organization")
 
         json_str = """
         {"resourceType": "Task", Wrong: null}
         """
         try:
             helpers.parse_json_str(json_str)
-            raise AssertionError('Code shouldn\'t come here! as invalid json string is provided')
+            raise AssertionError(
+                "Code shouldn't come here! as invalid json string is provided"
+            )
         except Invalid:
             pass
 
@@ -102,48 +113,49 @@ class HelperIntegrationTest(unittest.TestCase):
 
     def test_fhir_search_path_meta_info(self):
         """ """
-        js_name, is_list, of_many = \
-            helpers.fhir_search_path_meta_info('Resource.meta.profile')
+        js_name, is_list, of_many = helpers.fhir_search_path_meta_info(
+            "Resource.meta.profile"
+        )
 
-        self.assertEqual(js_name, 'profile')
+        self.assertEqual(js_name, "profile")
         self.assertTrue(is_list)
         self.assertIsNone(of_many)
 
-        js_name, is_list, of_many = \
-            helpers.fhir_search_path_meta_info('ActivityDefinition.url')
+        js_name, is_list, of_many = helpers.fhir_search_path_meta_info(
+            "ActivityDefinition.url"
+        )
 
         self.assertFalse(is_list)
 
     def test_translate_param_name_to_real_path(self):
         """Test param translation"""
 
-        path = \
-            helpers.translate_param_name_to_real_path('related-target', 'Observation')
+        path = helpers.translate_param_name_to_real_path(
+            "related-target", "Observation"
+        )
 
-        self.assertIsNotNone(path, 'Observation')
-        self.assertEqual(path, 'Observation.related.target')
+        self.assertIsNotNone(path, "Observation")
+        self.assertEqual(path, "Observation.related.target")
 
         # test with logic in path (AS)
-        path = \
-            helpers.translate_param_name_to_real_path('value-date', 'Observation')
+        path = helpers.translate_param_name_to_real_path("value-date", "Observation")
 
-        self.assertEqual(path, 'Observation.valueDateTime')
+        self.assertEqual(path, "Observation.valueDateTime")
 
         # test with logic in path (IS)
-        path = \
-            helpers.translate_param_name_to_real_path('abatement-boolean', 'Condition')
+        path = helpers.translate_param_name_to_real_path(
+            "abatement-boolean", "Condition"
+        )
 
-        self.assertEqual(path, 'Condition.abatementRange')
+        self.assertEqual(path, "Condition.abatementRange")
 
         # test with logic in path (WHERE)
-        path = \
-            helpers.translate_param_name_to_real_path('email', 'RelatedPerson')
+        path = helpers.translate_param_name_to_real_path("email", "RelatedPerson")
 
-        self.assertEqual(path, 'RelatedPerson.telecom')
+        self.assertEqual(path, "RelatedPerson.telecom")
 
         # test with missing
-        path = \
-            helpers.translate_param_name_to_real_path('fake-param')
+        path = helpers.translate_param_name_to_real_path("fake-param")
 
         self.assertIsNone(path)
 
@@ -151,28 +163,29 @@ class HelperIntegrationTest(unittest.TestCase):
         """ """
         request = dict()
         params = [
-            ('patient', 'P001'),
-            ('lastUpdated', '2018-01-01'),
-            ('lastUpdated', 'lt2018-09-10')]
+            ("patient", "P001"),
+            ("lastUpdated", "2018-01-01"),
+            ("lastUpdated", "lt2018-09-10"),
+        ]
 
-        request['QUERY_STRING'] = urlencode(params)
+        request["QUERY_STRING"] = urlencode(params)
 
         results = helpers.parse_query_string(request)
 
-        items = [p[0] for p in results if p[0] == 'lastUpdated']
+        items = [p[0] for p in results if p[0] == "lastUpdated"]
         self.assertEqual(len(items), 2)
 
         # Test with empty value [allowed]
-        request['QUERY_STRING'] = urlencode(params) + '&lastUpdated'
+        request["QUERY_STRING"] = urlencode(params) + "&lastUpdated"
 
         results = helpers.parse_query_string(request, True)
-        items = [p[0] for p in results if p[0] == 'lastUpdated']
+        items = [p[0] for p in results if p[0] == "lastUpdated"]
         self.assertEqual(len(items), 3)
 
         # Test with empty value [not allowed]
-        request['QUERY_STRING'] = urlencode(params) + '&lastUpdated'
+        request["QUERY_STRING"] = urlencode(params) + "&lastUpdated"
 
         results = helpers.parse_query_string(request)
-        items = [p[0] for p in results if p[0] == 'lastUpdated']
+        items = [p[0] for p in results if p[0] == "lastUpdated"]
 
         self.assertEqual(len(items), 2)

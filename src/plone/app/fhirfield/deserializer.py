@@ -10,13 +10,12 @@ from zope.publisher.interfaces.browser import IBrowserRequest
 import six
 
 
-__author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 
 @implementer(IFieldDeserializer)
 @adapter(IFhirResource, IDexterityContent, IBrowserRequest)
 class FhirResourceDeserializer(DefaultFieldDeserializer):
-
     def __call__(self, value):
         """ """
         if isinstance(value, six.string_types):
@@ -25,5 +24,6 @@ class FhirResourceDeserializer(DefaultFieldDeserializer):
             return IFhirResource(self.field).from_dict(value)
         else:
             raise ValueError(
-                'Invalid data type({0}) provided! only dict or string data type is accepted.'.format(type(value)),
+                "Invalid data type({0}) provided! only dict or "
+                "string data type is accepted.".format(type(value))
             )

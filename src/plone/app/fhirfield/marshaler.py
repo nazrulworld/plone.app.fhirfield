@@ -11,7 +11,7 @@ class FhirResourceFieldMarshaler(BaseFieldMarshaler):
 
     ascii = False
 
-    def encode(self, value, charset='utf-8', primary=False):
+    def encode(self, value, charset="utf-8", primary=False):
         if value is None:
             return
         actual_value = value.stringify(prettify=True)
@@ -19,13 +19,15 @@ class FhirResourceFieldMarshaler(BaseFieldMarshaler):
             return
         return actual_value.encode(charset)
 
-    def decode(self, value, message=None, charset='utf-8', contentType=None, primary=False):
+    def decode(
+        self, value, message=None, charset="utf-8", contentType=None, primary=False
+    ):
         try:
             unicode_value = value.decode(charset)
         except UnicodeEncodeError:
             unicode_value = value  # was already unicode
 
-        if unicode_value in ('', None):
+        if unicode_value in ("", None):
             decoded_value = IFhirResource(self.field).from_none()
         else:
             decoded_value = IFhirResource(self.field).fromUnicode(unicode_value)
@@ -35,10 +37,10 @@ class FhirResourceFieldMarshaler(BaseFieldMarshaler):
         value = self._query()
         if value is None:
             return None
-        return 'application/json'
+        return "application/json"
 
-    def getCharset(self, default='utf-8'):
+    def getCharset(self, default="utf-8"):
         value = self._query()
         if value is None:
             return None
-        return getattr(value, '_encoding', default)
+        return getattr(value, "_encoding", default)

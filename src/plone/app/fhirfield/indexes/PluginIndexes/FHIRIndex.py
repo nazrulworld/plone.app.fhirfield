@@ -14,7 +14,7 @@ import six
 import warnings
 
 
-__author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 
 def make_fhir_index_datum(mapping, fhir_json):
@@ -24,19 +24,19 @@ def make_fhir_index_datum(mapping, fhir_json):
         if key not in fhir_json:
             continue
 
-        if 'properties' in meta and fhir_json.get(key):
+        if "properties" in meta and fhir_json.get(key):
             # nested value
-            container[key] = \
-                make_fhir_index_datum(
-                    meta.get('properties'),
-                    fhir_json.get(key))
+            container[key] = make_fhir_index_datum(
+                meta.get("properties"), fhir_json.get(key)
+            )
 
         else:
-            if meta['type'] == 'string':
-                container[key] = fhir_json.get(key) and \
-                        six.text_type(fhir_json.get(key)) or None
+            if meta["type"] == "string":
+                container[key] = (
+                    fhir_json.get(key) and six.text_type(fhir_json.get(key)) or None
+                )
 
-            elif meta['type'] == 'datetime':
+            elif meta["type"] == "datetime":
                 # XXX: make DateTime object again?
                 container[key] = fhir_json.get(key)
     return container
@@ -44,39 +44,29 @@ def make_fhir_index_datum(mapping, fhir_json):
 
 class FhirFieldIndex(FieldIndex):
     """ """
-    meta_type = 'FhirFieldIndex'
-    query_options = ('query', 'not')
-    manage = manage_main = DTMLFile('dtml/manageFhirFieldIndex', globals())
-    manage_main._setName('manage_main')
+
+    meta_type = "FhirFieldIndex"
+    query_options = ("query", "not")
+    manage = manage_main = DTMLFile("dtml/manageFhirFieldIndex", globals())
+    manage_main._setName("manage_main")
     mapping = {
-        'id': {
-            'type': 'string',
+        "id": {"type": "string"},
+        "meta": {
+            "properties": {
+                "lastUpdated": {"type": "datetime"},
+                "versionId": {"type": "string"},
+            }
         },
-        'meta': {
-            'properties': {
-                'lastUpdated': {
-                    'type': 'datetime',
-                },
-                'versionId': {
-                    'type': 'string',
-                },
-            },
-        },
-        'resourceType': {
-            'type': 'string',
-        },
+        "resourceType": {"type": "string"},
     }
 
-    def __init__(self, id, ignore_ex=None,
-                 call_methods=None, extra=None,
-                 caller=None):
+    def __init__(self, id, ignore_ex=None, call_methods=None, extra=None, caller=None):
         """ """
         self._validate_id(id)
 
         super(FhirFieldIndex, self).__init__(
-                 id, ignore_ex=None,
-                 call_methods=None, extra=None,
-                 caller=None)
+            id, ignore_ex=None, call_methods=None, extra=None, caller=None
+        )
 
     def _validate_id(self, id_):
         """Validation about the convention which is provided by plone.app.fhirfield
@@ -105,10 +95,10 @@ class FhirFieldIndex(FieldIndex):
                 fhir_value = json.loads(datum)
             except ValueError:
                 warnings.warn(
-                    '{0}\'s value must be valid '
-                    'FHIR Resource json. But got-> {1}'.
-                    format(attr, fhir_value),
-                    UserWarning)
+                    "{0}'s value must be valid "
+                    "FHIR Resource json. But got-> {1}".format(attr, fhir_value),
+                    UserWarning,
+                )
                 return
         if fhir_value:
             datum = make_fhir_index_datum(self.mapping, fhir_value)
@@ -124,25 +114,21 @@ class FhirFieldIndex(FieldIndex):
         return super(FhirFieldIndex, self).index_object(documentId, obj, threshold=None)
 
 
-def manage_addFhirFieldIndex(self,
-                             id,
-                             extra=None,
-                             REQUEST=None,
-                             RESPONSE=None,
-                             URL3=None):
+def manage_addFhirFieldIndex(
+    self, id, extra=None, REQUEST=None, RESPONSE=None, URL3=None
+):
     """Add a fhir field index"""
-    return self.manage_addIndex(id,
-                                'FhirFieldIndex',
-                                extra=extra,
-                                REQUEST=REQUEST,
-                                RESPONSE=RESPONSE,
-                                URL1=URL3)
-manage_addFhirFieldIndexForm = DTMLFile('dtml/addFhirFieldIndexForm', globals())  # noqa: E305
+    return self.manage_addIndex(
+        id, "FhirFieldIndex", extra=extra, REQUEST=REQUEST, RESPONSE=RESPONSE, URL1=URL3
+    )
+
+
+manage_addFhirFieldIndexForm = DTMLFile(
+    "dtml/addFhirFieldIndexForm", globals()
+)  # noqa: E305
 
 
 REGISTRABLE_CLASSES = [
     # index, form, action
-    (FhirFieldIndex,
-        manage_addFhirFieldIndexForm,
-        manage_addFhirFieldIndex),
+    (FhirFieldIndex, manage_addFhirFieldIndexForm, manage_addFhirFieldIndex)
 ]

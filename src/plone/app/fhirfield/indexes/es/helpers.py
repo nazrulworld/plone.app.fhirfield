@@ -40,12 +40,15 @@ class ElasticsearchQueryBuilder(object):
     (either in general, or for a specific search). In general, servers
     SHOULD ignore unknown or unsupported parameters for the following reasons:
 
-    Various HTTP stacks and proxies may add parameters that aren't under the control of the client
-    The client can determine what parameters the server used by examining the self link in the return (see below)
+    Various HTTP stacks and proxies may add parameters that aren't under the control
+    of the client The client can determine what parameters the server used by examining
+    the self link in the return (see below)
     Clients can specify how the server should behave, by using the prefer header
 
-    Prefer: handling=strict: Client requests that the server return an error for any unknown or unsupported parameter
-    Prefer: handling=lenient: Client requests that the server ignore any unknown or unsupported parameter
+    Prefer: handling=strict: Client requests that the server return an error for any
+    unknown or unsupported parameter
+    Prefer: handling=lenient: Client requests that the
+    server ignore any unknown or unsupported parameter
 """
 
     def __init__(self, params, field_name, resource_type, handling="strict"):
@@ -63,7 +66,9 @@ class ElasticsearchQueryBuilder(object):
 
         self.validate()
 
-        self.query_tree = {"and": list()}
+        self.query_tree = {
+            "bool": {"must_not": list(), "must": list(), "filter": list()}
+        }
 
     #       => Private methods stared from here <=
 
@@ -71,15 +76,16 @@ class ElasticsearchQueryBuilder(object):
         self, path, value, logic_in_path=None, nested=None, modifier=None
     ):
         """ """
+        occurrence_type = "must"
         multiple_paths = len(path.split(".")) == 2
         nested_path = path
 
         if multiple_paths:
-            match_key = "should"
+            occurrence_type = "should"
 
         else:
             nested_path = ".".join(path.split(".")[:-1])
-            match_key = "must"
+            occurrence_type = "must"
 
         matches = list()
         if multiple_paths:
@@ -92,12 +98,15 @@ class ElasticsearchQueryBuilder(object):
 
         if nested:
             query = {
-                "nested": {"path": nested_path, "query": {"bool": {match_key: matches}}}
+                "nested": {
+                    "path": nested_path,
+                    "query": {"bool": {occurrence_type: matches}},
+                }
             }
         else:
-            query = {"query": {"bool": {match_key: matches}}}
+            query = {"query": {"bool": {occurrence_type: matches}}}
 
-        return query
+        return occurrence_type, query
 
     def _make_codeableconcept_query(
         self, path, value, nested=None, modifier=None, logic_in_path=None
@@ -214,6 +223,7 @@ class ElasticsearchQueryBuilder(object):
 
     def _make_date_query(self, path, value, modifier=None):
         """ """
+        occurance_type = "must"
         prefix = "eq"
 
         if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
@@ -248,34 +258,27 @@ class ElasticsearchQueryBuilder(object):
         if (prefix != "ne" and modifier == "not") or (
             prefix == "ne" and modifier != "not"
         ):
-            query = {"query": {"not": query}}
+            occurance_type = "must_not"
 
-        return query
+        return occurance_type, query
 
     def _make_exists_query(self, path, value, nested, modifier=None):
         """ """
         query = dict()
+        occurrence_type = "must"
         exists_q = {"exists": {"field": path}}
 
         if (modifier == "missing" and value == "true") or (
             modifier == "exists" and value == "false"
         ):
-            query["bool"] = {"must_not": exists_q}
-        elif (modifier == "missing" and value == "false") or (
-            modifier == "exists" and value == "true"
-        ):
-
-            query["exists"] = {"field": path}
+            occurrence_type = "must_not"
 
         if nested:
-            nested_query = {"nested": {"path": path, "query": exists_q}}
+            query = {"nested": {"path": path, "query": exists_q}}
+        else:
+            query = exists_q
 
-            if "bool" in query:
-                query["bool"]["must_not"] = nested_query
-            else:
-                query = {"bool": {"must": nested_query}}
-
-        return {"query": query}
+        return occurrence_type, query
 
     def _make_humanname_query(self, path, value, nested=None, modifier=None):
         """ """
@@ -431,39 +434,35 @@ class ElasticsearchQueryBuilder(object):
 
     def _make_reference_query(self, path, value, nested=None, modifier=None):
         """ """
-        query = dict(bool=dict())
-
+        occurrence_type = "must"
         fullpath = path + ".reference"
 
-        matches = [dict(term={fullpath: value})]
+        query = dict(term={fullpath: value})
 
         if modifier == "not":
-            match_key = "must_not"
-        else:
-            match_key = "must"
-
-        query["bool"][match_key] = matches
+            occurrence_type = "must_not"
 
         if nested:
-            query = {"nested": {"path": path, "query": query}}
-        else:
-            query = {"query": query}
+            query = {
+                "nested": {"path": path, "query": {"bool": {occurrence_type: query}}}
+            }
 
-        return query
+        return occurrence_type, query
 
     def _make_term_query(self, path, value, array_=None):
         """ """
-
         if array_:
             # check Array type
-            query = {"query": {"terms": {path: [value]}}}
+            query = {"terms": {path: [value]}}
         else:
-            query = {"query": {"term": {path: value}}}
+            query = {"term": {path: value}}
 
         return query
 
     def _make_token_query(self, path, value, array_=None, modifier=None):
         """ """
+        occurrence_type = "must"
+
         if value in ("true", "false"):
             if value == "true":
                 value = True
@@ -471,14 +470,14 @@ class ElasticsearchQueryBuilder(object):
                 value = False
 
         if modifier == "not":
-            match_key = "must_not"
+            occurrence_type = "must_not"
         else:
-            match_key = "must"
+            occurrence_type = "must"
 
         term_query = self._make_term_query(path, value, array_)
 
-        query = {"query": {"bool": {match_key: [term_query]}}}
-        return query
+        query = [term_query]
+        return occurrence_type, query
 
     #       =>     Private methods ended        <=
 
@@ -501,15 +500,16 @@ class ElasticsearchQueryBuilder(object):
                 modifier = None
 
             query_meta = self.resolve_query_meta(param_name)
-            query = self._build_query(
+            occurrence_type, query = self._build_query(
                 param_name, value, modifier, query_meta=query_meta
             )
 
             # add generated field query in list
             assert query, "Query `{0}` must not be empty!".format(query)
-            if query:
-                # xxx: OR query?
-                self.query_tree["and"].append(query)
+            if isinstance(query, (tuple, list)):
+                self.query_tree["bool"][occurrence_type].extend(query)
+            else:
+                self.query_tree["bool"][occurrence_type].append(query)
 
         # unofficial but tricky!
         query = self._make_term_query(
@@ -517,9 +517,14 @@ class ElasticsearchQueryBuilder(object):
         )
 
         # XXX multiple resources?
-        self.query_tree["and"].append(query)
+        self.query_tree["bool"]["must"].append(query)
 
-        return self.query_tree.copy()
+        query_tree = copy.deepcopy(self.query_tree)
+        for ot in self.query_tree["bool"]:
+            if len(query_tree["bool"][ot]) == 0:
+                del query_tree["bool"][ot]
+
+        return query_tree
 
     def _build_query(self, param_name, value, modifier, query_meta):
         """ """
@@ -529,18 +534,18 @@ class ElasticsearchQueryBuilder(object):
 
             nested = self.is_nested_mapping(path=path)
 
-            query = self._make_exists_query(
+            occurrence_type, query = self._make_exists_query(
                 path=path, value=value, nested=nested, modifier=modifier
             )
 
         elif param_type == "date":
-            query = self._make_date_query(path, value, modifier)
+            occurrence_type, query = self._make_date_query(path, value, modifier)
 
         elif param_type == "reference":
 
             nested = self.is_nested_mapping(path)
 
-            query = self._make_reference_query(
+            occurrence_type, query = self._make_reference_query(
                 path, value, nested=nested, modifier=modifier
             )
 
@@ -549,7 +554,7 @@ class ElasticsearchQueryBuilder(object):
             meta_info = fhir_search_path_meta_info(raw_path)
             array_ = meta_info[1] is True
 
-            query = self._make_token_query(
+            occurrence_type, query = self._make_token_query(
                 path, value, array_=array_, modifier=modifier
             )
 
@@ -557,7 +562,7 @@ class ElasticsearchQueryBuilder(object):
             # For now we are using literal string search
             # in future there could be searchable text like
             # search
-            query = self.build_string_query(
+            occurrence_type, query = self.build_string_query(
                 value,
                 path,
                 raw_path,
@@ -570,7 +575,7 @@ class ElasticsearchQueryBuilder(object):
 
             prefix, value = self.parse_prefix(value)
 
-            query = self._make_quantity_query(
+            occurrence_type, query = self._make_quantity_query(
                 path, value, prefix=prefix, modifier=modifier
             )
 
@@ -589,14 +594,14 @@ class ElasticsearchQueryBuilder(object):
                 if "value" in mapped_definition["properties"]:
                     path += ".value"
 
-            query = self._make_number_query(
+            occurrence_type, query = self._make_number_query(
                 path, value, prefix=prefix, modifier=modifier
             )
 
         elif param_type == "token":
             # One of most complex param type
 
-            query = self.build_token_query(
+            occurrence_type, query = self.build_token_query(
                 value,
                 path,
                 raw_path,
@@ -606,9 +611,9 @@ class ElasticsearchQueryBuilder(object):
             )
 
         elif param_type == "composite":
-            query = self.build_composite_query(value, param_name, path)
+            occurrence_type, query = self.build_composite_query(value, param_name, path)
 
-        return query
+        return occurrence_type, query
 
     def build_composite_query(self, value, param_name, path):
         """ """
@@ -905,7 +910,8 @@ class ElasticsearchQueryBuilder(object):
                 (
                     field,
                     _(
-                        "Pipe (|) is not allowed in value, when `text` modifier is provided"
+                        "Pipe (|) is not allowed in value, when "
+                        "`text` modifier is provided"
                     ),
                 )
             )

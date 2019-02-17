@@ -18,7 +18,7 @@ import six
 import sys
 
 
-__author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class ObjectStorage(Persistent):
@@ -28,7 +28,7 @@ class ObjectStorage(Persistent):
         self.raw = raw
 
     def __repr__(self):
-        return u'<ObjectStorage: {0!r}>'.format(self.raw)
+        return u"<ObjectStorage: {0!r}>".format(self.raw)
 
     def __eq__(self, other):
         if not isinstance(other, ObjectStorage):
@@ -44,6 +44,7 @@ class ObjectStorage(Persistent):
     def __bool__(self):
         """ """
         return self.raw is not None
+
     __nonzero__ = __bool__
 
 
@@ -52,7 +53,7 @@ class FhirResourceValue(object):
     """FhirResourceValue is a proxy class for holding any object derrived from
     fhir.resources.resource.Resource"""
 
-    __slot__ = ('_storage', '_encoding')
+    __slot__ = ("_storage", "_encoding")
 
     def foreground_origin(self):
         """Return the original object of FHIR model that is proxied!"""
@@ -64,10 +65,17 @@ class FhirResourceValue(object):
     def patch(self, patch_data):
 
         if not isinstance(patch_data, (list, tuple)):
-            raise WrongType('patch value must be list or tuple type! but got `{0}` type.'.format(type(patch_data)))
+            raise WrongType(
+                "patch value must be list or tuple type! but got `{0}` type.".format(
+                    type(patch_data)
+                )
+            )
 
         if not bool(self._storage):
-            raise Invalid('None object cannot be patched! Make sure fhir resource value is not empty!')
+            raise Invalid(
+                "None object cannot be patched! "
+                "Make sure fhir resource value is not empty!"
+            )
         try:
             patcher = jsonpatch.JsonPatch(patch_data)
             value = patcher.apply(self._storage.raw.as_json())
@@ -81,14 +89,16 @@ class FhirResourceValue(object):
     def stringify(self, prettify=False):
         """ """
         params = {}
-        params['encoding'] = self._encoding
+        params["encoding"] = self._encoding
         if prettify:
             # will make little bit slow, so apply only if needed
-            params['indent'] = 4
+            params["indent"] = 4
 
-        return self._storage.raw is not None and \
-            json.dumps(self._storage.raw.as_json(), **params) or \
-            ''
+        return (
+            self._storage.raw is not None
+            and json.dumps(self._storage.raw.as_json(), **params)
+            or ""
+        )
 
     def _validate_object(self, obj):
         """ """
@@ -102,21 +112,22 @@ class FhirResourceValue(object):
             six.reraise(Invalid, Invalid(str(exc)), sys.exc_info()[2])
 
         except DoesNotImplement as exc:
-            msg = 'Object must be derived from valid FHIR resource model class!'
+            msg = "Object must be derived from valid FHIR resource model class!"
             if api.env.debug_mode():
-                msg += 'But it is found that object is derived from `{0}`'.\
-                    format(obj.__class__.__module__ + '.' + obj.__class__.__name__)
-                msg += '\nOriginal Exception: {0!s}'.format(exc)
+                msg += "But it is found that object is derived from `{0}`".format(
+                    obj.__class__.__module__ + "." + obj.__class__.__name__
+                )
+                msg += "\nOriginal Exception: {0!s}".format(exc)
 
             six.reraise(WrongType, WrongType(msg), sys.exc_info()[2])
 
-    def __init__(self, raw=None, encoding='utf-8'):
+    def __init__(self, raw=None, encoding="utf-8"):
         """ """
         # Let's validate before value assignment!
         self._validate_object(raw)
 
-        object.__setattr__(self, '_storage', ObjectStorage(raw))
-        object.__setattr__(self, '_encoding', encoding)
+        object.__setattr__(self, "_storage", ObjectStorage(raw))
+        object.__setattr__(self, "_encoding", encoding)
 
     def __getattr__(self, name):
         """Any attribute from FHIR Resource Object is accessible via this class"""
@@ -127,11 +138,14 @@ class FhirResourceValue(object):
 
     def __getstate__(self):
         """ """
-        odict = OrderedDict([('_storage', self._storage), ('_encoding', self._encoding)])
+        odict = OrderedDict(
+            [("_storage", self._storage), ("_encoding", self._encoding)]
+        )
         return odict
 
     def __setattr__(self, name, val):
-        """This class kind of unmutable! All changes should be applied on FHIR Resource Object"""
+        """This class kind of unmutable!
+        All changes should be applied on FHIR Resource Object"""
         setattr(self._storage.raw, name, val)
 
     def __setstate__(self, odict):
@@ -146,19 +160,19 @@ class FhirResourceValue(object):
     def __repr__(self):
         """ """
         if self.__bool__():
-            return '<{0} object represents object of {1} at {2}>'.\
-                format(
-                    self.__class__.__module__ + '.' + self.__class__.__name__,
-                    self._storage.raw.__class__.__module__ + '.' + self._storage.raw.__class__.__name__,
-                    hex(id(self)),
-                )
+            return "<{0} object represents object of {1} at {2}>".format(
+                self.__class__.__module__ + "." + self.__class__.__name__,
+                self._storage.raw.__class__.__module__
+                + "."
+                + self._storage.raw.__class__.__name__,
+                hex(id(self)),
+            )
         else:
-            return '<{0} object represents object of {1} at {2}>'.\
-                format(
-                    self.__class__.__module__ + '.' + self.__class__.__name__,
-                    None.__class__.__name__,
-                    hex(id(self)),
-                )
+            return "<{0} object represents object of {1} at {2}>".format(
+                self.__class__.__module__ + "." + self.__class__.__name__,
+                None.__class__.__name__,
+                hex(id(self)),
+            )
 
     def __eq__(self, other):
         if not isinstance(other, FhirResourceValue):
@@ -174,4 +188,5 @@ class FhirResourceValue(object):
     def __bool__(self):
         """ """
         return bool(self._storage)
+
     __nonzero__ = __bool__

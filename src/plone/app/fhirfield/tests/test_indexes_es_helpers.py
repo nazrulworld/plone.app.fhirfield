@@ -8,116 +8,123 @@ from zope.interface import Invalid
 import unittest
 
 
-__author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def test_build_resource_date_type(self):
         """ """
         # test:1 exact
-        params = {'_lastUpdated': '2011-09-17'}
+        params = {"_lastUpdated": "2011-09-17"}
 
-        builder = helpers.ElasticsearchQueryBuilder(params,
-                                                    'resource',
-                                                    'Organization')
+        builder = helpers.ElasticsearchQueryBuilder(params, "resource", "Organization")
         compare = [
-            {'range': {
-                'resource.meta.lastUpdated': {
-                    'lte': '2011-09-17T00:00:00',
-                    'gte': '2011-09-17T00:00:00'}}},
-            {'query': {'term': {'resource.resourceType': 'Organization'}}},
-          ]
+            {
+                "range": {
+                    "resource.meta.lastUpdated": {
+                        "lte": "2011-09-17T00:00:00",
+                        "gte": "2011-09-17T00:00:00",
+                    }
+                }
+            },
+            {"term": {"resource.resourceType": "Organization"}},
+        ]
+
         query = builder.build()
+
         # resourceType should be auto included
-        self.assertEqual(len(query['and']), 2)
-        self.assertEqual(query['and'], compare)
+        self.assertEqual(len(query["bool"]["must"]), 2)
+        self.assertEqual(query["bool"]["must"], compare)
 
         # test:2 not equal
-        params = {'_lastUpdated': 'ne2011-09-17'}
+        params = {"_lastUpdated": "ne2011-09-17"}
 
-        builder = helpers.ElasticsearchQueryBuilder(params,
-                                                    'resource',
-                                                    'Organization')
-        compare = {'range': {
-            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00',
-                                          'gte': '2011-09-17T00:00:00'}}}
+        builder = helpers.ElasticsearchQueryBuilder(params, "resource", "Organization")
+        compare = {
+            "range": {
+                "resource.meta.lastUpdated": {
+                    "lte": "2011-09-17T00:00:00",
+                    "gte": "2011-09-17T00:00:00",
+                }
+            }
+        }
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 2)
-        self.assertEqual(query['and'][0]['query']['not'], compare)
+        self.assertEqual(len(query["bool"]["must_not"]), 1)
+        self.assertEqual(query["bool"]["must_not"][0], compare)
 
         # test:3 less than
-        params = {'_lastUpdated': 'lt2011-09-17'}
+        params = {"_lastUpdated": "lt2011-09-17"}
 
-        builder = helpers.ElasticsearchQueryBuilder(params,
-                                                    'resource',
-                                                    'Organization')
-        compare = {'range': {
-            'resource.meta.lastUpdated': {'lt': '2011-09-17T00:00:00'}}}
+        builder = helpers.ElasticsearchQueryBuilder(params, "resource", "Organization")
+        compare = {
+            "range": {"resource.meta.lastUpdated": {"lt": "2011-09-17T00:00:00"}}
+        }
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 2)
-        self.assertEqual(query['and'][0], compare)
+        self.assertEqual(query["bool"]["must"][0], compare)
 
         # test:4 greater than
-        params = {'_lastUpdated': 'gt2011-09-17'}
+        params = {"_lastUpdated": "gt2011-09-17"}
 
-        builder = helpers.ElasticsearchQueryBuilder(params,
-                                                    'resource',
-                                                    'Organization')
-        compare = {'range': {
-            'resource.meta.lastUpdated': {'gt': '2011-09-17T00:00:00'}}}
+        builder = helpers.ElasticsearchQueryBuilder(params, "resource", "Organization")
+        compare = {
+            "range": {"resource.meta.lastUpdated": {"gt": "2011-09-17T00:00:00"}}
+        }
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 2)
-        self.assertEqual(query['and'][0], compare)
+        self.assertEqual(query["bool"]["must"][0], compare)
 
         # test:4 less than or equal
-        params = {'_lastUpdated': 'le2011-09-17'}
+        params = {"_lastUpdated": "le2011-09-17"}
 
-        builder = helpers.ElasticsearchQueryBuilder(params,
-                                                    'resource',
-                                                    'Organization')
-        compare = {'range': {
-            'resource.meta.lastUpdated': {'lte': '2011-09-17T00:00:00'}}}
+        builder = helpers.ElasticsearchQueryBuilder(params, "resource", "Organization")
+        compare = {
+            "range": {"resource.meta.lastUpdated": {"lte": "2011-09-17T00:00:00"}}
+        }
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 2)
-        self.assertEqual(query['and'][0], compare)
+        self.assertEqual(query["bool"]["must"][0], compare)
 
         # test:5 greater than or equal
-        params = {'_lastUpdated': 'ge2011-09-17'}
+        params = {"_lastUpdated": "ge2011-09-17"}
 
-        builder = helpers.ElasticsearchQueryBuilder(params,
-                                                    'resource',
-                                                    'Organization')
-        compare = {'range': {
-            'resource.meta.lastUpdated': {'gte': '2011-09-17T00:00:00'}}}
+        builder = helpers.ElasticsearchQueryBuilder(params, "resource", "Organization")
+        compare = {
+            "range": {"resource.meta.lastUpdated": {"gte": "2011-09-17T00:00:00"}}
+        }
 
         query = builder.build()
 
-        self.assertEqual(len(query['and']), 2)
-        self.assertEqual(query['and'][0], compare)
+        self.assertEqual(query["bool"]["must"][0], compare)
 
     def test_build_resource_profile(self):
         """ """
-        params = {'_profile': 'https://www.hl7.org/fhir/search.html'}
+        params = {"_profile": "https://www.hl7.org/fhir/search.html"}
 
-        builder = helpers.ElasticsearchQueryBuilder(
-            params,
-            'resource',
-            'Organization')
+        builder = helpers.ElasticsearchQueryBuilder(params, "resource", "Organization")
         query = builder.build()
-        compare = {'and': [
-            {'query': {'bool': {'must': [{'query': {'terms': {
-                'resource.meta.profile': ['https://www.hl7.org/fhir/search.html']}}}]}}},
-            {'query': {'term': {'resource.resourceType': 'Organization'}}}]}
+        compare = {
+            "bool": {
+                "must": [
+                    {
+                        "terms": {
+                            "resource.meta.profile": [
+                                "https://www.hl7.org/fhir/search.html"
+                            ]
+                        }
+                    },
+                    {"term": {"resource.resourceType": "Organization"}},
+                ]
+            }
+        }
 
         self.assertEqual(query, compare)
 
@@ -125,44 +132,35 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         """ """
         # test with params those are unknown to fhir search
         try:
-            params = {'created_on': '2011-09-17', 'fake_param': None}
-            helpers.ElasticsearchQueryBuilder(
-                params,
-                'task_resource',
-                'Task')
+            params = {"created_on": "2011-09-17", "fake_param": None}
+            helpers.ElasticsearchQueryBuilder(params, "task_resource", "Task")
             raise AssertionError(
-                'code should not come here as unknown '
-                'parameters are provided')
+                "code should not come here as unknown " "parameters are provided"
+            )
         except Invalid as e:
-            self.assertIn('unrecognized by FHIR search', str(e))
-            self.assertIn('created_on', str(e))
-            self.assertIn('fake_param', str(e))
+            self.assertIn("unrecognized by FHIR search", str(e))
+            self.assertIn("created_on", str(e))
+            self.assertIn("fake_param", str(e))
 
         # Test with unsupported modifier
         try:
-            params = {'patient:unknown': 'Patient/1'}
-            helpers.ElasticsearchQueryBuilder(
-                params,
-                'task_resource',
-                'Task')
+            params = {"patient:unknown": "Patient/1"}
+            helpers.ElasticsearchQueryBuilder(params, "task_resource", "Task")
             raise AssertionError(
-                'code should not come here as unknown '
-                'parameters are provided')
+                "code should not come here as unknown " "parameters are provided"
+            )
         except Invalid as e:
             self.assertIn(
-                'Unsupported modifier has been attached with parameter',
-                str(e))
+                "Unsupported modifier has been attached with parameter", str(e)
+            )
 
     def test_validate_exists_modifier(self):
         """When any parameter has got modifier `missing or exists`,
         value always be boolean"""
-        params = {'patient:missing': None}
+        params = {"patient:missing": None}
         try:
-            helpers.ElasticsearchQueryBuilder(
-                params,
-                'task_resource',
-                'Task')
-            raise AssertionError('Code should not come here, as ')
+            helpers.ElasticsearchQueryBuilder(params, "task_resource", "Task")
+            raise AssertionError("Code should not come here, as ")
         except Invalid:
             pass
 
@@ -170,46 +168,38 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         """ """
         # test with other modifier
         try:
-            params = {'_lastUpdated:exact': 'Some Date'}
-            helpers.ElasticsearchQueryBuilder(
-                params,
-                'task_resource',
-                'Task')
+            params = {"_lastUpdated:exact": "Some Date"}
+            helpers.ElasticsearchQueryBuilder(params, "task_resource", "Task")
             raise AssertionError(
-                'code should not come here as invalide '
-                'modifier has been provided')
+                "code should not come here as invalide " "modifier has been provided"
+            )
         except Invalid as e:
-            self.assertIn('don\'t accept any modifier', str(e))
+            self.assertIn("don't accept any modifier", str(e))
 
         # test with validate date
         try:
-            params = {'_lastUpdated': '7679-89-90'}
-            helpers.ElasticsearchQueryBuilder(
-                params,
-                'task_resource',
-                'Task')
+            params = {"_lastUpdated": "7679-89-90"}
+            helpers.ElasticsearchQueryBuilder(params, "task_resource", "Task")
             raise AssertionError(
-                'code should not come here as invalide '
-                'modifier has been provided')
+                "code should not come here as invalide " "modifier has been provided"
+            )
         except Invalid as e:
-            self.assertIn('is not valid date string!', str(e))
+            self.assertIn("is not valid date string!", str(e))
 
         # test with invalid prefix
         try:
-            params = {'_lastUpdated': 'it2011-09-17'}
-            helpers.ElasticsearchQueryBuilder(
-                params,
-                'task_resource',
-                'Task')
+            params = {"_lastUpdated": "it2011-09-17"}
+            helpers.ElasticsearchQueryBuilder(params, "task_resource", "Task")
             raise AssertionError(
-                'code should not come here as invalide '
-                'modifier has been provided')
+                "code should not come here as invalide " "modifier has been provided"
+            )
         except Invalid as e:
-            self.assertIn('is not valid date string!', str(e))
+            self.assertIn("is not valid date string!", str(e))
 
 
 class ElasticsearchSortQueryBuilderIntegrationTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def test_build(self):
@@ -217,17 +207,17 @@ class ElasticsearchSortQueryBuilderIntegrationTest(unittest.TestCase):
         sort_on = []
 
         builder = helpers.ElasticsearchSortQueryBuilder(
-            {'Task': 'task_resource'},
-            '-_lastUpdated,status'.split(','))
+            {"Task": "task_resource"}, "-_lastUpdated,status".split(",")
+        )
 
         builder.build(sort_on)
 
-        sort_on.append('_score')
+        sort_on.append("_score")
 
         expected = [
-            {'task_resource.meta.lastUpdated': {'order': 'desc'}},
-            {'task_resource.status': {'order': 'asc'}},
-            '_score',
+            {"task_resource.meta.lastUpdated": {"order": "desc"}},
+            {"task_resource.status": {"order": "asc"}},
+            "_score",
         ]
         self.assertEqual(sort_on, expected)
 
@@ -236,36 +226,38 @@ class ElasticsearchSortQueryBuilderIntegrationTest(unittest.TestCase):
         # test unknown field
         try:
             helpers.build_elasticsearch_sortable(
-                {'Task': 'task_resource'}, ('created_on', ),
+                {"Task": "task_resource"}, ("created_on",)
             )
-            raise AssertionError('Code should not come here!')
+            raise AssertionError("Code should not come here!")
         except SearchQueryValidationError as e:
-            self.assertIn('created_on is unknown', str(e))
+            self.assertIn("created_on is unknown", str(e))
 
         # test unsupported field for certain resource
         # for example Task has no attribute gender
 
         try:
             helpers.build_elasticsearch_sortable(
-                {'Task': 'task_resource'}, ('_lastUpdated', 'gender'),
+                {"Task": "task_resource"}, ("_lastUpdated", "gender")
             )
-            raise AssertionError('Code should not come here!')
+            raise AssertionError("Code should not come here!")
         except SearchQueryValidationError as e:
-            self.assertIn('gender is not available', str(e))
+            self.assertIn("gender is not available", str(e))
 
 
 class QueryAssemblerPatchIntegrationTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
+
         class ES(object):
             def __init__(self):
                 """ """
                 self.catalogtool = None
 
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
         self.es = ES()
 
     def test_fhir_sortable(self):
@@ -273,23 +265,23 @@ class QueryAssemblerPatchIntegrationTest(unittest.TestCase):
         assembler = QueryAssembler(None, self.es)
 
         query = {
-            'task_resource': {'status': 'ready',
-                              '_lastUpdated': 'lt2018-01-15T06:31:18+00:00'},
-            'portal_type': 'Task',
-            '_sort': '-_lastUpdated,status',
+            "task_resource": {
+                "status": "ready",
+                "_lastUpdated": "lt2018-01-15T06:31:18+00:00",
+            },
+            "portal_type": "Task",
+            "_sort": "-_lastUpdated,status",
         }
         expected = [
-            {'task_resource.meta.lastUpdated': {'order': 'desc'}},
-            {'task_resource.status': {'order': 'asc'}},
-            '_score',
+            {"task_resource.meta.lastUpdated": {"order": "desc"}},
+            {"task_resource.status": {"order": "asc"}},
+            "_score",
         ]
         query, sort_list = assembler.normalize(query)
 
-        self.assertEqual(
-            sort_list,
-            expected)
+        self.assertEqual(sort_list, expected)
 
-        self.assertNotIn('_sort', query)
+        self.assertNotIn("_sort", query)
 
     def test_plone_sortable_obsolute(self):
         """
@@ -298,31 +290,25 @@ class QueryAssemblerPatchIntegrationTest(unittest.TestCase):
         assembler = QueryAssembler(None, self.es)
 
         query = {
-            'task_resource': {'status': 'ready',
-                              '_lastUpdated': 'lt2018-01-15T06:31:18+00:00'},
-            'portal_type': 'Task',
-            'sort_on': 'created',
-            'sort_order': 'desc',
+            "task_resource": {
+                "status": "ready",
+                "_lastUpdated": "lt2018-01-15T06:31:18+00:00",
+            },
+            "portal_type": "Task",
+            "sort_on": "created",
+            "sort_order": "desc",
         }
         query, sort_list = assembler.normalize(query)
 
-        self.assertEqual(sort_list, ['_score'])
-        self.assertNotIn('sort_on', query)
-        self.assertNotIn('sort_order', query)
+        self.assertEqual(sort_list, ["_score"])
+        self.assertNotIn("sort_on", query)
+        self.assertNotIn("sort_order", query)
 
     def test_plone_sortable_working(self):
         """For any kind of non FHIR query,
         there should work normal plone sorting"""
-        query = {
-            'portal_type': 'Task',
-            'sort_on': 'created,id',
-            'sort_order': 'desc',
-        }
-        expected = [
-            {'created': {'order': 'desc'}},
-            {'id': {'order': 'desc'}},
-            '_score',
-        ]
+        query = {"portal_type": "Task", "sort_on": "created,id", "sort_order": "desc"}
+        expected = [{"created": {"order": "desc"}}, {"id": {"order": "desc"}}, "_score"]
         assembler = QueryAssembler(None, self.es)
         query, sort_list = assembler.normalize(query)
         self.assertEqual(sort_list, expected)

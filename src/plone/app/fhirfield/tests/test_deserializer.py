@@ -25,25 +25,25 @@ import os
 import unittest
 
 
-___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+___author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class DeserializerIntegrationTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
 
     def assert_field(self, context, field, json_dict):
         """ """
         # Deserialize to field value
         deserializer = queryMultiAdapter(
-              (field, context, self.request),
-              IFieldDeserializer,
-              )
+            (field, context, self.request), IFieldDeserializer
+        )
         self.assertIsNotNone(deserializer)
 
         field_value = deserializer(json_dict)
@@ -54,22 +54,24 @@ class DeserializerIntegrationTest(unittest.TestCase):
         self.assertTrue(field_value.as_json(), field_value2.as_json())
 
         try:
-            deserializer(['I am invalid'])
-            raise AssertionError('Code should not come here! because invalid data type is provided.')
+            deserializer(["I am invalid"])
+            raise AssertionError(
+                "Code should not come here! because invalid data type is provided."
+            )
         except ValueError:
             pass
 
     def test_available_adapter(self):
         """ """
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
             json_dict = json.load(f)
 
         context = api.content.create(
-                container=self.portal,
-                type='FFOrganization',
-                id=None,
-                title='Test Organization xxx',
-            )
+            container=self.portal,
+            type="FFOrganization",
+            id=None,
+            title="Test Organization xxx",
+        )
 
         for name, field in getFields(IFFOrganization).items():
 
@@ -79,15 +81,12 @@ class DeserializerIntegrationTest(unittest.TestCase):
 
     def test_deserializer(self):
         """ """
-        body = {
-            '@type': 'FFOrganization',
-            'title': 'Test Organization xxx',
-        }
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            body['organization_resource'] = json.load(f)
+        body = {"@type": "FFOrganization", "title": "Test Organization xxx"}
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
+            body["organization_resource"] = json.load(f)
 
         request = TestRequest(BODY=json.dumps(body))
-        obj = create(self.portal, body['@type'], id_=None, title=body['title'])
+        obj = create(self.portal, body["@type"], id_=None, title=body["title"])
 
         deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
         assert deserializer is not None
@@ -101,51 +100,54 @@ class DeserializerIntegrationTest(unittest.TestCase):
         self.assertTrue(IFhirResourceValue.providedBy(obj.organization_resource))
 
         # Test error handling
-        body['organization_resource'] = {'data': 'FakeID'}
+        body["organization_resource"] = {"data": "FakeID"}
         request = TestRequest(BODY=json.dumps(body))
-        obj = create(self.portal, body['@type'], id_=None, title=body['title'])
+        obj = create(self.portal, body["@type"], id_=None, title=body["title"])
 
         deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
         try:
             deserializer(validate_all=True)
-            raise AssertionError('Code should not come here! Because invalid fhir json data is provided!')
+            raise AssertionError(
+                "Code should not come here! Because invalid fhir json data is provided!"
+            )
         except Invalid:
             pass
 
 
 class DeserializerFunctionalTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 
     def setUp(self):
         """ """
-        self.portal = self.layer['portal']
+        self.portal = self.layer["portal"]
         self.portal_url = self.portal.absolute_url()
         self.api_session = RelativeSession(self.portal_url)
-        self.api_session.headers.update({'Accept': 'application/json'})
+        self.api_session.headers.update({"Accept": "application/json"})
         self.api_session.auth = (SITE_OWNER_NAME, SITE_OWNER_PASSWORD)
 
     def test_deserializer(self):
         """ """
         json_body = {
-            '@type': 'FFOrganization',
-            'title': 'Test Organization xxx',
-            'id': 'test-hospital',
+            "@type": "FFOrganization",
+            "title": "Test Organization xxx",
+            "id": "test-hospital",
         }
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
-            json_body['organization_resource'] = json.load(f)
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
+            json_body["organization_resource"] = json.load(f)
 
-        response = self.api_session.post(
-             self.portal_url,
-             json=json_body,
-        )
+        response = self.api_session.post(self.portal_url, json=json_body)
         self.assertEqual(201, response.status_code)
         self.assertEqual(
-          response.json()['organization_resource']['resourceType'],
-          json_body['organization_resource']['resourceType'])
+            response.json()["organization_resource"]["resourceType"],
+            json_body["organization_resource"]["resourceType"],
+        )
 
         # Test with mismatched fhir json, I mean mismatcged resource
-        json_body['organization_resource'] = """{
+        json_body[
+            "organization_resource"
+        ] = """{
           "resourceType": "ValueSet",
           "id": "yesnodontknow",
           "url": "http://hl7.org/fhir/ValueSet/yesnodontknow",
@@ -193,12 +195,10 @@ class DeserializerFunctionalTest(unittest.TestCase):
           }
         }
         """
-        json_body['organization_resource'] = \
-            json.loads(json_body['organization_resource'])
-        json_body['id'] = 'another-hospital'
-
-        response = self.api_session.post(
-             self.portal_url,
-             json=json_body,
+        json_body["organization_resource"] = json.loads(
+            json_body["organization_resource"]
         )
+        json_body["id"] = "another-hospital"
+
+        response = self.api_session.post(self.portal_url, json=json_body)
         self.assertEqual(400, response.status_code)
