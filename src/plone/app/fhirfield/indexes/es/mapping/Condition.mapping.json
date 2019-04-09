@@ -4,19 +4,19 @@
             "abatementAge": {
                 "properties": {
                     "code": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "system": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "unit": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "value": {
                         "store": false,
@@ -52,19 +52,19 @@
                     "high": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "unit": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "value": {
                                 "store": false,
@@ -75,19 +75,19 @@
                     "low": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "unit": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "value": {
                                 "store": false,
@@ -98,9 +98,9 @@
                 }
             },
             "abatementString": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "assertedDate": {
                 "format": "date_time_no_millis||date_optional_time",
@@ -110,10 +110,9 @@
             "asserter": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
@@ -122,27 +121,28 @@
                     "coding": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "display": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             }
                         },
                         "type": "nested"
                     },
                     "text": {
-                        "index": "analyzed",
+                        "analyzer": "standard",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "text"
                     }
                 },
                 "type": "nested"
@@ -152,105 +152,107 @@
                     "coding": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "display": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             }
                         },
                         "type": "nested"
                     },
                     "text": {
-                        "index": "analyzed",
+                        "analyzer": "standard",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "text"
                     }
                 },
                 "type": "nested"
             },
             "clinicalStatus": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "code": {
                 "properties": {
                     "coding": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "display": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             }
                         },
                         "type": "nested"
                     },
                     "text": {
-                        "index": "analyzed",
+                        "analyzer": "standard",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "text"
                     }
                 }
             },
             "context": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "id": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "identifier": {
                 "properties": {
                     "system": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "type": {
                         "properties": {
                             "text": {
-                                "index": "analyzed",
+                                "analyzer": "standard",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "text"
                             }
                         }
                     },
                     "use": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "value": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 },
                 "type": "nested"
@@ -263,33 +265,33 @@
                         "type": "date"
                     },
                     "profile": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "versionId": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "onsetAge": {
                 "properties": {
                     "code": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "system": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "unit": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "value": {
                         "store": false,
@@ -321,19 +323,19 @@
                     "high": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "unit": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "value": {
                                 "store": false,
@@ -344,19 +346,19 @@
                     "low": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "unit": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "value": {
                                 "store": false,
@@ -367,63 +369,63 @@
                 }
             },
             "onsetString": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "resourceType": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "severity": {
                 "properties": {
                     "coding": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "display": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             }
                         },
                         "type": "nested"
                     },
                     "text": {
-                        "index": "analyzed",
+                        "analyzer": "standard",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "text"
                     }
                 }
             },
             "subject": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "verificationStatus": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             }
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-25T20:48:34+02:00",
+        "lastUpdated": "2019-04-09T15:24:14+02:00",
         "versionId": "STU3"
     },
     "resourceType": "Condition"

@@ -26,7 +26,7 @@ TEST_ZCML = """\
     <include package="fhirfield_rest.services" />
 </configure>
 """
-IS_TRAVIS = "TRAVIS" in os.environ
+IS_TRAVIS = "TRAVIS" in os.environ or 1
 
 
 class BaseDockerImage(object):

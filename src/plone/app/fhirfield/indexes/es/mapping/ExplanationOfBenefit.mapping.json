@@ -4,10 +4,9 @@
             "claim": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
@@ -17,60 +16,59 @@
                 "type": "date"
             },
             "disposition": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "enterer": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "facility": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "id": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "identifier": {
                 "properties": {
                     "system": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "type": {
                         "properties": {
                             "text": {
-                                "index": "analyzed",
+                                "analyzer": "standard",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "text"
                             }
                         }
                     },
                     "use": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "value": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 },
                 "type": "nested"
@@ -83,56 +81,53 @@
                         "type": "date"
                     },
                     "profile": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "versionId": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "organization": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "patient": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "provider": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "resourceType": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             }
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-25T20:48:34+02:00",
+        "lastUpdated": "2019-04-09T15:24:14+02:00",
         "versionId": "STU3"
     },
     "resourceType": "ExplanationOfBenefit"

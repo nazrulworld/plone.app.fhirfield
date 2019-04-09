@@ -2,14 +2,14 @@
     "mapping": {
         "properties": {
             "base": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "code": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "date": {
                 "format": "date_time_no_millis||date_optional_time",
@@ -17,46 +17,48 @@
                 "type": "date"
             },
             "derivedFrom": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "description": {
-                "index": "analyzed",
+                "analyzer": "standard",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "text"
             },
             "id": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "jurisdiction": {
                 "properties": {
                     "coding": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "display": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             }
                         },
                         "type": "nested"
                     },
                     "text": {
-                        "index": "analyzed",
+                        "analyzer": "standard",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "text"
                     }
                 },
                 "type": "nested"
@@ -69,61 +71,61 @@
                         "type": "date"
                     },
                     "profile": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "versionId": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "name": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "publisher": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "resourceType": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "status": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "target": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "type": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "url": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "version": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             }
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-25T20:48:34+02:00",
+        "lastUpdated": "2019-04-09T15:24:14+02:00",
         "versionId": "STU3"
     },
     "resourceType": "SearchParameter"

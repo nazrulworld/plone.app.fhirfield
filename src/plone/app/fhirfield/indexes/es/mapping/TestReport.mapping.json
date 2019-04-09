@@ -2,35 +2,36 @@
     "mapping": {
         "properties": {
             "id": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "identifier": {
                 "properties": {
                     "system": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "type": {
                         "properties": {
                             "text": {
-                                "index": "analyzed",
+                                "analyzer": "standard",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "text"
                             }
                         }
                     },
                     "use": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "value": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
@@ -47,46 +48,45 @@
                         "type": "date"
                     },
                     "profile": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "versionId": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "resourceType": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "result": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "testScript": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "tester": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             }
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-25T20:48:34+02:00",
+        "lastUpdated": "2019-04-09T15:24:14+02:00",
         "versionId": "STU3"
     },
     "resourceType": "TestReport"

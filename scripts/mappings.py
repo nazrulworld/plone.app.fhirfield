@@ -29,28 +29,28 @@ Long = {
 }
 
 Token = {
-    'type': 'string',
-    'index': 'not_analyzed',
+    'type': 'keyword',
+    'index': True,
     'store': False
 }
 
 KeywordToken = {
-    'type': 'string',
-    'index': 'analyzed',
-    'analyzer': 'keyword',
+    'type': 'keyword',
+    'index': True,
     'store': False
 }
 
 Text = {
-    'type': 'string',
-    'index': 'analyzed',
-    'store': False
+    'type': 'text',
+    'index': True,
+    'store': False,
+    'analyzer': 'standard'
 }
 
 SearchableText = {
-    'type': 'string',
-    'index': 'analyzed',
-    'analyzer': 'keyword',
+    'type': 'text',
+    'index': True,
+    'analyzer': 'standard',
     'store': False
 }
 

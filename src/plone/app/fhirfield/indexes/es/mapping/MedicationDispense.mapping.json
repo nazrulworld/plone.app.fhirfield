@@ -4,10 +4,9 @@
             "authorizingPrescription": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 },
                 "type": "nested"
@@ -15,53 +14,52 @@
             "context": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "destination": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "id": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "identifier": {
                 "properties": {
                     "system": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "type": {
                         "properties": {
                             "text": {
-                                "index": "analyzed",
+                                "analyzer": "standard",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "text"
                             }
                         }
                     },
                     "use": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "value": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 },
                 "type": "nested"
@@ -71,37 +69,37 @@
                     "coding": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "display": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             }
                         },
                         "type": "nested"
                     },
                     "text": {
-                        "index": "analyzed",
+                        "analyzer": "standard",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "text"
                     }
                 }
             },
             "medicationReference": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
@@ -113,45 +111,43 @@
                         "type": "date"
                     },
                     "profile": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     },
                     "versionId": {
-                        "index": "not_analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
             "receiver": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 },
                 "type": "nested"
             },
             "resourceType": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "status": {
-                "index": "not_analyzed",
+                "index": true,
                 "store": false,
-                "type": "string"
+                "type": "keyword"
             },
             "subject": {
                 "properties": {
                     "reference": {
-                        "analyzer": "keyword",
-                        "index": "analyzed",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "keyword"
                     }
                 }
             },
@@ -160,27 +156,28 @@
                     "coding": {
                         "properties": {
                             "code": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "display": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             },
                             "system": {
-                                "index": "not_analyzed",
+                                "index": true,
                                 "store": false,
-                                "type": "string"
+                                "type": "keyword"
                             }
                         },
                         "type": "nested"
                     },
                     "text": {
-                        "index": "analyzed",
+                        "analyzer": "standard",
+                        "index": true,
                         "store": false,
-                        "type": "string"
+                        "type": "text"
                     }
                 }
             },
@@ -197,7 +194,7 @@
         }
     },
     "meta": {
-        "lastUpdated": "2018-10-25T20:48:34+02:00",
+        "lastUpdated": "2019-04-09T15:24:14+02:00",
         "versionId": "STU3"
     },
     "resourceType": "MedicationDispense"

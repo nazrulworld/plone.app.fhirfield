@@ -1,16 +1,19 @@
+sudo: required
 language: python
 python:
   - 2.7.14
   - 3.5
-sudo: false
+
+services:
+  - docker
+
 cache:
   pip: true
   directories:
     - $HOME/buildout-cache
 env:
   global:
-    - ES_VERSION=6.6.0 
-    - ES_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.tar.gz
+    - ES_VERSION=6.3.0
   matrix:
     - PLONE_VERSION=5.0.x  QA=true
     - PLONE_VERSION=5.1.x  QA=true
@@ -19,6 +22,7 @@ before_script:
   - sleep 10
 
 before_install:
+  - docker run -d -e "cluster.name=docker-cluster" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -p 9200:9200 docker.elastic.co/elasticsearch/elasticsearch-oss:${ES_VERSION}
   - mkdir -p $HOME/buildout-cache/{eggs,downloads}
   - mkdir $HOME/.buildout
   - echo "[buildout]" > $HOME/.buildout/default.cfg
@@ -28,9 +32,6 @@ before_install:
   - bin/pip install -U pip
   - bin/pip install -r plone-$PLONE_VERSION-requirements.txt
 install:
-  - wget ${ES_DOWNLOAD_URL}
-  - tar -xzf elasticsearch-${ES_VERSION}.tar.gz
-  - ./elasticsearch-${ES_VERSION}/bin/elasticsearch &
   - sed -ie "s#plone-x.x.x.cfg#plone-$PLONE_VERSION.cfg#" travis.cfg
   - bin/buildout -N -t 3 -c travis.cfg
 script:

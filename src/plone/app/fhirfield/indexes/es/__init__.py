@@ -123,8 +123,6 @@ def MappingAdapter_get_index_creation_body(self):
 
 
 # *** Monkey Patch ***
-
-
 setattr(QueryAssembler, "_old_normalize", QueryAssembler.normalize)
 setattr(QueryAssembler, "normalize", QueryAssembler_normalize)
 

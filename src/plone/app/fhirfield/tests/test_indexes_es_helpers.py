@@ -37,8 +37,8 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         query = builder.build()
 
         # resourceType should be auto included
-        self.assertEqual(len(query["bool"]["must"]), 2)
-        self.assertEqual(query["bool"]["must"], compare)
+        self.assertEqual(len(query["bool"]["filter"]), 2)
+        self.assertEqual(query["bool"]["filter"], compare)
 
         # test:2 not equal
         params = {"_lastUpdated": "ne2011-09-17"}
@@ -67,7 +67,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(query["bool"]["must"][0], compare)
+        self.assertEqual(query["bool"]["filter"][0], compare)
 
         # test:4 greater than
         params = {"_lastUpdated": "gt2011-09-17"}
@@ -79,7 +79,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(query["bool"]["must"][0], compare)
+        self.assertEqual(query["bool"]["filter"][0], compare)
 
         # test:4 less than or equal
         params = {"_lastUpdated": "le2011-09-17"}
@@ -91,7 +91,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(query["bool"]["must"][0], compare)
+        self.assertEqual(query["bool"]["filter"][0], compare)
 
         # test:5 greater than or equal
         params = {"_lastUpdated": "ge2011-09-17"}
@@ -103,7 +103,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
 
         query = builder.build()
 
-        self.assertEqual(query["bool"]["must"][0], compare)
+        self.assertEqual(query["bool"]["filter"][0], compare)
 
     def test_build_resource_profile(self):
         """ """
@@ -113,7 +113,7 @@ class ElasticsearchQueryBuilderIntegrationTest(unittest.TestCase):
         query = builder.build()
         compare = {
             "bool": {
-                "must": [
+                "filter": [
                     {
                         "terms": {
                             "resource.meta.profile": [

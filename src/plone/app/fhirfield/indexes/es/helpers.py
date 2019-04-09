@@ -223,7 +223,7 @@ class ElasticsearchQueryBuilder(object):
 
     def _make_date_query(self, path, value, modifier=None):
         """ """
-        occurance_type = "must"
+        occurance_type = "filter"
         prefix = "eq"
 
         if value[0:2] in FSPR_VALUE_PRIFIXES_MAP:
@@ -434,7 +434,7 @@ class ElasticsearchQueryBuilder(object):
 
     def _make_reference_query(self, path, value, nested=None, modifier=None):
         """ """
-        occurrence_type = "must"
+        occurrence_type = "filter"
         fullpath = path + ".reference"
 
         query = dict(term={fullpath: value})
@@ -451,9 +451,15 @@ class ElasticsearchQueryBuilder(object):
 
     def _make_term_query(self, path, value, array_=None):
         """ """
-        if array_:
-            # check Array type
-            query = {"terms": {path: [value]}}
+        # check array type or multiple terms is provided
+        use_terms = array_ or type(value) in (list, tuple, set)
+
+        if use_terms:
+            if type(value) not in (list, tuple, set):
+                terms = [value]
+            else:
+                terms = value
+            query = {"terms": {path: terms}}
         else:
             query = {"term": {path: value}}
 
@@ -461,7 +467,7 @@ class ElasticsearchQueryBuilder(object):
 
     def _make_token_query(self, path, value, array_=None, modifier=None):
         """ """
-        occurrence_type = "must"
+        occurrence_type = "filter"
 
         if value in ("true", "false"):
             if value == "true":
@@ -472,7 +478,7 @@ class ElasticsearchQueryBuilder(object):
         if modifier == "not":
             occurrence_type = "must_not"
         else:
-            occurrence_type = "must"
+            occurrence_type = "filter"
 
         term_query = self._make_term_query(path, value, array_)
 
@@ -517,7 +523,7 @@ class ElasticsearchQueryBuilder(object):
         )
 
         # XXX multiple resources?
-        self.query_tree["bool"]["must"].append(query)
+        self.query_tree["bool"]["filter"].append(query)
 
         query_tree = copy.deepcopy(self.query_tree)
         for ot in self.query_tree["bool"]:

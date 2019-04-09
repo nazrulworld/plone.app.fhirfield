@@ -72,7 +72,6 @@ class EsFhirFieldIndex(BaseIndex):
         """Only prepared fhir query is acceptable
         other query is building here"""
         self.validate_name(name)
-
         value = self._normalize_query(value)
         if value in (None, ''):
             return
