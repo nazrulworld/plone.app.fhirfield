@@ -977,7 +977,9 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Test complex composite
         brains = portal_catalog.unrestrictedSearchResults(
             observation_resource={
-                "code-value-quantity": "http://loinc.org|11557-6&lt7.0,http://kbc.org|11557-6&gt6.1"
+                "code-value-quantity": (
+                    "http://loinc.org|11557-6&lt7.0,"
+                    "http://kbc.org|11557-6&gt6.1")
             },
             portal_type="FFObservation",
         )

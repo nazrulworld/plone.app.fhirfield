@@ -1,15 +1,15 @@
 # _*_ coding: utf-8 _*_
 from collective.elasticsearch import hook
 from collective.elasticsearch.es import ElasticSearchCatalog
-from plone.app.fhirfield.testing import IS_TRAVIS  # noqa: E501
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
+from collective.elasticsearch.interfaces import IElasticSettings
 from plone import api
-from plone.testing import z2
+from plone.app.fhirfield.testing import IS_TRAVIS  # noqa: E501
+from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
+from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.registry.interfaces import IRegistry
-from collective.elasticsearch.interfaces import IElasticSettings
+from plone.testing import z2
 from zope.component import getUtility
 
 import logging
