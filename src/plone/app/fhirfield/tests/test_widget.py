@@ -257,11 +257,11 @@ class WidgetFunctionalTest(unittest.TestCase):
         # should suceess now and redirect to view page
         self.assertEqual(
             browser.mech_browser.geturl(),
-            "http://localhost:55001/plone/fforganization/view",
+            "http://nohost/plone/fforganization/view",
         )
 
         # let's try edit
-        browser.open("http://localhost:55001/plone/fforganization/edit")
+        browser.open("http://nohost/plone/fforganization/edit")
         fhir_str = browser.getControl(name="form.widgets.organization_resource").value
 
         fhir_json = json.loads(fhir_str)
@@ -274,7 +274,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         self.assertIn('class="portalMessage info"', browser.contents)
         self.assertIn("Changes saved", browser.contents)
         self.assertEqual(
-            browser.mech_browser.geturl(), "http://localhost:55001/plone/fforganization"
+            browser.mech_browser.geturl(), "http://nohost/plone/fforganization"
         )
 
     def test_issue_11(self):
@@ -296,8 +296,6 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.open(view_url)
         contents = browser.contents
 
-        with open("/tmp/output.html", "w") as f:
-            f.write(contents)
         # make sure static resources are injected
         self.assertIn(
             "++plone++plone.app.fhirfield/css/jquery.json-viewer.css", contents

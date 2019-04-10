@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING  # noqa: 501
+from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING  # noqa: 501
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.restapi.interfaces import IDeserializeFromJson
@@ -189,7 +189,7 @@ def test_suite():
                     | doctest.NORMALIZE_WHITESPACE
                     | doctest.ELLIPSIS,
                 ),
-                layer=PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING,
+                layer=PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING,
             )
         ]
     )

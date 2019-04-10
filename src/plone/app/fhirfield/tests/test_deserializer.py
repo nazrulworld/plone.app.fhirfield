@@ -4,7 +4,7 @@ from .schema import IFFOrganization
 from plone import api
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
+from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
@@ -117,7 +117,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
 class DeserializerFunctionalTest(unittest.TestCase):
     """ """
 
-    layer = PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
+    layer = PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING
 
     def setUp(self):
         """ """

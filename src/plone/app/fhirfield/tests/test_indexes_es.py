@@ -8,6 +8,7 @@
 # https://github.com/FirelyTeam/RonFHIR
 # All imports here
 from . import FHIR_FIXTURE_PATH
+from .base import BaseFunctionalTesting
 from collective.elasticsearch.es import ElasticSearchCatalog
 from DateTime import DateTime
 from plone import api
@@ -15,16 +16,9 @@ from plone.app.fhirfield.exc import SearchQueryValidationError
 from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import FhirFieldIndex  # noqa: E501
 from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import make_fhir_index_datum
 from plone.app.fhirfield.testing import IS_TRAVIS  # noqa: E501
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import SITE_OWNER_PASSWORD
-from plone.testing import z2
 
 import json
-import logging
 import os
-import six
-import sys
 import time
 import unittest
 
@@ -32,64 +26,8 @@ import unittest
 __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"
 
 
-class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
+class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
     """ """
-
-    layer = PLONE_APP_FHIRFIELD_WITH_ES_FUNCTIONAL_TESTING
-
-    def setUp(self):
-        """ """
-        self.portal = self.layer["portal"]
-        self.portal_url = api.portal.get_tool("portal_url")()
-        self.portal_catalog_url = api.portal.get_tool("portal_catalog").absolute_url()
-
-        self.anon_browser = z2.Browser(self.layer["app"])
-        self.error_setup(self.anon_browser)
-
-        self.admin_browser = z2.Browser(self.layer["app"])
-        self.admin_browser.addHeader(
-            "Authorization",
-            "Basic {0}:{1}".format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD),
-        )
-        self.error_setup(self.admin_browser)
-        if not IS_TRAVIS:
-            self.enable_event_log()
-
-    def error_setup(self, browser):
-        """ """
-        browser.handleErrors = False
-        self.portal.error_log._ignored_exceptions = ()
-
-        def raising(self, info):
-            import traceback
-
-            traceback.print_tb(info[2])
-            six.print_(info[1])
-
-        from Products.SiteErrorLog.SiteErrorLog import SiteErrorLog
-
-        SiteErrorLog.raising = raising
-
-    def enable_event_log(self, loggers=None, plone_log_level="ERROR"):
-        """
-            :param loggers: dict of loggers. format {'logger name': 'level name'}
-            :param plone_log_level: log level of plone. default is ERROR
-         """
-        defaults = {"plone.app.fhirfield": "INFO", "collective.elasticsearch": "DEBUG"}
-        from Products.CMFPlone.log import logger
-
-        loggers = loggers or defaults
-
-        for logger_name, level_name in six.iteritems(loggers):
-            logging.getLogger(logger_name).setLevel(
-                getattr(logging, level_name.upper())
-            )
-        # Plone log level:
-        logger.root.setLevel(getattr(logging, plone_log_level.upper()))
-
-        # Enable output when running tests:
-        logger.root.addHandler(logging.StreamHandler(sys.stdout))
-
     def test_resource_index_created(self):
         """resource is attribute of FFOrganization content
         that is indexed as FhirFieldIndex"""
@@ -206,18 +144,13 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # https://www.elastic.co/guide/en/elasticsearch/guide/current/nested-query.html
         portal_catalog = api.portal.get_tool("portal_catalog")
         res = portal_catalog.unrestrictedSearchResults(
-            organization_resource={"_id": "f001"},
-            portal_type="FFOrganization"
+            organization_resource={"_id": "f001"}, portal_type="FFOrganization"
         )
         self.assertEqual(len(res), 1)
 
     def convert_to_elasticsearch(self, indexes=list()):
         """ """
-        default_indexes = [
-            "Description",
-            "SearchableText",
-            "Title"
-        ]
+        default_indexes = ["Description", "SearchableText", "Title"]
         if indexes:
             default_indexes.extend(indexes)
         # first we making sure to transfer handler
@@ -232,13 +165,19 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             action=self.portal_catalog_url + "/@@elastic-convert"
         )
         form.getControl(name="convert").click()
-        with open('/tmp/output.html', 'w') as fp:
-            fp.write(self.admin_browser.contents)
 
     def load_contents(self):
         """ """
         self.convert_to_elasticsearch(
-            ["organization_resource", "patient_resource", "task_resource"]
+            [
+                "organization_resource",
+                "medicationrequest_resource",
+                "patient_resource",
+                "task_resource",
+                "chargeitem_resource",
+                "encounter_resource",
+                "observation_resource",
+            ]
         )
 
         self.admin_browser.open(self.portal_url + "/++add++FFOrganization")
@@ -443,7 +382,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         result = portal_catalog(**query)
         self.assertEqual(len(result), 0)
 
-    def offtest_catalogsearch_fhir_reference_param(self):
+    def test_catalogsearch_fhir_reference_param(self):
         """Testing FHIR search reference type params, i.e subject, owner"""
         self.load_contents()
         patient_id = "Patient/19c5245f-89a8-49f8-b244-666b32adb92e"
@@ -483,7 +422,18 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # should get all tasks
         self.assertEqual(len(result), 3)
 
-    def offtest_catalogsearch__profile(self):
+        # Test with nested reference
+        query = {
+            "task_resource": {
+                "based-on": "ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce"
+            }
+        }
+        result = portal_catalog(**query)
+
+        # Should One HAQ sub task
+        self.assertEqual(len(result), 1)
+
+    def test_catalogsearch__profile(self):
         """solve me first: TransportError(400, u'search_phase_execution_exception',
         u'[terms] query does not support [minimum_should_match]') """
         self.load_contents()
@@ -495,7 +445,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # result should contains two items
         self.assertEqual(len(result), 2)
 
-    def offtest_catalogsearch_missing_modifier(self):
+    def test_catalogsearch_missing_modifier(self):
         """ """
         self.load_contents()
         # add another patient
@@ -531,7 +481,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.assertIsNotNone(result[0].getObject().patient_resource.gender)
 
-    def offtest_issue_5(self):
+    def test_issue_5(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/5
         FHIR search's modifier `missing` is not working for nested mapping
         """
@@ -555,7 +505,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # should be one (parent Task)
         self.assertEqual(len(result), 1)
 
-    def offtest_catalogsearch_identifier(self):
+    def test_catalogsearch_identifier(self):
         """ """
         self.load_contents()
 
@@ -634,7 +584,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         except SearchQueryValidationError as e:
             self.assertIn("Only single Pipe (|)", str(e))
 
-    def offtest_catalogsearch_array_type_reference(self):
+    def test_catalogsearch_array_type_reference(self):
         """Search where reference inside List """
         self.load_contents()
 
@@ -654,7 +604,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(result), 2)
 
-    def offtest_elasticsearch_sorting(self):
+    def test_elasticsearch_sorting(self):
         """Search where reference inside List """
         self.load_contents()
         portal_catalog = api.portal.get_tool("portal_catalog")
@@ -699,7 +649,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
             result[1].getObject().task_resource.meta.lastUpdated.date,
         )
 
-    def offtest_mapping_adapter_patch(self):
+    def test_mapping_adapter_patch(self):
         """collective.elasticsearch.mapping.MappingAdapter.
         The patch provides default index settings"""
         self.convert_to_elasticsearch()
@@ -711,7 +661,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(settings["index"]["mapping"]["nested_fields"]["limit"], "100")
 
-    def offtest_issue_6(self):
+    def test_issue_6(self):
         """[FhirFieldIndex stores whole FHIR resources json as indexed value]
         https://github.com/nazrulworld/plone.app.fhirfield/issues/6"""
         self.admin_browser.open(self.portal_url + "/++add++FFOrganization")
@@ -739,7 +689,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(indexed_data, index_datum)
 
-    def offtest_quantity_type_search(self):
+    def test_quantity_type_search(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/7"""
         self.load_contents()
 
@@ -787,7 +737,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
-    def offtest_number_type_search(self):
+    def test_number_type_search(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/8"""
         self.load_contents()
 
@@ -846,7 +796,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
-    def offtest_issue_12(self):
+    def test_issue_12(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/12"""
         self.load_contents()
 
@@ -932,7 +882,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         )
         self.assertEqual(len(brains), 1)
 
-    def offtest_issue_13_address_telecom(self):
+    def test_issue_13_address_telecom(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/13"""
         self.load_contents()
 
@@ -964,7 +914,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(len(brains), 1)
 
-    def offtest_issue_15_address_telecom(self):
+    def test_issue_15_address_telecom(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/15"""
         self.load_contents()
 
@@ -992,7 +942,7 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
 
         self.assertEqual(len(brains), 1)
 
-    def offtest_issue_10(self):
+    def test_issue_10(self):
         """Composite type param:
         https://github.com/nazrulworld/plone.app.fhirfield/issues/10"""
         self.load_contents()
@@ -1027,14 +977,13 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         # Test complex composite
         brains = portal_catalog.unrestrictedSearchResults(
             observation_resource={
-                "code-value-quantity":
-                "http://loinc.org|11557-6&lt7.0,http://kbc.org|11557-6&gt6.1"
+                "code-value-quantity": "http://loinc.org|11557-6&lt7.0,http://kbc.org|11557-6&gt6.1"
             },
             portal_type="FFObservation",
         )
         self.assertEqual(len(brains), 1)
 
-    def offtest_issue_17(self):
+    def test_issue_17(self):
         """Support for duplicate param name/value
         https://github.com/nazrulworld/plone.app.fhirfield/issues/17"""
         self.load_contents()
@@ -1048,8 +997,3 @@ class ElasticSearchFhirIndexFunctionalTest(unittest.TestCase):
         brains = portal_catalog.unrestrictedSearchResults(**query)
 
         self.assertEqual(len(brains), 1)
-
-    def tearDown(self):
-        """ """
-        es = ElasticSearchCatalog(api.portal.get_tool("portal_catalog"))
-        es.connection.indices.delete(index="_all")

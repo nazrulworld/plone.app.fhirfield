@@ -3,7 +3,7 @@
 from . import FHIR_FIXTURE_PATH
 from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import FhirFieldIndex
 from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import make_fhir_index_datum  # noqa: E501
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_WITH_ES_INTEGRATION_TESTING  # noqa: E501
+from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING  # noqa: E501
 
 import json
 import os
@@ -16,7 +16,7 @@ __author__ = 'Md Nazrul Islam<email2nazrul@gamil.com>'
 class FHIRIndexIntergrationTest(unittest.TestCase):
     """Test that plone.app.fhirfield is properly installed."""
 
-    layer = PLONE_APP_FHIRFIELD_WITH_ES_INTEGRATION_TESTING
+    layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def test_fhir_index_datum(self):
         """Test datum for zope PluginIndex"""

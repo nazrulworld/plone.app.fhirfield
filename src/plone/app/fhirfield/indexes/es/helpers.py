@@ -76,54 +76,58 @@ class ElasticsearchQueryBuilder(object):
         self, path, value, logic_in_path=None, nested=None, modifier=None
     ):
         """ """
-        occurrence_type = "must"
+        query_context = "filter"
         multiple_paths = len(path.split(".")) == 2
         nested_path = path
 
         if multiple_paths:
-            occurrence_type = "should"
+            query_context = "should"
 
         else:
             nested_path = ".".join(path.split(".")[:-1])
-            occurrence_type = "must"
+            query_context = "filter"
 
         matches = list()
         if multiple_paths:
-            matches.append({"match": {path + ".city": value}})
-            matches.append({"match": {path + ".country": value}})
-            matches.append({"match": {path + ".postalCode": value}})
-            matches.append({"match": {path + ".state": value}})
+            matches.append({"term": {path + ".city": value}})
+            matches.append({"term": {path + ".country": value}})
+            matches.append({"term": {path + ".postalCode": value}})
+            matches.append({"term": {path + ".state": value}})
         else:
-            matches.append({"match": {path: value}})
+            matches.append({"term": {path: value}})
 
         if nested:
             query = {
                 "nested": {
                     "path": nested_path,
-                    "query": {"bool": {occurrence_type: matches}},
+                    "query": {"bool": {query_context: matches}},
                 }
             }
+            if query_context == "should":
+                query["nested"]["query"]["bool"]["minimum_should_match"] = 1
         else:
-            query = {"query": {"bool": {occurrence_type: matches}}}
-
-        return occurrence_type, query
+            query = {"bool": {query_context: matches}}
+            if query_context == "should":
+                query["bool"]["minimum_should_match"] = 1
+        # we dependent on modifier
+        return modifier == "not" and "must_not" or "filter", query
 
     def _make_codeableconcept_query(
         self, path, value, nested=None, modifier=None, logic_in_path=None
     ):
         """ """
         if modifier == "not":
-            match_key = "must_not"
+            occurrence_type = "must_not"
 
         elif modifier == "text":
-            match_key = "must"
+            occurrence_type = "filter"
 
         elif modifier in ("above", "below"):
             # xxx: not implemnted yet
-            match_key = "must"
+            occurrence_type = "filter"
 
         else:
-            match_key = "must"
+            occurrence_type = "filter"
 
         matches = list()
 
@@ -138,10 +142,10 @@ class ElasticsearchQueryBuilder(object):
             matches.append(coding_query)
 
         if nested:
-            query = {"nested": {"path": path, "query": {"bool": {match_key: matches}}}}
+            query = {"nested": {"path": path, "query": {"bool": {"filter": matches}}}}
         else:
-            query = {"query": {"bool": {match_key: matches}}}
-        return query
+            query = {"bool": {"filter": matches}}
+        return occurrence_type, query
 
     def _make_coding_query(
         self, path, value, nested=None, modifier=None, logic_in_path=None
@@ -150,43 +154,43 @@ class ElasticsearchQueryBuilder(object):
         if modifier == "not":
             match_key = "must_not"
         elif modifier == "text":
-            match_key = "must"
+            match_key = "filter"
         elif modifier in ("above", "below"):
             # xxx: not implemnted yet
-            match_key = "must"
+            match_key = "filter"
         else:
-            match_key = "must"
+            match_key = "filter"
 
         matches = list()
         has_pipe = "|" in value
 
         if modifier == "text":
 
-            matches.append({"match": {path + ".display": value}})
+            matches.append({"term": {path + ".display": value}})
 
         elif has_pipe:
 
             if value.startswith("|"):
-                matches.append({"match": {path + ".code": value[1:]}})
+                matches.append({"term": {path + ".code": value[1:]}})
             elif value.endswith("|"):
-                matches.append({"match": {path + ".system": value[:-1]}})
+                matches.append({"term": {path + ".system": value[:-1]}})
             else:
                 parts = value.split("|")
                 try:
-                    matches.append({"match": {path + ".system": parts[0]}})
+                    matches.append({"term": {path + ".system": parts[0]}})
 
-                    matches.append({"match": {path + ".code": parts[1]}})
+                    matches.append({"term": {path + ".code": parts[1]}})
 
                 except IndexError:
                     pass
 
         else:
-            matches.append({"match": {path + ".code": value}})
+            matches.append({"term": {path + ".code": value}})
 
         if nested:
             query = {"nested": {"path": path, "query": {"bool": {match_key: matches}}}}
         else:
-            query = {"query": {"bool": {match_key: matches}}}
+            query = {"bool": {match_key: matches}}
 
         return query
 
@@ -194,32 +198,31 @@ class ElasticsearchQueryBuilder(object):
         self, path, value, logic_in_path=None, nested=None, modifier=None
     ):
         """ """
+        occurrence_type = "filter"
+
         if modifier == "not":
-            match_key = "must_not"
+            occurrence_type = "must_not"
 
         elif modifier == "text":
-            match_key = "must"
+            occurrence_type = "filter"
 
         elif modifier in ("above", "below"):
             # xxx: not implemnted yet
-            match_key = "must"
-
-        else:
-            match_key = "must"
+            occurrence_type = "filter"
 
         matches = list()
         matches.append({"match": {path + ".value": value}})
 
         if logic_in_path:
             parts = logic_in_path.split("|")
-            matches.append({"match": {path + "." + parts[1]: parts[2]}})
+            matches.append({"term": {path + "." + parts[1]: parts[2]}})
 
         if nested:
-            query = {"nested": {"path": path, "query": {"bool": {match_key: matches}}}}
+            query = {"nested": {"path": path, "query": {"bool": {"filter": matches}}}}
         else:
-            query = {"query": {"bool": {match_key: matches}}}
+            query = {"bool": {"filter": matches}}
 
-        return query
+        return occurrence_type, query
 
     def _make_date_query(self, path, value, modifier=None):
         """ """
@@ -265,7 +268,7 @@ class ElasticsearchQueryBuilder(object):
     def _make_exists_query(self, path, value, nested, modifier=None):
         """ """
         query = dict()
-        occurrence_type = "must"
+        occurrence_type = "filter"
         exists_q = {"exists": {"field": path}}
 
         if (modifier == "missing" and value == "true") or (
@@ -295,17 +298,17 @@ class ElasticsearchQueryBuilder(object):
             array_ = False
 
         if fullpath.split(".")[-1] == "text":
-            query = self._make_match_query(fullpath, value, modifier)
+            occurrence_type, query = self._make_match_query(fullpath, value, modifier)
 
         else:
 
-            query = self._make_token_query(
+            occurrence_type, query = self._make_token_query(
                 fullpath, value, array_=array_, modifier=modifier
             )
 
         if nested:
             query = {"nested": {"path": path, "query": query}}
-        return query
+        return occurrence_type, query
 
     def _make_identifier_query(self, path, value, nested=None, modifier=None):
         """ """
@@ -313,9 +316,9 @@ class ElasticsearchQueryBuilder(object):
         has_pipe = "|" in value
 
         if modifier == "not":
-            match_key = "must_not"
+            occurrence_type = "must_not"
         else:
-            match_key = "must"
+            occurrence_type = "filter"
 
         if modifier == "text":
             # make dentifier.type.text query
@@ -323,42 +326,46 @@ class ElasticsearchQueryBuilder(object):
 
         elif has_pipe:
             if value.startswith("|"):
-                matches.append({"match": {path + ".value": value[1:]}})
+                matches.append({"term": {path + ".value": value[1:]}})
             elif value.endswith("|"):
-                matches.append({"match": {path + ".system": value[:-1]}})
+                matches.append({"term": {path + ".system": value[:-1]}})
             else:
                 parts = value.split("|")
                 try:
-                    matches.append({"match": {path + ".system": parts[0]}})
+                    matches.append({"term": {path + ".system": parts[0]}})
 
-                    matches.append({"match": {path + ".value": parts[1]}})
+                    matches.append({"term": {path + ".value": parts[1]}})
 
                 except IndexError:
                     pass
         else:
-            matches.append({"match": {path + ".value": value}})
+            matches.append({"term": {path + ".value": value}})
 
         if nested:
-            query = {"nested": {"path": path, "query": {"bool": {match_key: matches}}}}
+            query = {"nested": {"path": path, "query": {"bool": {"filter": matches}}}}
         else:
-            query = {"query": {"bool": {match_key: matches}}}
+            if len(matches) == 1:
+                query = matches[0]
+            else:
+                query = {"bool": {"filter": matches}}
 
-        return query
+        return occurrence_type, query
 
     def _make_match_query(self, path, value, modifier=None):
         """ """
 
         if modifier == "not":
-            match_key = "must_not"
+            occurrence_type = "must_not"
         else:
-            match_key = "must"
+            occurrence_type = "filter"
 
         query = {"match": {path: value}}
 
-        return {"query": {"bool": {match_key: [query]}}}
+        return occurrence_type, query
 
     def _make_number_query(self, path, value, prefix="eq", modifier=None):
         """ """
+        occurrence_type = modifier == "not" and "must_not" or "filter"
         query = dict()
         if prefix in ("eq", "ne"):
             query["range"] = {
@@ -374,9 +381,9 @@ class ElasticsearchQueryBuilder(object):
         if (prefix != "ne" and modifier == "not") or (
             prefix == "ne" and modifier != "not"
         ):
-            query = {"query": {"not": query}}
+            occurrence_type = "must_not"
 
-        return query
+        return occurrence_type, query
 
     def _make_quantity_query(self, path, value, prefix="eq", modifier=None):
         """ """
@@ -411,26 +418,26 @@ class ElasticsearchQueryBuilder(object):
             unit = value_parts[1]
 
         if system:
-            matches.append({"match": {path + ".system": system}})
+            matches.append({"term": {path + ".system": system}})
         if code:
-            matches.append({"match": {path + ".code": code}})
+            matches.append({"term": {path + ".code": code}})
         if unit:
-            matches.append({"match": {path + ".unit": unit}})
+            matches.append({"term": {path + ".unit": unit}})
 
         if (prefix != "ne" and modifier == "not") or (
             prefix == "ne" and modifier != "not"
         ):
-            query = {"query": {"bool": {"must_not": [value_query]}}}
+            query = {"bool": {"must_not": [value_query]}}
         else:
-            query = {"query": {"bool": {"must": [value_query]}}}
+            query = {"bool": {"filter": [value_query]}}
 
         if matches:
-            if "must" not in query["query"]["bool"]:
-                query["query"]["bool"].update({"must": list()})
+            if "filter" not in query["bool"]:
+                query["bool"].update({"filter": list()})
 
-            query["query"]["bool"]["must"].extend(matches)
+            query["bool"]["filter"].extend(matches)
 
-        return query
+        return modifier == "not" and "must_not" or "filter", query
 
     def _make_reference_query(self, path, value, nested=None, modifier=None):
         """ """
@@ -443,9 +450,7 @@ class ElasticsearchQueryBuilder(object):
             occurrence_type = "must_not"
 
         if nested:
-            query = {
-                "nested": {"path": path, "query": {"bool": {occurrence_type: query}}}
-            }
+            query = {"nested": {"path": path, "query": {"bool": {"filter": query}}}}
 
         return occurrence_type, query
 
@@ -606,7 +611,6 @@ class ElasticsearchQueryBuilder(object):
 
         elif param_type == "token":
             # One of most complex param type
-
             occurrence_type, query = self.build_token_query(
                 value,
                 path,
@@ -637,25 +641,25 @@ class ElasticsearchQueryBuilder(object):
         for composite_val in value.split(","):
             value_parts = composite_val.split("&")
 
-            query1 = self._build_query(
+            occurrence_type, query1 = self._build_query(
                 params[0][0], value_parts[0], modifier=None, query_meta=params[0][1]
             )
 
-            query2 = self._build_query(
+            occurrence_type, query2 = self._build_query(
                 params[1][0], value_parts[1], modifier=None, query_meta=params[1][1]
             )
             queries.append(self.merge_query(query1, query2))
 
         if len(queries) == 1:
-            return queries[0]
+            return "filter", queries[0]
         else:
 
-            query = dict(query=dict(bool=dict(should=list())))
+            query = dict(bool=dict(should=list(), minimum_should_match=1))
 
             for qr in queries:
-                query["query"]["bool"]["should"].append(qr)
+                query["bool"]["should"].append(qr)
 
-            return query
+            return "filter", query
 
     def build_token_query(
         self, value, path, raw_path, logic_in_path=None, map_cls=None, modifier=None
@@ -1061,26 +1065,25 @@ class ElasticsearchQueryBuilder(object):
         first_query = queries[0]
 
         for query in queries[1:]:
-            if "must" in query["query"]["bool"]:
-                if "must" not in first_query["query"]["bool"]:
-                    first_query["query"]["bool"]["must"] = list()
-                first_query["query"]["bool"]["must"].extend(
-                    first_query["query"]["bool"]["must"]
-                )
+            if "filter" in query["bool"]:
+                if "filter" not in first_query["bool"]:
+                    first_query["bool"]["filter"] = list()
+                first_query["bool"]["filter"].extend(first_query["bool"]["filter"])
 
-            if "must_not" in query["query"]["bool"]:
-                if "must_not" not in first_query["query"]["bool"]:
-                    first_query["query"]["bool"]["must_not"] = list()
-                first_query["query"]["bool"]["must_not"].extend(
-                    first_query["query"]["bool"]["must_not"]
-                )
+            if "must" in query["bool"]:
+                if "must" not in first_query["bool"]:
+                    first_query["bool"]["must"] = list()
+                first_query["bool"]["must"].extend(first_query["bool"]["must"])
 
-            if "should" in query["query"]["bool"]:
-                if "should" not in first_query["query"]["bool"]:
-                    first_query["query"]["bool"]["should"] = list()
-                first_query["query"]["bool"]["should"].extend(
-                    first_query["query"]["bool"]["should"]
-                )
+            if "must_not" in query["bool"]:
+                if "must_not" not in first_query["bool"]:
+                    first_query["bool"]["must_not"] = list()
+                first_query["bool"]["must_not"].extend(first_query["bool"]["must_not"])
+
+            if "should" in query["bool"]:
+                if "should" not in first_query["bool"]:
+                    first_query["bool"]["should"] = list()
+                first_query["bool"]["should"].extend(first_query["bool"]["should"])
 
         return first_query
 
