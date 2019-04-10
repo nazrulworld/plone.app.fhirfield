@@ -21,6 +21,35 @@ import unittest
 __author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 
+def clearTransactionEntries(es):
+    _hook = hook.getHook(es)
+    _hook.remove = []
+    _hook.index = {}
+
+
+def tear_down_es(es):
+    """ """
+    es.connection.indices.delete_alias(index=es.real_index_name, name=es.index_name)
+    es.connection.indices.delete(index=es.real_index_name)
+    clearTransactionEntries(es)
+
+
+def setup_es(self, es_only_indexes={u"Title", u"Description", u"SearchableText"}):
+    """ """
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(IElasticSettings, check=False)  # noqa: P001
+    # disable sniffing hosts in tests because docker...
+    settings.sniffer_timeout = None
+    settings.enabled = True
+    settings.sniffer_timeout = 0.0
+    settings.es_only_indexes = es_only_indexes
+
+    self.catalog = api.portal.get_tool("portal_catalog")
+    self.catalog._elasticcustomindex = "plone-test-index"
+    self.es = ElasticSearchCatalog(self.catalog)
+    self.catalog.manage_catalogRebuild()
+
+
 class BaseTesting(unittest.TestCase):
     """" """
 
@@ -30,29 +59,13 @@ class BaseTesting(unittest.TestCase):
         self.portal_url = api.portal.get_tool("portal_url")()
         self.portal_catalog_url = api.portal.get_tool("portal_catalog").absolute_url()
 
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(IElasticSettings, check=False)  # noqa: P001
-        # disable sniffing hosts in tests because docker...
-        settings.sniffer_timeout = None
-        settings.enabled = True
-        settings.sniffer_timeout = 0.0
-        settings.es_only_indexes
-
-        self.catalog = api.portal.get_tool("portal_catalog")
-        self.catalog._elasticcustomindex = "plone-test-index"
-        self.es = ElasticSearchCatalog(self.catalog)
-        self.catalog.manage_catalogRebuild()
+        setup_es(self)
         # need to commit here so all tests start with a baseline
         # of elastic enabled
         self.commit()
 
     def commit(self):
         transaction.commit()
-
-    def clearTransactionEntries(self):
-        _hook = hook.getHook(self.es)
-        _hook.remove = []
-        _hook.index = {}
 
     def enable_event_log(self, loggers=None, plone_log_level="ERROR"):
         """
@@ -77,11 +90,7 @@ class BaseTesting(unittest.TestCase):
     def tearDown(self):
         """ """
         super(BaseTesting, self).tearDown()
-        self.es.connection.indices.delete_alias(
-            index=self.es.real_index_name, name=self.es.index_name
-        )
-        self.es.connection.indices.delete(index=self.es.real_index_name)
-        self.clearTransactionEntries()
+        tear_down_es(self.es)
 
 
 class BaseFunctionalTesting(BaseTesting):
