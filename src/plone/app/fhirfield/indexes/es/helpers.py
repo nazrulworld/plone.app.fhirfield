@@ -439,20 +439,54 @@ class ElasticsearchQueryBuilder(object):
 
         return modifier == "not" and "must_not" or "filter", query
 
-    def _make_reference_query(self, path, value, nested=None, modifier=None):
+    def make_reference_query(self, path, value, nested=None, modifier=None):
         """ """
         occurrence_type = "filter"
-        fullpath = path + ".reference"
+        queries = list()
 
-        query = dict(term={fullpath: value})
+        for val in value.split(","):
+            query = self._make_reference_query(path, val.strip(), nested=nested)
+            queries.append(query)
 
         if modifier == "not":
             occurrence_type = "must_not"
 
+        if len(queries) == 1:
+            return occurrence_type, queries[0]
+        elif len(queries) > 1:
+            if nested:
+                combined = {
+                    "nested": {
+                        "path": path,
+                        "query": {
+                            "bool": {"minimum_should_match": 1, "should": list()}
+                        },
+                    }
+                }
+                should_path = combined["nested"]["query"]["bool"]["should"]
+
+            else:
+                combined = {"bool": {"minimum_should_match": 1, "should": list()}}
+                should_path = combined["bool"]["should"]
+
+            for query in queries:
+                if "nested" in query:
+                    query = query["nested"]["query"]["bool"]["filter"]
+
+                should_path.append(query)
+
+            return occurrence_type, combined
+
+    def _make_reference_query(self, path, value, nested=None):
+        """ """
+        fullpath = path + ".reference"
+
+        query = dict(match={fullpath: value})
+
         if nested:
             query = {"nested": {"path": path, "query": {"bool": {"filter": query}}}}
 
-        return occurrence_type, query
+        return query
 
     def _make_term_query(self, path, value, array_=None):
         """ """
@@ -479,6 +513,8 @@ class ElasticsearchQueryBuilder(object):
                 value = True
             else:
                 value = False
+        elif isinstance(value, six.string_types) and "," in value:
+            value = list(map(lambda x: x.strip(), value.split(",")))
 
         if modifier == "not":
             occurrence_type = "must_not"
@@ -556,7 +592,7 @@ class ElasticsearchQueryBuilder(object):
 
             nested = self.is_nested_mapping(path)
 
-            occurrence_type, query = self._make_reference_query(
+            occurrence_type, query = self.make_reference_query(
                 path, value, nested=nested, modifier=modifier
             )
 

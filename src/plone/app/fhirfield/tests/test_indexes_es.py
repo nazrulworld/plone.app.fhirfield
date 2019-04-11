@@ -21,6 +21,7 @@ import json
 import os
 import time
 import unittest
+import uuid
 
 
 __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"
@@ -28,6 +29,7 @@ __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"
 
 class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
     """ """
+
     def test_resource_index_created(self):
         """resource is attribute of FFOrganization content
         that is indexed as FhirFieldIndex"""
@@ -788,8 +790,8 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         ).value = json.dumps(fhir_json)
         self.admin_browser.getControl(name="form.buttons.save").click()
         self.assertIn("Item created", self.admin_browser.contents)
-        # Let's wait a bit
-        time.sleep(1)
+        # Let's flush
+        self.es.connection.indices.flush()
 
         brains = portal_catalog.unrestrictedSearchResults(
             encounter_resource={"length": "gt139"}, portal_type="FFEncounter"
@@ -978,8 +980,8 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         brains = portal_catalog.unrestrictedSearchResults(
             observation_resource={
                 "code-value-quantity": (
-                    "http://loinc.org|11557-6&lt7.0,"
-                    "http://kbc.org|11557-6&gt6.1")
+                    "http://loinc.org|11557-6&lt7.0," "http://kbc.org|11557-6&gt6.1"
+                )
             },
             portal_type="FFObservation",
         )
@@ -999,3 +1001,63 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         brains = portal_catalog.unrestrictedSearchResults(**query)
 
         self.assertEqual(len(brains), 1)
+
+    def test_issue_21(self):
+        """Add Support for IN/OR query for token and other if possible search type
+        https://github.com/nazrulworld/plone.app.fhirfield/issues/21"""
+        self.load_contents()
+        new_id = str(uuid.uuid4())
+        new_patient_id = str(uuid.uuid4())
+        new_procedure_request_id = str(uuid.uuid4())
+        self.admin_browser.open(self.portal_url + "/++add++FFTask")
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, "SubTask_HAQ.json"), "r") as f:
+            json_value = json.load(f)
+            json_value["id"] = new_id
+            json_value["status"] = "completed"
+            json_value["for"]["reference"] = "Patient/" + new_patient_id
+            json_value["basedOn"][0]["reference"] = (
+                "ProcedureRequest/" + new_procedure_request_id
+            )
+
+            self.admin_browser.getControl(
+                name="form.widgets.task_resource"
+            ).value = json.dumps(json_value)
+
+            self.admin_browser.getControl(
+                name="form.widgets.IBasic.title"
+            ).value = json_value["description"]
+
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+
+        # Let's flush
+        self.es.connection.indices.flush()
+
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        query = {"task_resource": {"status": "ready,draft"}}
+        brains = portal_catalog.unrestrictedSearchResults(**query)
+        # should All three tasks
+        self.assertEqual(len(brains), 3)
+
+        query = {
+            "task_resource": {
+                "patient": "Patient/19c5245f-89a8-49f8-b244-666b32adb92e,Patient/"
+                + new_patient_id
+            }
+        }
+        brains = portal_catalog.unrestrictedSearchResults(**query)
+        # should All three tasks + one
+        self.assertEqual(len(brains), 4)
+
+        query = {
+            "task_resource": {
+                "based-on": (
+                    "ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce,"
+                    "ProcedureRequest/"
+                    + new_procedure_request_id)
+            }
+        }
+        brains = portal_catalog.unrestrictedSearchResults(**query)
+        # should two tasks
+        self.assertEqual(len(brains), 2)

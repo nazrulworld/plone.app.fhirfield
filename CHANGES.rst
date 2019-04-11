@@ -4,6 +4,11 @@ Changelog
 2.0.0 (unreleased)
 ------------------
 
+Newfeatures
+
+- `Issue#21 <https://github.com/nazrulworld/plone.app.fhirfield/issues/21>`_ One of the powerful feature added, IN/OR support in search query.
+  Now possible to provide multiple values separated by comma.
+
 Breakings
 
 - Drop support Elastic server version 2.3.x.
