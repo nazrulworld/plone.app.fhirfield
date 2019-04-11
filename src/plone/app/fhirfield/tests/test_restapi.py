@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from .base import setup_es
+from .base import tear_down_es
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING  # noqa: 501
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
@@ -97,40 +99,28 @@ def init_fixture(portal, fixture_path):
                 create_content_from_fhir_json(portal, fhir_json)
 
 
-def setup_ES(portal, admin_browser):
+def setup_ES(app):
     """ """
-    portal_catalog_url = getattr(portal, "portal_catalog").absolute_url()
-
-    default_indexes = [
-        "Description",
-        "SearchableText",
-        "Title",
-        "organization_resource",
-        "patient_resource",
-        "questionnaire_resource",
-        "questionnaireresponse_resource",
-        "task_resource",
-        "valueset_resource",
-        "device_resource",
-        "devicerequest_resource",
-        "procedurerequest_resource",
-        "chargeitem_resource",
-        "encounter_resource",
-        "medicationrequest_resource",
-        "observation_resource",
-        "media_resource",
-    ]
-
-    # first we making sure to transfer handler
-    admin_browser.open(portal.portal_url() + "/@@elastic-controlpanel")
-    admin_browser.getControl(name="form.widgets.es_only_indexes").value = "\n".join(
-        default_indexes
-    )
-    admin_browser.getControl(name="form.widgets.enabled:list").value = [True]
-    admin_browser.getControl(name="form.buttons.save").click()
-
-    form = admin_browser.getForm(action=portal_catalog_url + "/@@elastic-convert")
-    form.getControl(name="convert").click()
+    default_indexes = {
+        u"Description",
+        u"SearchableText",
+        u"Title",
+        u"organization_resource",
+        u"patient_resource",
+        u"questionnaire_resource",
+        u"questionnaireresponse_resource",
+        u"task_resource",
+        u"valueset_resource",
+        u"device_resource",
+        u"devicerequest_resource",
+        u"procedurerequest_resource",
+        u"chargeitem_resource",
+        u"encounter_resource",
+        u"medicationrequest_resource",
+        u"observation_resource",
+        u"media_resource",
+    }
+    setup_es(app, default_indexes)
 
 
 def setUp(doctest):
@@ -162,7 +152,8 @@ def setUp(doctest):
     anon_session = make_session(portal)
 
     # Setup ES
-    setup_ES(portal, admin_browser)
+    setup_ES(app)
+    transaction.commit()
 
     # Fixtures
     init_fixture(portal, FIXTURE_PATH)
@@ -175,6 +166,13 @@ def setUp(doctest):
     doctest.globs.update(locals())
 
 
+def tearDown(doctest):
+    """ """
+    layer = doctest.globs["layer"]
+    app = layer["app"]
+    tear_down_es(app.es)
+
+
 def test_suite():
     """ """
     suite = unittest.TestSuite()
@@ -185,6 +183,7 @@ def test_suite():
                 doctest.DocFileSuite(
                     "../../../../../RESTAPI.rst",
                     setUp=setUp,
+                    tearDown=tearDown,
                     optionflags=doctest.REPORT_ONLY_FIRST_FAILURE
                     | doctest.NORMALIZE_WHITESPACE
                     | doctest.ELLIPSIS,

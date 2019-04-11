@@ -4,7 +4,9 @@ Changelog
 2.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Breakings
+
+- Drop support Elastic server version 2.3.x.
 
 
 1.0.0 (2019-01-18)
