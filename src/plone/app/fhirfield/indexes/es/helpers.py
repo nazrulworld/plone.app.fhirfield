@@ -32,6 +32,12 @@ import six
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
+escape_comma_replacer = "_ESCAPE_COMMA_"
+
+
+def has_escape_comma(val):
+    return "\\," in val
+
 
 class ElasticsearchQueryBuilder(object):
     """Unknown and unsupported parameters
@@ -112,7 +118,7 @@ class ElasticsearchQueryBuilder(object):
         # we dependent on modifier
         return modifier == "not" and "must_not" or "filter", query
 
-    def _make_codeableconcept_query(
+    def make_codeableconcept_query(
         self, path, value, nested=None, modifier=None, logic_in_path=None
     ):
         """ """
@@ -129,6 +135,57 @@ class ElasticsearchQueryBuilder(object):
         else:
             occurrence_type = "filter"
 
+        queries = list()
+        has_escape_comma_ = has_escape_comma(value)
+
+        if has_escape_comma_:
+            value = value.replace("\\,", escape_comma_replacer)
+
+        for val in value.split(","):
+            if has_escape_comma_ and has_escape_comma(val):
+                val = val.replace(escape_comma_replacer, "\\,")
+
+            query = self._make_codeableconcept_query(
+                path,
+                val.strip(),
+                nested=nested,
+                modifier=modifier,
+                logic_in_path=logic_in_path,
+            )
+            queries.append(query)
+
+        if len(queries) == 1:
+            return occurrence_type, queries[0]
+
+        if nested:
+            combined = {
+                "nested": {
+                    "path": path,
+                    "query": {"bool": {"minimum_should_match": 1, "should": list()}},
+                }
+            }
+            should_path = combined["nested"]["query"]["bool"]["should"]
+
+        else:
+            combined = {"bool": {"minimum_should_match": 1, "should": list()}}
+            should_path = combined["bool"]["should"]
+
+        for query in queries:
+            if "nested" in query:
+                query_ = query["nested"]["query"]["bool"]["filter"]
+            else:
+                query_ = query["bool"]["filter"]
+            if len(query_) == 1:
+                should_path.append(query_[0])
+            elif len(query_) > 1:
+                should_path.append({"bool": {"filter": query_}})
+
+        return occurrence_type, combined
+
+    def _make_codeableconcept_query(
+        self, path, value, nested=None, modifier=None, logic_in_path=None
+    ):
+        """ """
         matches = list()
 
         if modifier == "text":
@@ -145,7 +202,56 @@ class ElasticsearchQueryBuilder(object):
             query = {"nested": {"path": path, "query": {"bool": {"filter": matches}}}}
         else:
             query = {"bool": {"filter": matches}}
-        return occurrence_type, query
+        return query
+
+    def make_coding_query(
+        self, path, value, nested=None, modifier=None, logic_in_path=None
+    ):
+        queries = list()
+        has_escape_comma_ = has_escape_comma(value)
+
+        if has_escape_comma_:
+            value = value.replace("\\,", escape_comma_replacer)
+
+        for val in value.split(","):
+            if has_escape_comma_ and has_escape_comma(val):
+                val = val.replace(escape_comma_replacer, "\\,")
+
+            query = self._make_coding_query(
+                path,
+                val.strip(),
+                nested=nested,
+                modifier=modifier,
+                logic_in_path=logic_in_path,
+            )
+            queries.append(query)
+
+        if len(queries) == 1:
+            # occurrence_type always filter
+            return "filter", queries[0]
+
+        if nested:
+            combined = {
+                "nested": {
+                    "path": path,
+                    "query": {"bool": {"minimum_should_match": 1, "should": list()}},
+                }
+            }
+            should_path = combined["nested"]["query"]["bool"]["should"]
+
+        else:
+            combined = {"bool": {"minimum_should_match": 1, "should": list()}}
+            should_path = combined["bool"]["should"]
+
+        for query in queries:
+            if "nested" in query:
+                query_bool = query["nested"]["query"]["bool"]
+            else:
+                query_bool = query["bool"]
+
+            should_path.append({"bool": query_bool})
+
+        return "filter", combined
 
     def _make_coding_query(
         self, path, value, nested=None, modifier=None, logic_in_path=None
@@ -223,6 +329,36 @@ class ElasticsearchQueryBuilder(object):
             query = {"bool": {"filter": matches}}
 
         return occurrence_type, query
+
+    def make_date_query(self, path, value, modifier=None):
+        """ """
+        queries = list()
+        has_escape_comma_ = has_escape_comma(value)
+        if has_escape_comma_:
+            value = value.replace("\\,", escape_comma_replacer)
+
+        for val in value.split(","):
+            if has_escape_comma_ and has_escape_comma(val):
+                val = val.replace(escape_comma_replacer, "\\,")
+
+            occurance_type, query = self._make_date_query(
+                path, val.strip(), modifier=modifier
+            )
+            queries.append((occurance_type, query))
+
+        if len(queries) == 1:
+            return queries[0]
+        elif len(queries) > 1:
+            same_occurance = len(set(map(lambda x: x[0], queries))) == 1
+            combined = {"bool": {"should": list(), "minimum_should_match": 1}}
+            for occurance_type, query in queries:
+                if same_occurance or occurance_type in ("filter", "must"):
+                    combined["bool"]["should"].append(query)
+                else:
+                    query_ = {"bool": {"must_not": query}}
+                    combined["bool"]["should"].append(query_)
+            # allways filter
+            return "filter", combined
 
     def _make_date_query(self, path, value, modifier=None):
         """ """
@@ -363,20 +499,61 @@ class ElasticsearchQueryBuilder(object):
 
         return occurrence_type, query
 
-    def _make_number_query(self, path, value, prefix="eq", modifier=None):
+    def make_number_query(self, path, value, modifier=None):
         """ """
-        occurrence_type = modifier == "not" and "must_not" or "filter"
+        queries = list()
+        mapped_definition = self.get_mapped_definition(path)
+        for val in value.split(","):
+
+            occurrence_type, query = self._make_number_query(
+                path,
+                val.strip(),
+                mapped_definition=mapped_definition,
+                modifier=modifier,
+            )
+            queries.append((occurrence_type, query))
+
+        if len(queries) == 1:
+            return queries[0]
+
+        elif len(queries) > 1:
+            combined = {"bool": {"should": list(), "minimum_should_match": 1}}
+            for occurrence_type, query in queries:
+                if occurrence_type == "must_not":
+                    combined["bool"]["should"].append({"bool": {"must_not": query}})
+                else:
+                    combined["bool"]["should"].append(query)
+            # allways filter
+            return "filter", combined
+
+    def _make_number_query(self, path, value, mapped_definition, modifier=None):
+        """ """
+        occurrence_type = "filter"
+        prefix, val = self.parse_prefix(value)
+        path_ = path
+        if "properties" in mapped_definition:
+            if "value" in mapped_definition["properties"]:
+                path_ = path + ".value"
+                type_ = mapped_definition["properties"]["value"]["type"]
+        else:
+            type_ = mapped_definition["type"]
+
+        if type_ == "float":
+            val = float(val)
+        else:
+            val = int(val)
+
         query = dict()
         if prefix in ("eq", "ne"):
             query["range"] = {
-                path: {
-                    FSPR_VALUE_PRIFIXES_MAP.get("ge"): value,
-                    FSPR_VALUE_PRIFIXES_MAP.get("le"): value,
+                path_: {
+                    FSPR_VALUE_PRIFIXES_MAP.get("ge"): val,
+                    FSPR_VALUE_PRIFIXES_MAP.get("le"): val,
                 }
             }
 
         elif prefix in ("le", "lt", "ge", "gt"):
-            query["range"] = {path: {FSPR_VALUE_PRIFIXES_MAP.get(prefix): value}}
+            query["range"] = {path_: {FSPR_VALUE_PRIFIXES_MAP.get(prefix): val}}
 
         if (prefix != "ne" and modifier == "not") or (
             prefix == "ne" and modifier != "not"
@@ -385,27 +562,38 @@ class ElasticsearchQueryBuilder(object):
 
         return occurrence_type, query
 
-    def _make_quantity_query(self, path, value, prefix="eq", modifier=None):
+    def make_quantity_query(self, path, value, modifier=None):
+        """ """
+        queries = list()
+        has_escape_comma_ = has_escape_comma(value)
+        if has_escape_comma_:
+            value = value.replace("\\,", escape_comma_replacer)
+
+        for val in value.split(","):
+            if has_escape_comma_ and has_escape_comma(val):
+                val = val.replace(escape_comma_replacer, "\\,")
+
+            query = self._make_quantity_query(path, val.strip(), modifier=modifier)
+            queries.append(query)
+
+        if len(queries) == 1:
+            # always filter
+            return "filter", queries[0]
+        elif len(queries) > 1:
+            combined = {"bool": {"should": list(), "minimum_should_match": 1}}
+            for query in queries:
+                combined["bool"]["should"].append(query)
+            # allways filter
+            return "filter", combined
+
+    def _make_quantity_query(self, path, value, modifier=None):
         """ """
         matches = list()
         value_parts = value.split("|")
-        value = float(value_parts[0])
-
-        value_query = dict()
-
-        if prefix in ("eq", "ne"):
-            value_query["range"] = {
-                path
-                + ".value": {
-                    FSPR_VALUE_PRIFIXES_MAP.get("ge"): value,
-                    FSPR_VALUE_PRIFIXES_MAP.get("le"): value,
-                }
-            }
-
-        elif prefix in ("le", "lt", "ge", "gt"):
-            value_query["range"] = {
-                path + ".value": {FSPR_VALUE_PRIFIXES_MAP.get(prefix): value}
-            }
+        mapped_definition = self.get_mapped_definition(path)
+        occurrence_type, value_query = self._make_number_query(
+            path, value_parts[0], mapped_definition=mapped_definition, modifier=modifier
+        )
         # Potential extras
         system = None
         code = None
@@ -424,27 +612,35 @@ class ElasticsearchQueryBuilder(object):
         if unit:
             matches.append({"term": {path + ".unit": unit}})
 
-        if (prefix != "ne" and modifier == "not") or (
-            prefix == "ne" and modifier != "not"
-        ):
-            query = {"bool": {"must_not": [value_query]}}
-        else:
-            query = {"bool": {"filter": [value_query]}}
+        query = {"bool": {occurrence_type: [value_query]}}
 
         if matches:
-            if "filter" not in query["bool"]:
-                query["bool"].update({"filter": list()})
+            if modifier == "not":
+                if "must_not" in query["bool"]:
+                    query["bool"] = {"must_not": list()}
+                query["bool"]["must_not"].extend(matches)
 
-            query["bool"]["filter"].extend(matches)
+            else:
+                if "filter" not in query["bool"]:
+                    query["bool"].update({"filter": list()})
 
-        return modifier == "not" and "must_not" or "filter", query
+                query["bool"]["filter"].extend(matches)
+
+        return query
 
     def make_reference_query(self, path, value, nested=None, modifier=None):
         """ """
         occurrence_type = "filter"
         queries = list()
+        has_escape_comma_ = has_escape_comma(value)
+
+        if has_escape_comma_:
+            value = value.replace("\\,", escape_comma_replacer)
 
         for val in value.split(","):
+            if has_escape_comma_ and has_escape_comma(val):
+                val = val.replace(escape_comma_replacer, "\\,")
+
             query = self._make_reference_query(path, val.strip(), nested=nested)
             queries.append(query)
 
@@ -507,6 +703,9 @@ class ElasticsearchQueryBuilder(object):
     def _make_token_query(self, path, value, array_=None, modifier=None):
         """ """
         occurrence_type = "filter"
+        has_escape_comma_ = has_escape_comma(value)
+        if has_escape_comma_:
+            value = value.replace("\\,", escape_comma_replacer)
 
         if value in ("true", "false"):
             if value == "true":
@@ -514,7 +713,12 @@ class ElasticsearchQueryBuilder(object):
             else:
                 value = False
         elif isinstance(value, six.string_types) and "," in value:
-            value = list(map(lambda x: x.strip(), value.split(",")))
+            container = list()
+            for val in value.split(","):
+                if has_escape_comma_ and has_escape_comma(val):
+                    val = val.replace(escape_comma_replacer, "\\,")
+                container.append(val.strip())
+            value = container
 
         if modifier == "not":
             occurrence_type = "must_not"
@@ -586,7 +790,7 @@ class ElasticsearchQueryBuilder(object):
             )
 
         elif param_type == "date":
-            occurrence_type, query = self._make_date_query(path, value, modifier)
+            occurrence_type, query = self.make_date_query(path, value, modifier)
 
         elif param_type == "reference":
 
@@ -620,29 +824,13 @@ class ElasticsearchQueryBuilder(object):
 
         elif param_type == "quantity":
 
-            prefix, value = self.parse_prefix(value)
-
-            occurrence_type, query = self._make_quantity_query(
-                path, value, prefix=prefix, modifier=modifier
+            occurrence_type, query = self.make_quantity_query(
+                path, value, modifier=modifier
             )
 
         elif param_type == "number":
-
-            prefix, value = self.parse_prefix(value)
-            mapped_definition = self.get_mapped_definition(path)
-
-            if "type" in mapped_definition:
-                if mapped_definition["type"] == "float":
-                    value = float(value)
-                else:
-                    value = int(value)
-
-            elif "properties" in mapped_definition:
-                if "value" in mapped_definition["properties"]:
-                    path += ".value"
-
-            occurrence_type, query = self._make_number_query(
-                path, value, prefix=prefix, modifier=modifier
+            occurrence_type, query = self.make_number_query(
+                path, value, modifier=modifier
             )
 
         elif param_type == "token":
@@ -717,7 +905,7 @@ class ElasticsearchQueryBuilder(object):
             or map_cls == "CodeableConcept"
         ):
 
-            query = self._make_codeableconcept_query(
+            query = self.make_codeableconcept_query(
                 path,
                 value,
                 nested=nested,
@@ -730,7 +918,7 @@ class ElasticsearchQueryBuilder(object):
             or map_cls == "Coding"
         ):
 
-            query = self._make_coding_query(
+            query = self.make_coding_query(
                 path,
                 value,
                 nested=nested,

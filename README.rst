@@ -6,8 +6,8 @@
     :target: http://travis-ci.org/nazrulworld/plone.app.fhirfield
     :alt: Travis Build Status
 
-.. image:: https://img.shields.io/coveralls/nazrulworld/plone.app.fhirfield/master.svg
-    :target: https://coveralls.io/r/nazrulworld/plone.app.fhirfield
+.. image:: https://coveralls.io/repos/github/nazrulworld/plone.app.fhirfield/badge.svg?branch=master
+    :target: https://coveralls.io/github/nazrulworld/plone.app.fhirfield?branch=master
     :alt: Test Coverage
 
 .. image:: https://img.shields.io/pypi/pyversions/plone.recipe.sublimetext.svg

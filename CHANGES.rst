@@ -14,6 +14,11 @@ Breakings
 - Drop support Elastic server version 2.3.x.
 
 
+Bugfixes
+
+- Important fix for ``Quantity`` search type, now value prefix not impact on other (unit, system). 
+
+
 1.0.0 (2019-01-18)
 ------------------
 
