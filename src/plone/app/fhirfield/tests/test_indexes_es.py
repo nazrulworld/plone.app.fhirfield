@@ -30,7 +30,7 @@ __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"
 class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
     """ """
 
-    def offtest_resource_index_created(self):
+    def test_resource_index_created(self):
         """resource is attribute of FFOrganization content
         that is indexed as FhirFieldIndex"""
         self.admin_browser.open(self.portal_catalog_url + "/manage_catalogIndexes")
@@ -344,6 +344,27 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         )
         # result should contains only item
         self.assertEqual(len(result), 2)
+
+        # ** Issue: 21 **
+        # test IN/OR
+        result = portal_catalog(
+            task_resource={"authored-on": "2017-08-05T06:16:41,ge2018-08-05T06:16:41"}
+        )
+        # should be two
+        self.assertEqual(len(result), 2)
+
+        result = portal_catalog(
+            task_resource={"authored-on": "2017-05-07T07:42:17,2019-08-05T06:16:41"}
+        )
+        # Although 2019-08-05T06:16:41 realy does not exists but OR
+        # feature should bring One
+        self.assertEqual(len(result), 1)
+
+        result = portal_catalog(
+            task_resource={"authored-on": "lt2018-08-05T06:16:41,gt2017-05-07T07:42:17"}
+        )
+        # Keep in mind OR feature! not and that's why expected result 3 not 1 because
+        self.assertEqual(len(result), 3)
 
     def test_catalogsearch_fhir_token_param(self):
         """Testing FHIR search token type params, i.e status, active"""

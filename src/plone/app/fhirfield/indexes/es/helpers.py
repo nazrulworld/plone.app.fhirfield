@@ -1118,26 +1118,47 @@ class ElasticsearchQueryBuilder(object):
 
     def validate_date(self, field, modifier, value, container):
         """ """
-        if modifier:
+        if modifier and modifier not in ("not", "missing"):
             container.append(
                 (
                     field,
-                    _("date type parameter don't accept any modifier except `missing`"),
+                    _(
+                        "date type parameter don't accept "
+                        "any modifier except `missing` and `not`"
+                    ),
                 )
             )
-        else:
-            prefix = value[0:2]
-            if prefix in FSPR_VALUE_PRIFIXES_MAP:
-                date_val = value[2:]
-            else:
-                date_val = value
+            return
+        # Issue#21
+        for val in value.split(","):
+            self._validate_date(field, val.strip(), container)
 
-            try:
-                DateTime(date_val)
-            except Exception:
-                container.append((field, "{0} is not valid date string!".format(value)))
+    def _validate_date(self, field, value, container):
+        """ """
+        prefix = value[0:2]
+        if prefix in FSPR_VALUE_PRIFIXES_MAP:
+            date_val = value[2:]
+        else:
+            date_val = value
+
+        try:
+            DateTime(date_val)
+        except Exception:
+            container.append((field, "{0} is not valid date string!".format(value)))
 
     def validate_token(self, field, modifier, value, container):
+        """ """
+        has_escape_comma_ = has_escape_comma(value)
+
+        if has_escape_comma_:
+            value = value.replace("\\,", escape_comma_replacer)
+
+        for val in value.split(","):
+            if has_escape_comma_ and has_escape_comma(val):
+                val = val.replace(escape_comma_replacer, "\\,")
+            self._validate_token(field, modifier, val, container)
+
+    def _validate_token(self, field, modifier, value, container):
         """ """
         if modifier == "text" and "|" in value:
             container.append(
