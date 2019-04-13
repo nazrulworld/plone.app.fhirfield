@@ -854,11 +854,11 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         ).value = "Test Clinical Bill"
 
         with open(os.path.join(FHIR_FIXTURE_PATH, "ChargeItem.json"), "r") as f:
-            fhir_json = json.load(f)
+            fhir_json_charge_item = json.load(f)
 
         self.admin_browser.getControl(
             name="form.widgets.chargeitem_resource"
-        ).value = json.dumps(fhir_json)
+        ).value = json.dumps(fhir_json_charge_item)
         self.admin_browser.getControl(name="form.buttons.save").click()
         self.assertIn("Item created", self.admin_browser.contents)
 
@@ -900,6 +900,53 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         brains = portal_catalog.unrestrictedSearchResults(
             encounter_resource={"length": "gt139"}, portal_type="FFEncounter"
         )
+        self.assertEqual(len(brains), 1)
+
+        # Test Issue#21
+        fhir_json_copy = copy.deepcopy(fhir_json_charge_item)
+        fhir_json_copy["id"] = str(uuid.uuid4())
+        fhir_json_copy["priceOverride"].update(
+            {"value": 12, "unit": "USD", "code": "USD"}
+        )
+        fhir_json_copy["quantity"]["value"] = 3
+        fhir_json_copy["factorOverride"] = 0.54
+
+        self.admin_browser.open(self.portal_url + "/++add++FFChargeItem")
+        self.admin_browser.getControl(
+            name="form.widgets.IBasic.title"
+        ).value = "Test Clinical Bill (USD)"
+        self.admin_browser.getControl(
+            name="form.widgets.chargeitem_resource"
+        ).value = json.dumps(fhir_json_copy)
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+
+        fhir_json_copy = copy.deepcopy(fhir_json_charge_item)
+        fhir_json_copy["id"] = str(uuid.uuid4())
+        fhir_json_copy["priceOverride"].update(
+            {"value": 850, "unit": "BDT", "code": "BDT"}
+        )
+        fhir_json_copy["quantity"]["value"] = 8
+        fhir_json_copy["factorOverride"] = 0.21
+
+        self.admin_browser.open(self.portal_url + "/++add++FFChargeItem")
+        self.admin_browser.getControl(
+            name="form.widgets.IBasic.title"
+        ).value = "Test Clinical Bill(BDT)"
+        self.admin_browser.getControl(
+            name="form.widgets.chargeitem_resource"
+        ).value = json.dumps(fhir_json_copy)
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+        # Let's flush
+        self.es.connection.indices.flush()
+        # Test with multiple equal values
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={"factor-override": "0.8,0.21"})
+        self.assertEqual(len(brains), 2)
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={"factor-override": "gt0.8,lt0.54"})
         self.assertEqual(len(brains), 1)
 
     def test_issue_12(self):
