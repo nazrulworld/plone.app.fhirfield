@@ -805,18 +805,14 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         brains = portal_catalog.unrestrictedSearchResults(
             chargeitem_resource={
                 "price-override": (
-                    "gt39.99|urn:iso:std:iso:4217|EUR,"
-                    "le850|urn:iso:std:iso:4217|BDT")
+                    "gt39.99|urn:iso:std:iso:4217|EUR," "le850|urn:iso:std:iso:4217|BDT"
+                )
             }
         )
         self.assertEqual(len(brains), 2)
 
         brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={
-                "price-override": (
-                    "ge12,"
-                    "le850")
-            }
+            chargeitem_resource={"price-override": ("ge12," "le850")}
         )
         # should be all three now
         self.assertEqual(len(brains), 3)
@@ -826,7 +822,8 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
                 "price-override": (
                     "|urn:iso:std:iso:4217|USD,"
                     "|urn:iso:std:iso:4217|BDT,"
-                    "|urn:iso:std:iso:4217|DKK")
+                    "|urn:iso:std:iso:4217|DKK"
+                )
             }
         )
         # should be 2
@@ -834,11 +831,7 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
 
         # serach by unit only
         brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={
-                "price-override": (
-                    "|BDT,"
-                    "|DKK")
-            }
+            chargeitem_resource={"price-override": ("|BDT," "|DKK")}
         )
         # should be one
         self.assertEqual(len(brains), 1)
@@ -942,11 +935,13 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         self.es.connection.indices.flush()
         # Test with multiple equal values
         brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"factor-override": "0.8,0.21"})
+            chargeitem_resource={"factor-override": "0.8,0.21"}
+        )
         self.assertEqual(len(brains), 2)
 
         brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"factor-override": "gt0.8,lt0.54"})
+            chargeitem_resource={"factor-override": "gt0.8,lt0.54"}
+        )
         self.assertEqual(len(brains), 1)
 
     def test_issue_12(self):
@@ -1212,3 +1207,71 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         brains = portal_catalog.unrestrictedSearchResults(**query)
         # should two tasks
         self.assertEqual(len(brains), 2)
+
+    def test_issue_21_code_and_coding(self):
+        """Add Support for IN/OR query for token and other if possible search type
+        https://github.com/nazrulworld/plone.app.fhirfield/issues/21"""
+        self.load_contents()
+        with open(os.path.join(FHIR_FIXTURE_PATH, "ChargeItem.json"), "r") as f:
+            fhir_json = json.load(f)
+
+        fhir_json_copy = copy.deepcopy(fhir_json)
+        fhir_json_copy["id"] = str(uuid.uuid4())
+        fhir_json_copy["code"]["coding"] = [
+            {
+                "code": "387517004",
+                "display": "Paracetamol",
+                "system": "http://snomed.info/387517004",
+            }
+        ]
+        fhir_json_copy["code"]["text"] = "Paracetamol (substance)"
+
+        self.admin_browser.open(self.portal_url + "/++add++FFChargeItem")
+        self.admin_browser.getControl(
+            name="form.widgets.IBasic.title"
+        ).value = "Test Clinical Bill (USD)"
+        self.admin_browser.getControl(
+            name="form.widgets.chargeitem_resource"
+        ).value = json.dumps(fhir_json_copy)
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+
+        fhir_json_copy = copy.deepcopy(fhir_json)
+        fhir_json_copy["id"] = str(uuid.uuid4())
+        fhir_json_copy["code"]["coding"] = [
+            {
+                "code": "387137007",
+                "display": "Omeprazole",
+                "system": "http://snomed.info/387137007",
+            }
+        ]
+        fhir_json_copy["code"]["text"] = "Omeprazole (substance)"
+
+        self.admin_browser.open(self.portal_url + "/++add++FFChargeItem")
+        self.admin_browser.getControl(
+            name="form.widgets.IBasic.title"
+        ).value = "Test Clinical Bill(BDT)"
+        self.admin_browser.getControl(
+            name="form.widgets.chargeitem_resource"
+        ).value = json.dumps(fhir_json_copy)
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+        # Let's flush
+        self.es.connection.indices.flush()
+
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={"code": "387517004,387137007"}
+        )
+        self.assertEqual(len(brains), 2)
+
+        # Test with system+code with negetive
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={
+                "code:not": (
+                    "http://snomed.info/sct|F01510,"
+                    "http://snomed.info/387137007|387137007"
+                )
+            }
+        )
+        self.assertEqual(len(brains), 1)
