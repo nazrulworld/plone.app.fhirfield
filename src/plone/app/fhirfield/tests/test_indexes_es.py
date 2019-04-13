@@ -17,6 +17,7 @@ from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import FhirFieldIndex  
 from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import make_fhir_index_datum
 from plone.app.fhirfield.testing import IS_TRAVIS  # noqa: E501
 
+import copy
 import json
 import os
 import time
@@ -762,6 +763,86 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         )
         self.assertEqual(len(brains), 1)
 
+        # Test Issue#21
+        fhir_json_copy = copy.deepcopy(fhir_json)
+        fhir_json_copy["id"] = str(uuid.uuid4())
+        fhir_json_copy["priceOverride"].update(
+            {"value": 12, "unit": "USD", "code": "USD"}
+        )
+        fhir_json_copy["quantity"]["value"] = 3
+        fhir_json_copy["factorOverride"] = 0.54
+
+        self.admin_browser.open(self.portal_url + "/++add++FFChargeItem")
+        self.admin_browser.getControl(
+            name="form.widgets.IBasic.title"
+        ).value = "Test Clinical Bill (USD)"
+        self.admin_browser.getControl(
+            name="form.widgets.chargeitem_resource"
+        ).value = json.dumps(fhir_json_copy)
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+
+        fhir_json_copy = copy.deepcopy(fhir_json)
+        fhir_json_copy["id"] = str(uuid.uuid4())
+        fhir_json_copy["priceOverride"].update(
+            {"value": 850, "unit": "BDT", "code": "BDT"}
+        )
+        fhir_json_copy["quantity"]["value"] = 8
+        fhir_json_copy["factorOverride"] = 0.21
+
+        self.admin_browser.open(self.portal_url + "/++add++FFChargeItem")
+        self.admin_browser.getControl(
+            name="form.widgets.IBasic.title"
+        ).value = "Test Clinical Bill(BDT)"
+        self.admin_browser.getControl(
+            name="form.widgets.chargeitem_resource"
+        ).value = json.dumps(fhir_json_copy)
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+        # Let's flush
+        self.es.connection.indices.flush()
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={
+                "price-override": (
+                    "gt39.99|urn:iso:std:iso:4217|EUR,"
+                    "le850|urn:iso:std:iso:4217|BDT")
+            }
+        )
+        self.assertEqual(len(brains), 2)
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={
+                "price-override": (
+                    "ge12,"
+                    "le850")
+            }
+        )
+        # should be all three now
+        self.assertEqual(len(brains), 3)
+        # serach by only system and code
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={
+                "price-override": (
+                    "|urn:iso:std:iso:4217|USD,"
+                    "|urn:iso:std:iso:4217|BDT,"
+                    "|urn:iso:std:iso:4217|DKK")
+            }
+        )
+        # should be 2
+        self.assertEqual(len(brains), 2)
+
+        # serach by unit only
+        brains = portal_catalog.unrestrictedSearchResults(
+            chargeitem_resource={
+                "price-override": (
+                    "|BDT,"
+                    "|DKK")
+            }
+        )
+        # should be one
+        self.assertEqual(len(brains), 1)
+
     def test_number_type_search(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/8"""
         self.load_contents()
@@ -1077,8 +1158,8 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
             "task_resource": {
                 "based-on": (
                     "ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce,"
-                    "ProcedureRequest/"
-                    + new_procedure_request_id)
+                    "ProcedureRequest/" + new_procedure_request_id
+                )
             }
         }
         brains = portal_catalog.unrestrictedSearchResults(**query)

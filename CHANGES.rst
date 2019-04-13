@@ -16,7 +16,8 @@ Breakings
 
 Bugfixes
 
-- Important fix for ``Quantity`` search type, now value prefix not impact on other (unit, system). 
+- Important fix for ``Quantity`` search type, now value prefix not impact on other (unit, system). Additionally 
+  also now possible to search by unit or system and code (without value)
 
 
 1.0.0 (2019-01-18)

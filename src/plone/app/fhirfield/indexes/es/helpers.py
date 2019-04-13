@@ -591,9 +591,15 @@ class ElasticsearchQueryBuilder(object):
         matches = list()
         value_parts = value.split("|")
         mapped_definition = self.get_mapped_definition(path)
-        occurrence_type, value_query = self._make_number_query(
-            path, value_parts[0], mapped_definition=mapped_definition, modifier=modifier
-        )
+        query = {"bool": {}}
+        if value_parts[0]:
+            occurrence_type, value_query = self._make_number_query(
+                path,
+                value_parts[0],
+                mapped_definition=mapped_definition,
+                modifier=modifier,
+            )
+            query["bool"] = {occurrence_type: [value_query]}
         # Potential extras
         system = None
         code = None
@@ -611,8 +617,6 @@ class ElasticsearchQueryBuilder(object):
             matches.append({"term": {path + ".code": code}})
         if unit:
             matches.append({"term": {path + ".unit": unit}})
-
-        query = {"bool": {occurrence_type: [value_query]}}
 
         if matches:
             if modifier == "not":
