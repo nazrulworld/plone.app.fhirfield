@@ -681,7 +681,10 @@ class ElasticsearchQueryBuilder(object):
         """ """
         fullpath = path + ".reference"
 
-        query = dict(match={fullpath: value})
+        if "/" in value:
+            query = dict(match_phrase={fullpath: value})
+        else:
+            query = dict(term={fullpath: value})
 
         if nested:
             query = {"nested": {"path": path, "query": {"bool": {"filter": query}}}}

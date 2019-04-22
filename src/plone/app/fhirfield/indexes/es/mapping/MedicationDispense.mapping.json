@@ -4,9 +4,10 @@
             "authorizingPrescription": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 },
                 "type": "nested"
@@ -14,18 +15,20 @@
             "context": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
             "destination": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
@@ -97,9 +100,10 @@
             "medicationReference": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
@@ -125,9 +129,10 @@
             "receiver": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 },
                 "type": "nested"
@@ -145,9 +150,10 @@
             "subject": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
@@ -194,7 +200,7 @@
         }
     },
     "meta": {
-        "lastUpdated": "2019-04-09T15:24:14+02:00",
+        "lastUpdated": "2019-04-22T19:09:31+02:00",
         "versionId": "STU3"
     },
     "resourceType": "MedicationDispense"

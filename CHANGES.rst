@@ -6,6 +6,9 @@ Changelog
 
 Newfeatures
 
+- `Issue#14 <https://github.com/nazrulworld/plone.app.fhirfield/issues/14>`_ Now reference query is powerful yet!
+  It is possible now search by id only or resourceType only or mixing up.
+
 - `Issue#21 <https://github.com/nazrulworld/plone.app.fhirfield/issues/21>`_ One of the powerful feature added, IN/OR support in search query.
   Now possible to provide multiple values separated by comma.
 

@@ -9,18 +9,20 @@
             "enterer": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
             "facility": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
@@ -62,9 +64,10 @@
             "insurer": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
@@ -90,18 +93,20 @@
             "organization": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
             "patient": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
@@ -138,9 +143,10 @@
             "provider": {
                 "properties": {
                     "reference": {
+                        "analyzer": "fhir_reference_analyzer",
                         "index": true,
                         "store": false,
-                        "type": "keyword"
+                        "type": "text"
                     }
                 }
             },
@@ -157,7 +163,7 @@
         }
     },
     "meta": {
-        "lastUpdated": "2019-04-09T15:24:14+02:00",
+        "lastUpdated": "2019-04-22T19:09:31+02:00",
         "versionId": "STU3"
     },
     "resourceType": "Claim"

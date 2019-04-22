@@ -40,6 +40,8 @@ KeywordToken = {
     'store': False
 }
 
+PathToken = {"type": "text", "index": True, "store": False, "analyzer": "path_analyzer"}
+
 Text = {
     'type': 'text',
     'index': True,
@@ -68,8 +70,13 @@ Timing = {
 }
 
 Reference = {
-    'properties': {
-        'reference': KeywordToken
+    "properties": {
+        "reference": {
+            "type": "text",
+            "index": True,
+            "store": False,
+            "analyzer": "fhir_reference_analyzer",
+        }
     }
 }
 

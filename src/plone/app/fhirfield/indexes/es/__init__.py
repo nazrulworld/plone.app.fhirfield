@@ -128,6 +128,20 @@ def MappingAdapter_get_index_creation_body(self):
                 },
             }
         }
+        settings["analysis"] = {
+            "analyzer": {
+                "path_analyzer": {"tokenizer": "path_tokenizer"},
+                "fhir_reference_analyzer": {"tokenizer": "fhir_reference_tokenizer"}
+            },
+            "tokenizer": {
+                "path_tokenizer": {"type": "path_hierarchy", "delimiter": "/"},
+                "fhir_reference_tokenizer": {"type": "pattern", "pattern": "/"}
+            },
+            "filter": {},
+            "char_filter": {},
+        }
+        settings["index.mapper.dynamic"] = False
+
     except KeyError:
         msg = """
             Plone registry records ("

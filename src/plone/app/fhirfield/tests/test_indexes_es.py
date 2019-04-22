@@ -1334,3 +1334,70 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
     #     brains = portal_catalog.unrestrictedSearchResults(
     #         task_resource={"status": "ready,draft"}
     #     )
+
+    def test_issue14_path_analizer(self):
+        """ """
+        self.load_contents()
+        portal_catalog = api.portal.get_tool("portal_catalog")
+        brains = portal_catalog.unrestrictedSearchResults(
+            task_resource={"patient": "Patient"}
+        )
+        # Should Get All Tasks
+        self.assertEqual(len(brains), 3)
+
+        self.admin_browser.open(self.portal_url + "/++add++FFObservation")
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Observation.json"), "r") as f:
+            json_value1 = json.load(f)
+            self.admin_browser.getControl(
+                name="form.widgets.observation_resource"
+            ).value = json.dumps(json_value1)
+
+            self.admin_browser.getControl(name="form.widgets.IBasic.title").value = (
+                json_value1["resourceType"] + json_value1["id"]
+            )
+
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+
+        device_id = str(uuid.uuid4())
+        self.admin_browser.open(self.portal_url + "/++add++FFObservation")
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Observation.json"), "r") as f:
+            json_value = json.load(f)
+            json_value["id"] = str(uuid.uuid4())
+            json_value["subject"] = {"reference": "Device/" + device_id}
+            self.admin_browser.getControl(
+                name="form.widgets.observation_resource"
+            ).value = json.dumps(json_value)
+
+            self.admin_browser.getControl(name="form.widgets.IBasic.title").value = (
+                json_value["resourceType"] + json_value["id"]
+            )
+
+        self.admin_browser.getControl(name="form.buttons.save").click()
+        self.assertIn("Item created", self.admin_browser.contents)
+        self.es.connection.indices.flush()
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            observation_resource={"subject": "Device"}
+        )
+        # Should One
+        self.assertEqual(len(brains), 1)
+
+        # Little bit complex
+        brains = portal_catalog.unrestrictedSearchResults(
+            observation_resource={"subject": "Device,Patient"}
+        )
+        self.assertEqual(len(brains), 2)
+
+        # Search By Multiple Ids
+        brains = portal_catalog.unrestrictedSearchResults(
+            observation_resource={
+                "subject": device_id + "," + json_value1["subject"]["reference"]
+            }
+        )
+        self.assertEqual(len(brains), 2)
+
+        brains = portal_catalog.unrestrictedSearchResults(
+            observation_resource={"subject": device_id}
+        )
+        self.assertEqual(len(brains), 1)
