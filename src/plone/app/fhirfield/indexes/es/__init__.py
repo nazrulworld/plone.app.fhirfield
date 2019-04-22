@@ -89,6 +89,26 @@ def QueryAssembler_normalize(self, query):
     return query, sort_on
 
 
+def QueryAssembler___call__(self, dquery):
+    """This patch should be removed, if bellow issue is fixed,
+    or may be not for optimization purpose?
+    @see Issue:https://github.com/collective/collective.elasticsearch/issues/55"""
+
+    query = self._old___call__(dquery)
+    if "bool" not in query:
+        return query
+
+    if "minimum_should_match" in query["bool"]:
+        if len(query["bool"].get("should", [])) == 0:
+            del query["bool"]["minimum_should_match"]
+
+    for context in ("must", "must_not", "filter", "should"):
+
+        if context in query["bool"] and len(query["bool"][context]) == 0:
+            del query["bool"][context]
+    return query
+
+
 def MappingAdapter_get_index_creation_body(self):
     """Per index based settings
     https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
@@ -125,6 +145,9 @@ def MappingAdapter_get_index_creation_body(self):
 # *** Monkey Patch ***
 setattr(QueryAssembler, "_old_normalize", QueryAssembler.normalize)
 setattr(QueryAssembler, "normalize", QueryAssembler_normalize)
+
+setattr(QueryAssembler, "_old___call__", QueryAssembler.__call__)
+setattr(QueryAssembler, "__call__", QueryAssembler___call__)
 
 setattr(
     MappingAdapter, "get_index_creation_body", MappingAdapter_get_index_creation_body

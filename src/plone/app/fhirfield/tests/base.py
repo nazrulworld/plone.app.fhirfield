@@ -111,7 +111,7 @@ class BaseFunctionalTesting(BaseTesting):
             "Basic {0}:{1}".format(SITE_OWNER_NAME, SITE_OWNER_PASSWORD),
         )
         self.error_setup(self.admin_browser)
-        if not IS_TRAVIS:
+        if not IS_TRAVIS and 1 == 2:
             self.enable_event_log()
 
     def error_setup(self, browser):
