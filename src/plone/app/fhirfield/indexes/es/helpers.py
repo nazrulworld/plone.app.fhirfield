@@ -33,6 +33,7 @@ import six
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 escape_comma_replacer = "_ESCAPE_COMMA_"
+uri_scheme = re.compile(r"^https?://", re.I)
 
 
 def has_escape_comma(val):
@@ -495,7 +496,10 @@ class ElasticsearchQueryBuilder(object):
         else:
             occurrence_type = "filter"
 
-        query = {"match": {path: value}}
+        if modifier == "exact":
+            query = {"match_phrase": {path: value}}
+        else:
+            query = {"match": {path: value}}
 
         return occurrence_type, query
 
@@ -681,7 +685,7 @@ class ElasticsearchQueryBuilder(object):
         """ """
         fullpath = path + ".reference"
 
-        if "/" in value:
+        if "/" in value or uri_scheme.match(value):
             query = dict(match_phrase={fullpath: value})
         else:
             query = dict(term={fullpath: value})
