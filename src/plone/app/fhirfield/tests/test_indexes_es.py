@@ -1276,65 +1276,6 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         )
         self.assertEqual(len(brains), 1)
 
-    # def test_issue22_pagination(self):
-    #     """ """
-    #     self.load_contents()
-
-    #     for x in range(30):
-    #         # add tasks
-    #         self.admin_browser.open(self.portal_url + "/++add++FFTask")
-    #         with open(os.path.join(FHIR_FIXTURE_PATH, "ParentTask.json"), "r") as f:
-    #             json_value = json.load(f)
-    #             json_value["id"] = str(uuid.uuid4())
-    #             self.admin_browser.getControl(
-    #                 name="form.widgets.task_resource"
-    #             ).value = json.dumps(json_value)
-
-    #             self.admin_browser.getControl(
-    #                 name="form.widgets.IBasic.title"
-    #             ).value = json_value["description"] + str(x)
-
-    #         self.admin_browser.getControl(name="form.buttons.save").click()
-    #         self.assertIn("Item created", self.admin_browser.contents)
-
-    #         self.admin_browser.open(self.portal_url + "/++add++FFTask")
-    #         with open(os.path.join(FHIR_FIXTURE_PATH, "SubTask_HAQ.json"), "r") as f:
-    #             json_value = json.load(f)
-    #             json_value["id"] = str(uuid.uuid4())
-    #             self.admin_browser.getControl(
-    #                 name="form.widgets.task_resource"
-    #             ).value = json.dumps(json_value)
-
-    #             self.admin_browser.getControl(
-    #                 name="form.widgets.IBasic.title"
-    #             ).value = json_value["description"] + str(x)
-
-    #         self.admin_browser.getControl(name="form.buttons.save").click()
-    #         self.assertIn("Item created", self.admin_browser.contents)
-
-    #         self.admin_browser.open(self.portal_url + "/++add++FFTask")
-    #         with open(os.path.join(FHIR_FIXTURE_PATH, "SubTask_CRP.json"), "r") as f:
-    #             json_value = json.load(f)
-    #             json_value["id"] = str(uuid.uuid4())
-    #             self.admin_browser.getControl(
-    #                 name="form.widgets.task_resource"
-    #             ).value = json.dumps(json_value)
-
-    #             self.admin_browser.getControl(
-    #                 name="form.widgets.IBasic.title"
-    #             ).value = json_value["description"] + str(x)
-
-    #         self.admin_browser.getControl(name="form.buttons.save").click()
-    #         self.assertIn("Item created", self.admin_browser.contents)
-
-    #         # Let's flush
-    #         self.es.connection.indices.flush()
-
-    #     portal_catalog = api.portal.get_tool("portal_catalog")
-    #     brains = portal_catalog.unrestrictedSearchResults(
-    #         task_resource={"status": "ready,draft"}
-    #     )
-
     def test_issue14_path_analizer(self):
         """ """
         self.load_contents()

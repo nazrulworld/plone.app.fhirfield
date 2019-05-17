@@ -1,6 +1,19 @@
 Migration
 =========
 
+1.0.0 to 2.0.0
+--------------
+
+1. Simply old indexes are not usable any more! as new ES server (6.x.x) is used.
+2. Do backup of your existing Data.fs (important!).
+3. From plone controlpanel, Go to elasticsearch settings page ``/@@elastic-controlpanel``.
+4. Convert Catalog again, make sure in the ``Indexes for which all searches are done through ElasticSearch`` section
+   your desired indexes are select.
+5. If your site is behind the proxy, we suggest make `ssh tuneling to connect <https://www.ssh.com/ssh/tunneling/example>`_ your site.
+   Because next takes much times, (depends on your data size)
+6. Rebuild Catalog && wait for success, if you face any problem try again.
+
+
 1.0.0rc3 to 1.0.0rc4
 --------------------
 

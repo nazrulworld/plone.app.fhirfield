@@ -21,7 +21,7 @@ install_requires = [
     'fhir.resources==3.0.1'
 ]
 elasticsearch_requires = [
-    'collective.elasticsearch>=3.0.3'
+    'collective.elasticsearch>=3.0.3,<4.0.0'
 ]
 test_requires = [
     'plone.restapi',

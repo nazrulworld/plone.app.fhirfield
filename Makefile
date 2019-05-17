@@ -13,15 +13,6 @@ run-es:
 	--name elasticsearch_ff0 \
 	docker.elastic.co/elasticsearch/elasticsearch-oss:$(es_version)
 
-run-ps-es:
-	cd $(current_dir)var && \
-	docker run --rm -v esdata:/usr/share/elasticsearch/data -p 127.0.0.1:9200:9200 \
-	--name elasticsearch_ff1 \
-	-e "network.publish_host=127.0.0.1" \
-	-e "transport.publish_port=9200" \
-	-e "discovery.type=single-node" \
-	-e "cluster.name=docker-cluster" \
-	docker.elastic.co/elasticsearch/elasticsearch-oss:$(es_version)
 
 stop-all:
 	docker kill $$(docker ps -q)
