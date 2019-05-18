@@ -33,7 +33,6 @@ test_requires = [
     'plone.app.robotframework[debug]',
     'collective.MockMailHost',
     'Products.contentmigration',
-    'docker',
     'requests',
 ]
 
@@ -44,7 +43,7 @@ setup(
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         "Framework :: Plone",
         "Framework :: Plone :: 5.0",
