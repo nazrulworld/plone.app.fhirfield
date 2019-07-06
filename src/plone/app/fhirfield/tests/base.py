@@ -13,6 +13,7 @@ from plone.testing import z2
 from zope.component import getUtility
 
 import logging
+import os
 import sys
 import transaction
 import unittest
@@ -38,6 +39,9 @@ def setup_es(self, es_only_indexes={u"Title", u"Description", u"SearchableText"}
     """ """
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IElasticSettings, check=False)  # noqa: P001
+    # set host
+    host = os.environ.get("ES_SERVER_HOST", "127.0.0.1")
+    settings.hosts = [unicode(host)]
     # disable sniffing hosts in tests because docker...
     settings.sniffer_timeout = None
     settings.enabled = True
