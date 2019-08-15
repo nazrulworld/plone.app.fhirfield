@@ -1,8 +1,9 @@
 sudo: required
 language: python
 python:
-  - 2.7.14
   - 3.5
+  - 3.6
+  - 3.7
 
 services:
   - docker
@@ -15,8 +16,7 @@ env:
   global:
     - ES_VERSION=6.3.0
   matrix:
-    - PLONE_VERSION=5.0.x  QA=true
-    - PLONE_VERSION=5.1.x  QA=true
+    - PLONE_VERSION=5.2.x  QA=true
 
 before_script:
   - sleep 10

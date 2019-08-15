@@ -1,2 +1,3 @@
-setuptools == 38.5.1
-zc.buildout == 2.11.1
+-c plone-5.2.x-requirements.txt
+setuptools
+zc.buildout

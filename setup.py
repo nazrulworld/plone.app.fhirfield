@@ -17,11 +17,10 @@ long_description = '\n\n'.join([
 install_requires = [
     'setuptools',
     'jsonpatch',
-    # important! STU3
-    'fhir.resources==3.0.1'
+    'fhirpath'
 ]
 elasticsearch_requires = [
-    'collective.elasticsearch>=3.0.3,<4.0.0'
+    'collective.elasticsearch'
 ]
 test_requires = [
     'plone.restapi',
@@ -38,24 +37,23 @@ test_requires = [
 
 setup(
     name='plone.app.fhirfield',
-    version='2.0.1.dev0',
+    version='3.0.0a1.dev0',
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
         "Framework :: Plone",
-        "Framework :: Plone :: 5.0",
-        "Framework :: Plone :: 5.1",
         "Framework :: Plone :: 5.2",
+        "Framework :: Plone :: 5.3",
+        "Framework :: Plone :: Addon",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Operating System :: OS Independent",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ],
