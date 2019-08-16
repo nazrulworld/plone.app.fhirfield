@@ -1,4 +1,21 @@
 # _*_ coding: utf-8 _*_
+import pkgutil
+import re
+import sys
+import time
+from importlib import import_module
+
+import six
+from six.moves.urllib.parse import unquote_plus
+
+from fhirpath.enums import FHIR_VERSION
+from fhirpath.utils import lookup_fhir_class_path
+from plone.api.validation import required_parameters
+from plone.app.fhirfield.compat import _
+from plone.app.fhirfield.compat import json
+from plone.memoize import ram
+from zope.interface import Invalid
+
 from .compat import EMPTY_STRING
 from .compat import NO_VALUE
 from .exc import SearchQueryError
@@ -6,19 +23,6 @@ from .exc import SearchQueryValidationError
 from .variables import FHIR_RESOURCE_LIST  # noqa: F401
 from .variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
 from .variables import FHIR_SEARCH_PARAMETER_SEARCHABLE
-from importlib import import_module
-from plone.api.validation import required_parameters
-from plone.app.fhirfield.compat import _
-from plone.app.fhirfield.compat import json
-from plone.memoize import ram
-from six.moves.urllib.parse import unquote_plus
-from zope.interface import Invalid
-
-import pkgutil
-import re
-import six
-import sys
-import time
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
@@ -31,6 +35,7 @@ PATH_WITH_DOT_WHERE = re.compile(r"\.where\([a-z]+\=\'[a-z]+\'\)$", re.I)
 @required_parameters("model_name")
 def search_fhir_model(model_name, cache=True):
     """ """
+    return lookup_fhir_class_path(model_name, fhir_release=FHIR_VERSION.STU3)
     global FHIR_RESOURCE_MODEL_CACHE
     if model_name in FHIR_RESOURCE_MODEL_CACHE.keys() and cache:
         return "{0}.{1}".format(FHIR_RESOURCE_MODEL_CACHE[model_name], model_name)
@@ -135,10 +140,12 @@ def fhir_search_path_meta_info(path):
     model_cls = resource_type_str_to_fhir_model(resource_type)
     result = None
     for prop in properties:
+
         for (
             name,
             jsname,
             typ,
+            type_name,
             is_list,
             of_many,
             not_optional,

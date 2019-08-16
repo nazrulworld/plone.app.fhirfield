@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
-from . import BASE_TEST_PATH
-from . import FHIR_FIXTURE_PATH
-from .schema import IFFOrganization
+import os
+import unittest
+
 from plone.app.fhirfield import FhirResource
 from plone.app.fhirfield import handler
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
@@ -13,8 +13,9 @@ from zope.component import queryMultiAdapter
 from zope.component import queryUtility
 from zope.schema import getFields
 
-import os
-import unittest
+from . import BASE_TEST_PATH
+from . import FHIR_FIXTURE_PATH
+from .schema import IFFOrganization
 
 
 ___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
@@ -43,7 +44,7 @@ class HandlerIntegrationTest(unittest.TestCase):
         self.assertIsInstance(resource_handler.context, FhirResource)
 
         fhir_value = fhir_field.fromUnicode(fhir_str)
-        self.assertIsInstance(resource_handler.toUnicode(fhir_value), unicode)
+        self.assertIsInstance(resource_handler.toUnicode(fhir_value), str)
 
         # Test: available as Uitility
         fhir_hanlder_util = queryUtility(

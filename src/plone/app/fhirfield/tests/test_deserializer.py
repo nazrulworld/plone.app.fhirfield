@@ -1,6 +1,8 @@
 # _*_ coding: utf-8 _*_
-from . import FHIR_FIXTURE_PATH
-from .schema import IFFOrganization
+import json
+import os
+import unittest
+
 from plone import api
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
@@ -20,9 +22,8 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
 
-import json
-import os
-import unittest
+from . import FHIR_FIXTURE_PATH
+from .schema import IFFOrganization
 
 
 ___author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"

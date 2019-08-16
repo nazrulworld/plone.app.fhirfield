@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
-from plone import api
+import unittest
+
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from Products.CMFPlone.interfaces import INonInstallable
+from Products.CMFPlone.utils import get_installer
 from zope.component import queryUtility
-
-import unittest
 
 
 class TestSetup(unittest.TestCase):
@@ -16,11 +16,11 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         """Custom shared utility setup for tests."""
         self.portal = self.layer["portal"]
-        self.installer = api.portal.get_tool("portal_quickinstaller")
+        self.installer = get_installer(self.portal, self.layer["request"])
 
     def test_product_installed(self):
         """Test if plone.app.fhirfield is installed."""
-        self.assertTrue(self.installer.isProductInstalled("plone.app.fhirfield"))
+        self.assertTrue(self.installer.is_product_installed("plone.app.fhirfield"))
 
 
 class TestUninstall(unittest.TestCase):
@@ -29,12 +29,12 @@ class TestUninstall(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer["portal"]
-        self.installer = api.portal.get_tool("portal_quickinstaller")
-        self.installer.uninstallProducts(["plone.app.fhirfield"])
+        self.installer = get_installer(self.portal, self.layer["request"])
+        self.installer.uninstall_product("plone.app.fhirfield")
 
     def test_product_uninstalled(self):
         """Test if plone.app.fhirfield is cleanly uninstalled."""
-        self.assertFalse(self.installer.isProductInstalled("plone.app.fhirfield"))
+        self.assertFalse(self.installer.is_product_installed("plone.app.fhirfield"))
 
     def test_hidden_profiled(self):
         """Test if plone.app.fhirfield hidden profile utility is available"""

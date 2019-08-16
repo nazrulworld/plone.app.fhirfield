@@ -1,14 +1,16 @@
 # _*_ coding: utf-8 _*_
-from . import FHIR_FIXTURE_PATH
-from plone.app.fhirfield import compat
-from plone.app.fhirfield import helpers
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
-from six.moves.urllib.parse import urlencode
-from zope.interface import Invalid
-
 import inspect
 import os
 import unittest
+
+from six.moves.urllib.parse import urlencode
+
+from plone.app.fhirfield import compat
+from plone.app.fhirfield import helpers
+from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
+from zope.interface import Invalid
+
+from . import FHIR_FIXTURE_PATH
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
@@ -22,18 +24,10 @@ class HelperIntegrationTest(unittest.TestCase):
     def test_search_fhir_model(self):
         """ """
         dotted_path = helpers.search_fhir_model("DeviceRequest")
-        self.assertEqual("fhir.resources.devicerequest.DeviceRequest", dotted_path)
+        self.assertEqual("fhir.resources.STU3.devicerequest.DeviceRequest", dotted_path)
 
         dotted_path = helpers.search_fhir_model("FakeResource")
         self.assertIsNone(dotted_path)
-
-    def test_caching_of_search_fhir_model(self):
-        """ """
-        helpers.FHIR_RESOURCE_MODEL_CACHE.clear()
-        dotted_path = helpers.search_fhir_model("DeviceRequest")
-        self.assertEqual("fhir.resources.devicerequest.DeviceRequest", dotted_path)
-
-        self.assertEqual(len(helpers.FHIR_RESOURCE_MODEL_CACHE), 1)
 
     def test_resource_type_str_to_fhir_model(self):
         """ """

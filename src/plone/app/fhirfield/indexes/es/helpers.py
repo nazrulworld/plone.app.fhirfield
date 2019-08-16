@@ -24,7 +24,7 @@ from plone.app.fhirfield.variables import SEARCH_PARAM_MODIFIERS
 
 import ast
 import copy
-import mapping_types
+from . import mapping_types
 import os
 import re
 import six

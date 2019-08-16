@@ -1,5 +1,7 @@
 # _*_ coding: utf-8 _*_
-from .schema import IFFOrganization
+import time
+import unittest
+
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.app.testing import SITE_OWNER_NAME
@@ -10,8 +12,7 @@ from zope.component import getUtilitiesFor
 from zope.component import queryUtility
 from zope.schema import getFields
 
-import time
-import unittest
+from .schema import IFFOrganization
 
 
 ___author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
@@ -38,7 +39,7 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
         self.assertIsNotNone(field_factory)
         fhir_field2 = field_factory(
             title=u"Fhir Resource Field",
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
         )
 
         self.assertEqual(fhir_field.model, fhir_field2.model)
@@ -88,7 +89,7 @@ class SchemaeditorFunctionalTest(unittest.TestCase):
         browser.open(self.portal_url + "/login_form")
         browser.getControl(name="__ac_name").value = SITE_OWNER_NAME
         browser.getControl(name="__ac_password").value = SITE_OWNER_PASSWORD
-        browser.getControl(name="submit").click()
+        browser.getControl(name="buttons.login").click()
 
     def test_schemaeditor(self):
         """" """

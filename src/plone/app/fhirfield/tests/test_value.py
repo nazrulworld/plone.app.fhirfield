@@ -8,7 +8,7 @@ from zope.interface import implementer
 from zope.interface import Invalid
 from zope.schema.interfaces import WrongType
 
-import cPickle
+import pickle as cPickle
 import json
 import os
 import six

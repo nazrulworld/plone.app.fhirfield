@@ -4,8 +4,8 @@
 # @Link    : http://nazrul.me/
 # @Version : $Id$
 # All imports here
-from .fhir import EsFhirFieldIndex
-from .helpers import build_elasticsearch_sortable
+import warnings
+
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
 from collective.elasticsearch.mapping import MappingAdapter
 from collective.elasticsearch.query import QueryAssembler
@@ -14,7 +14,8 @@ from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST  # noqa: F401
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
-import warnings
+from .fhir import EsFhirFieldIndex
+from .helpers import build_elasticsearch_sortable
 
 
 __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"
@@ -30,8 +31,9 @@ def QueryAssembler_normalize(self, query):
     sort_on = []
     resources = dict()
     sort_on_orig = query.pop("sort_on", None)
+
     if sort_on_orig:
-        sort_on_orig = map(lambda x: x.strip(), sort_on_orig.split(","))
+        sort_on_orig = list(map(lambda x: x.strip(), sort_on_orig.split(",")))
 
     for param in query.keys():
         if param in ("_sort", "_count", "sort_order"):

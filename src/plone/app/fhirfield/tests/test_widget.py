@@ -1,7 +1,8 @@
 # _*_ coding: utf-8 _*_
-from __future__ import print_function  # noqa: I001
-from . import FHIR_FIXTURE_PATH
-from .schema import IFFOrganization
+import json
+import os
+import unittest
+
 from plone.app.fhirfield import widget
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
@@ -9,16 +10,15 @@ from plone.app.fhirfield.value import FhirResourceValue
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
+from z3c.form.interfaces import NOVALUE
 from z3c.form.interfaces import IDataConverter
 from z3c.form.interfaces import IFieldWidget
-from z3c.form.interfaces import NOVALUE
 from zope.component import queryMultiAdapter
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
 
-import json
-import os
-import unittest
+from . import FHIR_FIXTURE_PATH
+from .schema import IFFOrganization
 
 
 ___author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
@@ -191,7 +191,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.open(self.portal_url + "/login_form")
         browser.getControl(name="__ac_name").value = SITE_OWNER_NAME
         browser.getControl(name="__ac_password").value = SITE_OWNER_PASSWORD
-        browser.getControl(name="submit").click()
+        browser.getControl(name="buttons.login").click()
 
     def test_widget(self):
         """" """
@@ -237,7 +237,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.getControl(name="form.buttons.save").click()
         # There must be form error! as required title is missing so url is unchanged
         self.assertEqual(
-            browser.mech_browser.geturl(), self.portal_url + "/++add++FFOrganization"
+            browser.url, self.portal_url + "/++add++FFOrganization"
         )
         # Test Value exist, even form resubmit
         self.assertEqual(
@@ -256,7 +256,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.getControl(name="form.buttons.save").click()
         # should suceess now and redirect to view page
         self.assertEqual(
-            browser.mech_browser.geturl(),
+            browser.url,
             "http://nohost/plone/fforganization/view",
         )
 
@@ -274,7 +274,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         self.assertIn('class="portalMessage info"', browser.contents)
         self.assertIn("Changes saved", browser.contents)
         self.assertEqual(
-            browser.mech_browser.geturl(), "http://nohost/plone/fforganization"
+            browser.url, "http://nohost/plone/fforganization"
         )
 
     def test_issue_11(self):
@@ -292,7 +292,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.getControl(name="form.buttons.save").click()
         self.assertIn("Item created", browser.contents)
 
-        view_url = browser.mech_browser.geturl()
+        view_url = browser.url
         browser.open(view_url)
         contents = browser.contents
 

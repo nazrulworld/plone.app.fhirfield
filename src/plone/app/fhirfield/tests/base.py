@@ -1,4 +1,10 @@
 # _*_ coding: utf-8 _*_
+import logging
+import os
+import sys
+import unittest
+
+import transaction
 from collective.elasticsearch import hook
 from collective.elasticsearch.es import ElasticSearchCatalog
 from collective.elasticsearch.interfaces import IElasticSettings
@@ -11,12 +17,6 @@ from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.registry.interfaces import IRegistry
 from plone.testing import z2
 from zope.component import getUtility
-
-import logging
-import os
-import sys
-import transaction
-import unittest
 
 
 __author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
@@ -41,7 +41,7 @@ def setup_es(self, es_only_indexes={u"Title", u"Description", u"SearchableText"}
     settings = registry.forInterface(IElasticSettings, check=False)  # noqa: P001
     # set host
     host = os.environ.get("ES_SERVER_HOST", "127.0.0.1")
-    settings.hosts = [unicode(host)]
+    settings.hosts = [host]
     # disable sniffing hosts in tests because docker...
     settings.sniffer_timeout = None
     settings.enabled = True

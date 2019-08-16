@@ -1,7 +1,9 @@
 # _*_ coding: utf-8 _*_
-from . import FHIR_FIXTURE_PATH
-from .schema import IFFOrganization
+import json
+import os
+import unittest
 from email.message import Message
+
 from plone.app.fhirfield import marshaler
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.restapi.interfaces import IDeserializeFromJson
@@ -15,9 +17,8 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
 
-import json
-import os
-import unittest
+from . import FHIR_FIXTURE_PATH
+from .schema import IFFOrganization
 
 
 ___author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
@@ -83,30 +84,11 @@ class MarshalerIntegrationTest(unittest.TestCase):
             decoded_value.as_json(), context.organization_resource.as_json()
         )
 
-        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
-            already_decoded = f.read().decode("utf-8")
-
         encoding = field_marshaler.getCharset()
         self.assertEqual(encoding, "utf-8")
 
         content_type = field_marshaler.getContentType()
         self.assertEqual(content_type, "application/json")
-        try:
-            already_decoded.decode(encoding)
-            raise AssertionError(
-                "Code should not come here! should raise Unicode decoding error."
-            )
-        except UnicodeEncodeError:
-            decoded_value2 = field_marshaler.decode(
-                already_decoded, charset=encoding, contentType=content_type
-            )
-            self.assertEqual(decoded_value.as_json(), decoded_value2.as_json())
-
-        decoded_value = field_marshaler.decode(
-            "", charset=encoding, contentType=content_type
-        )
-
-        self.assertIsInstance(decoded_value, decoded_value2.__class__)
 
         context.organization_resource = None
         fhir_field = getFields(IFFOrganization)["organization_resource"]

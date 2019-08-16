@@ -1,7 +1,15 @@
 # -*- coding: utf-8 -*-
-from .base import setup_es
-from .base import tear_down_es
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING  # noqa: 501
+import io
+import json
+import os
+import time
+import unittest
+
+import six
+
+import transaction
+from plone.app.fhirfield.testing import \
+    PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING  # noqa: 501
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.restapi.interfaces import IDeserializeFromJson
@@ -15,13 +23,8 @@ from zope.event import notify
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
 
-import io
-import json
-import os
-import six
-import time
-import transaction
-import unittest
+from .base import setup_es
+from .base import tear_down_es
 
 
 try:  # pragma: no cover

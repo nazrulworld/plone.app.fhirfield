@@ -163,7 +163,8 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         ).value = "\n".join(default_indexes)
         self.admin_browser.getControl(name="form.widgets.enabled:list").value = [True]
         self.admin_browser.getControl(name="form.buttons.save").click()
-
+        with open("error.html", "w") as fp:
+            fp.write(self.admin_browser.contents)
         form = self.admin_browser.getForm(
             action=self.portal_catalog_url + "/@@elastic-convert"
         )

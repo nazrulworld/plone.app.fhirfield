@@ -1,5 +1,10 @@
 # _*_ coding: utf-8 _*_
-from . import FHIR_FIXTURE_PATH
+import json
+import os
+import unittest
+
+import six
+
 from plone.app.fhirfield import field
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
 from plone.app.fhirfield.value import FhirResourceValue
@@ -8,10 +13,7 @@ from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
 from zope.schema.interfaces import WrongContainedType
 from zope.schema.interfaces import WrongType
 
-import json
-import os
-import six
-import unittest
+from . import FHIR_FIXTURE_PATH
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
@@ -34,7 +36,7 @@ class FieldIntegrationTest(unittest.TestCase):
         try:
             field.FhirResource(
                 title=six.text_type("Organization resource"),
-                model="fhir.resources.organization.Organization",
+                model="fhir.resources.STU3.organization.Organization",
                 model_interface="plone.app.fhirfield.interfaces.IFhirResourceModel",
             )
         except Invalid as exc:
@@ -226,7 +228,7 @@ class FieldIntegrationTest(unittest.TestCase):
         # Test model constraint
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.task.Task",
+            model="fhir.resources.STU3.task.Task",
         )
 
         try:
@@ -267,7 +269,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
         )
 
         try:
@@ -316,7 +318,7 @@ class FieldIntegrationTest(unittest.TestCase):
         # Test contraint
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.task.Task",
+            model="fhir.resources.STU3.task.Task",
         )
 
         try:
@@ -335,7 +337,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
         )
 
         try:
@@ -360,7 +362,7 @@ class FieldIntegrationTest(unittest.TestCase):
         """ """
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
             required=False,
         )
 
@@ -371,7 +373,7 @@ class FieldIntegrationTest(unittest.TestCase):
         """ """
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
         )
 
         empty_value = fhir_field.from_none()
@@ -400,14 +402,14 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
             default=json_dict,
         )
         self.assertEqual(json_dict, fhir_field.default.as_json())
 
         fhir_field2 = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
             default=json.dumps(json_dict),
         )
 
@@ -415,7 +417,7 @@ class FieldIntegrationTest(unittest.TestCase):
 
         fhir_field3 = field.FhirResource(
             title=six.text_type("Organization resource"),
-            model="fhir.resources.organization.Organization",
+            model="fhir.resources.STU3.organization.Organization",
             default=None,
         )
         self.assertEqual(str(fhir_field3.default), "")

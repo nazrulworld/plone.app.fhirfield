@@ -13,7 +13,7 @@ class IFFOrganization(model.Schema):
     """ """
     organization_resource = FhirResource(
         title=u'Fhir Organization Field',
-        model='fhir.resources.organization.Organization',
+        model='fhir.resources.STU3.organization.Organization',
     )
 
 
@@ -26,7 +26,7 @@ class IFFPatient(model.Schema):
     """ """
     patient_resource = FhirResource(
         title=u'Fhir Patient Field',
-        model='fhir.resources.patient.Patient',
+        model='fhir.resources.STU3.patient.Patient',
     )
 
 
@@ -39,7 +39,7 @@ class IFFPractitioner(model.Schema):
     """ """
     practitioner_resource = FhirResource(
         title=u'Fhir Practitioner Field',
-        model='fhir.resources.practitioner.Practitioner',
+        model='fhir.resources.STU3.practitioner.Practitioner',
     )
 
 
@@ -52,7 +52,7 @@ class IFFQuestionnaire(model.Schema):
     """ """
     questionnaire_resource = FhirResource(
         title=u'Fhir Questionnaire Field',
-        model='fhir.resources.questionnaire.Questionnaire',
+        model='fhir.resources.STU3.questionnaire.Questionnaire',
     )
 
 
@@ -65,7 +65,7 @@ class IFFQuestionnaireResponse(model.Schema):
     """ """
     questionnaireresponse_resource = FhirResource(
         title=u'Fhir QuestionnaireResponse Field',
-        model='fhir.resources.questionnaireresponse.QuestionnaireResponse',
+        model='fhir.resources.STU3.questionnaireresponse.QuestionnaireResponse',
     )
 
 
@@ -78,7 +78,7 @@ class IFFTask(model.Schema):
     """ """
     task_resource = FhirResource(
         title=u'Fhir Task Field',
-        model='fhir.resources.task.Task',
+        model='fhir.resources.STU3.task.Task',
     )
 
 
@@ -91,7 +91,7 @@ class IFFProcedureRequest(model.Schema):
     """ """
     procedurerequest_resource = FhirResource(
         title=u'Fhir ProcedureRequest Field',
-        model='fhir.resources.procedurerequest.ProcedureRequest',
+        model='fhir.resources.STU3.procedurerequest.ProcedureRequest',
     )
 
 
@@ -104,7 +104,7 @@ class IFFDevice(model.Schema):
     """ """
     device_resource = FhirResource(
         title=u'Fhir Device Field',
-        model='fhir.resources.device.Device',
+        resource_type='Device',
     )
 
 
@@ -117,7 +117,7 @@ class IFFDeviceRequest(model.Schema):
     """ """
     task_resource = FhirResource(
         title=u'Fhir DeviceRequest Field',
-        model='fhir.resources.devicerequest.DeviceRequest',
+        resource_type='DeviceRequest',
     )
 
 
@@ -130,7 +130,7 @@ class IFFValueSet(model.Schema):
     """ """
     valueset_resource = FhirResource(
         title=u'Fhir ValueSet Field',
-        model='fhir.resources.valueset.ValueSet',
+        resource_type='ValueSet',
     )
 
 
@@ -143,7 +143,7 @@ class IFFChargeItem(model.Schema):
     """"""
     chargeitem_resource = FhirResource(
         title=u'Fhir ChargeItem Field',
-        model='fhir.resources.chargeitem.ChargeItem',
+        resource_type='ChargeItem',
     )
 
 
@@ -156,7 +156,7 @@ class IFFEncounter(model.Schema):
     """"""
     encounter_resource = FhirResource(
         title=u'Fhir FFEncounter Field',
-        model='fhir.resources.encounter.Encounter',
+        resource_type='Encounter',
     )
 
 
@@ -169,7 +169,7 @@ class IFFMedicationRequest(model.Schema):
     """"""
     medicationrequest_resource = FhirResource(
         title=u'Fhir MedicationRequest Field',
-        model='fhir.resources.medicationrequest.MedicationRequest',
+        resource_type='MedicationRequest',
     )
 
 
@@ -182,7 +182,7 @@ class IFFObservation(model.Schema):
     """"""
     observation_resource = FhirResource(
         title=u'Fhir Observation Field',
-        model='fhir.resources.observation.Observation',
+        resource_type='Observation',
     )
 
 
@@ -195,7 +195,7 @@ class IFFMedia(model.Schema):
     """"""
     media_resource = FhirResource(
         title=u'Fhir Media Field',
-        model='fhir.resources.media.Media',
+        resource_type='Media',
     )
 
 

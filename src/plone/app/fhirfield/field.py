@@ -1,5 +1,9 @@
 # _*_ coding:utf-8 _*_
-from fhir.resources.fhirabstractbase import FHIRValidationError
+import sys
+
+import six
+
+from fhir.resources.STU3.fhirabstractbase import FHIRValidationError
 from plone import api
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.helpers import import_string
@@ -10,22 +14,19 @@ from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceModel
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.value import FhirResourceValue
-from zope.interface import implementer
 from zope.interface import Invalid
+from zope.interface import implementer
 from zope.interface.exceptions import BrokenImplementation
 from zope.interface.exceptions import BrokenMethodImplementation
 from zope.interface.exceptions import DoesNotImplement
 from zope.interface.interfaces import IInterface
 from zope.interface.verify import verifyObject
-from zope.schema import getFields
 from zope.schema import Object
+from zope.schema import getFields
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied
 from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import WrongContainedType
 from zope.schema.interfaces import WrongType
-
-import six
-import sys
 
 
 __author__ = "Md Nazrul Islam<nazrul@zitelab.dk>"
@@ -58,6 +59,7 @@ class FhirResource(Object):
         self.model = model
         self.resource_type = resource_type
         self.model_interface = model_interface
+        self.validate_invariants = kw.pop("validate_invariants", False)
 
         self._init_validate()
 

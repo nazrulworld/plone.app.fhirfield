@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 """Setup tests for this package."""
-from . import FHIR_FIXTURE_PATH
-from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import FhirFieldIndex
-from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import make_fhir_index_datum  # noqa: E501
-from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING  # noqa: E501
-
 import json
 import os
 import unittest
+
+from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import FhirFieldIndex
+from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import \
+    make_fhir_index_datum  # noqa: E501
+from plone.app.fhirfield.testing import \
+    PLONE_APP_FHIRFIELD_INTEGRATION_TESTING  # noqa: E501
+
+from . import FHIR_FIXTURE_PATH
 
 
 __author__ = 'Md Nazrul Islam<email2nazrul@gamil.com>'
