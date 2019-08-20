@@ -102,6 +102,7 @@ class FhirFieldIndex(FieldIndex):
                 return
         if fhir_value:
             datum = make_fhir_index_datum(self.mapping, fhir_value)
+            datum = json.dumps(datum, sort_keys=True)
 
         return datum
 
