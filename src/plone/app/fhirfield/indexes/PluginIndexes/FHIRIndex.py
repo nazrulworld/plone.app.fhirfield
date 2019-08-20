@@ -85,7 +85,7 @@ class FhirFieldIndex(FieldIndex):
         if not datum:
             # Nothing to do
             return datum
-
+        # import pdb;pdb.set_trace()
         fhir_value = None
         if IFhirResourceValue.providedBy(datum):
             fhir_value = datum.as_json()
@@ -102,6 +102,9 @@ class FhirFieldIndex(FieldIndex):
                 return
         if fhir_value:
             datum = make_fhir_index_datum(self.mapping, fhir_value)
+            # issue: https://github.com/zopefoundation/BTrees/issues/109
+            datum = json.dumps(datum, sort_keys=True)
+            # https://stackoverflow.com/questions/10844064/items-in-json-object-are-out-of-order-using-json-dumps
 
         return datum
 
