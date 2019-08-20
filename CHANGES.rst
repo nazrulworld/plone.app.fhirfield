@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1.0 (unreleased)
+2.1.0 (2019-08-20)
 ------------------
 
 - ZCatalog's index datum value type is now string (json serialized) (previously was dictionary type).
