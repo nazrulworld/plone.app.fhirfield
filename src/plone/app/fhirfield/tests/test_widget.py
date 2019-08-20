@@ -236,9 +236,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.getControl(name="form.widgets.organization_resource").value = fhir_str
         browser.getControl(name="form.buttons.save").click()
         # There must be form error! as required title is missing so url is unchanged
-        self.assertEqual(
-            browser.url, self.portal_url + "/++add++FFOrganization"
-        )
+        self.assertEqual(browser.url, self.portal_url + "/++add++FFOrganization")
         # Test Value exist, even form resubmit
         self.assertEqual(
             json.loads(
@@ -255,10 +253,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         browser.getControl(name="form.widgets.organization_resource").value = fhir_str
         browser.getControl(name="form.buttons.save").click()
         # should suceess now and redirect to view page
-        self.assertEqual(
-            browser.url,
-            "http://nohost/plone/fforganization/view",
-        )
+        self.assertEqual(browser.url, "http://nohost/plone/fforganization/view")
 
         # let's try edit
         browser.open("http://nohost/plone/fforganization/edit")
@@ -273,9 +268,7 @@ class WidgetFunctionalTest(unittest.TestCase):
         # should sucess
         self.assertIn('class="portalMessage info"', browser.contents)
         self.assertIn("Changes saved", browser.contents)
-        self.assertEqual(
-            browser.url, "http://nohost/plone/fforganization"
-        )
+        self.assertEqual(browser.url, "http://nohost/plone/fforganization")
 
     def test_issue_11(self):
         """Better default view for FHIR field in view mode"""

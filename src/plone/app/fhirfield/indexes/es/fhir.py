@@ -4,8 +4,8 @@
 # @Link    : http://nazrul.me/
 # @Version : $Id$
 # All imports here
-from .helpers import build_elasticsearch_query
-from .helpers import get_elasticsearch_mapping
+import warnings
+
 from collective.elasticsearch import logger
 from collective.elasticsearch.indexes import BaseIndex
 from Missing import MV
@@ -13,14 +13,16 @@ from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST
 
-import warnings
+from .helpers import build_elasticsearch_query
+from .helpers import get_elasticsearch_mapping
 
 
-__author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 
 class EsFhirFieldIndex(BaseIndex):
     """ """
+
     filter_query = True
 
     def validate_name(self, name):
@@ -32,17 +34,18 @@ class EsFhirFieldIndex(BaseIndex):
         """Minimal mapping for all kind of fhir models"""
         self.validate_name(name)
 
-        key = name.split('_')[0]
+        key = name.split("_")[0]
 
         try:
             return get_elasticsearch_mapping(key)
         except LookupError:
             warnings.warn(
-                'No mapping found for `{0}`, instead minimal '
-                'mapping has been used.'.format(name),
-                UserWarning)
+                "No mapping found for `{0}`, instead minimal "
+                "mapping has been used.".format(name),
+                UserWarning,
+            )
         # Return the base/basic mapping
-        return get_elasticsearch_mapping('Resource')
+        return get_elasticsearch_mapping("Resource")
 
     def get_value(self, object):
         """ """
@@ -51,14 +54,13 @@ class EsFhirFieldIndex(BaseIndex):
         if len(attrs) > 0:
             attr = attrs[0]
         else:
-            attr = ''
+            attr = ""
 
-        if getattr(self.index, 'index_object', None):
+        if getattr(self.index, "index_object", None):
             value = self.index._get_object_datum(object, attr, es_datum=True)
         else:
             logger.info(
-                'catalogObject was passed bad index '
-                'object {0!s}.'.format(self.index),
+                "catalogObject was passed bad index " "object {0!s}.".format(self.index)
             )
         if value == MV:
             return None
@@ -73,23 +75,22 @@ class EsFhirFieldIndex(BaseIndex):
         other query is building here"""
         self.validate_name(name)
         value = self._normalize_query(value)
-        if value in (None, ''):
+        if value in (None, ""):
             return
 
-        if isinstance(value, dict) and value.get('query'):
-            query = {'and': value.get('query')}
+        if isinstance(value, dict) and value.get("query"):
+            query = {"and": value.get("query")}
             # need query validation???
             return query
 
         params = None
 
-        resource_type = FHIR_RESOURCE_LIST[name.split('_')[0].lower()]['name']
+        resource_type = FHIR_RESOURCE_LIST[name.split("_")[0].lower()]["name"]
         if params is None:
             params = value
 
         query = build_elasticsearch_query(
-            params,
-            field_name=name,
-            resource_type=resource_type)
+            params, field_name=name, resource_type=resource_type
+        )
 
         return query

@@ -1,21 +1,23 @@
 # _*_ coding: utf-8 _*_
-from .interfaces import IFhirResourceModel
-from .interfaces import IFhirResourceValue
+import sys
 from collections import OrderedDict
+
+import six
+
+import jsonpatch
 from persistent import Persistent
 from plone import api
 from plone.app.fhirfield.compat import json
-from zope.interface import implementer
 from zope.interface import Invalid
+from zope.interface import implementer
 from zope.interface.exceptions import BrokenImplementation
 from zope.interface.exceptions import BrokenMethodImplementation
 from zope.interface.exceptions import DoesNotImplement
 from zope.interface.verify import verifyObject
 from zope.schema.interfaces import WrongType
 
-import jsonpatch
-import six
-import sys
+from .interfaces import IFhirResourceModel
+from .interfaces import IFhirResourceValue
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"

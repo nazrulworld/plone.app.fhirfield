@@ -1,4 +1,6 @@
 # _*_ coding: utf-8 _*_
+import six
+
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.dexterity.interfaces import IDexterityContent
 from plone.restapi.deserializer.dxfields import DefaultFieldDeserializer
@@ -6,8 +8,6 @@ from plone.restapi.interfaces import IFieldDeserializer
 from zope.component import adapter
 from zope.interface import implementer
 from zope.publisher.interfaces.browser import IBrowserRequest
-
-import six
 
 
 __author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"

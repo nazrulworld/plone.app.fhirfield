@@ -1,18 +1,20 @@
 # _*_ coding: utf-8 _*_
-from . import FHIR_FIXTURE_PATH
+import json
+import os
+import pickle as cPickle
+import unittest
+
+import six
+
 from plone.app.fhirfield import value
 from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
 from plone.app.fhirfield.interfaces import IFhirResourceModel
-from zope.interface import implementer
 from zope.interface import Invalid
+from zope.interface import implementer
 from zope.schema.interfaces import WrongType
 
-import pickle as cPickle
-import json
-import os
-import six
-import unittest
+from . import FHIR_FIXTURE_PATH
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"

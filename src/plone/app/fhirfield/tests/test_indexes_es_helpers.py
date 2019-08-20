@@ -1,11 +1,11 @@
 # _*_ coding: utf-8 _*_
+import unittest
+
 from collective.elasticsearch.query import QueryAssembler
 from plone.app.fhirfield.exc import SearchQueryValidationError
 from plone.app.fhirfield.indexes.es import helpers
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from zope.interface import Invalid
-
-import unittest
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"

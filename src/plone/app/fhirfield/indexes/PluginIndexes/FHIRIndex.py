@@ -4,14 +4,15 @@
 # @Link    : http://nazrul.me/
 # @Version : $Id$
 # All imports here
+import warnings
+
+import six
+
 from App.special_dtml import DTMLFile
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.helpers import validate_index_name
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex
-
-import six
-import warnings
 
 
 __author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"

@@ -1,4 +1,6 @@
 # _*_ coding: utf-8 _*_
+import six
+
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from Products.CMFPlone.resources import add_resource_on_request
@@ -6,19 +8,17 @@ from z3c.form.browser.textarea import TextAreaWidget
 from z3c.form.browser.widget import addFieldClass
 from z3c.form.converter import BaseDataConverter
 from z3c.form.interfaces import DISPLAY_MODE
+from z3c.form.interfaces import NOVALUE
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer
 from z3c.form.interfaces import ITextAreaWidget
-from z3c.form.interfaces import NOVALUE
 from z3c.form.widget import FieldWidget
 from zope.component import adapter
 from zope.interface import implementer
 from zope.interface import implementer_only
 
-import six
 
-
-__author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class IFhirResourceWidget(ITextAreaWidget):
@@ -28,7 +28,7 @@ class IFhirResourceWidget(ITextAreaWidget):
 @implementer_only(IFhirResourceWidget)
 class FhirResourceWidget(TextAreaWidget):
 
-    klass = u'fhirResourceWidget'
+    klass = u"fhirResourceWidget"
     value = None
 
     def update(self):
@@ -39,12 +39,8 @@ class FhirResourceWidget(TextAreaWidget):
 
         if self.mode == DISPLAY_MODE:
             # add the registered resource on condition
-            add_resource_on_request(
-                self.request,
-                'fhirfield-json-viewer-js')
-            add_resource_on_request(
-                self.request,
-                'fhirfield-json-viewer-style')
+            add_resource_on_request(self.request, "fhirfield-json-viewer-js")
+            add_resource_on_request(self.request, "fhirfield-json-viewer-style")
 
     def extract(self, default=NOVALUE):
         raw = self.request.get(self.name, default)
@@ -66,15 +62,13 @@ class FhirResourceConverter(BaseDataConverter):
         if IFhirResourceValue.providedBy(value):
             return value
 
-        elif value in (NOVALUE, None, ''):
+        elif value in (NOVALUE, None, ""):
             return IFhirResource(self.field).from_none()
 
         elif isinstance(value, six.string_types):
             return IFhirResource(self.field).fromUnicode(value)
 
-        raise ValueError(
-            'Can not convert {0!s} to an IFhirResourceValue'.format(value),
-        )
+        raise ValueError("Can not convert {0!s} to an IFhirResourceValue".format(value))
 
     def toFieldValue(self, value):
         """ """
@@ -84,12 +78,10 @@ class FhirResourceConverter(BaseDataConverter):
         elif isinstance(value, six.string_types):
             return IFhirResource(self.field).fromUnicode(value)
 
-        elif value in (NOVALUE, None, ''):
+        elif value in (NOVALUE, None, ""):
             return IFhirResource(self.field).from_none()
 
-        raise ValueError(
-            'Can not convert {0!s} to an IFhirResourceValue'.format(value),
-        )
+        raise ValueError("Can not convert {0!s} to an IFhirResourceValue".format(value))
 
 
 class FhirResourceAreaConverter(BaseDataConverter):
@@ -97,21 +89,19 @@ class FhirResourceAreaConverter(BaseDataConverter):
 
     def toWidgetValue(self, value):
         """ """
-        if value in (None, '', NOVALUE):
-            return ''
+        if value in (None, "", NOVALUE):
+            return ""
 
         if IFhirResourceValue.providedBy(value):
-            if self.widget.mode in ('input', 'hidden'):
+            if self.widget.mode in ("input", "hidden"):
                 return value.stringify()
-            elif self.widget.mode == 'display':
+            elif self.widget.mode == "display":
                 return value.stringify()
 
         if isinstance(value, six.string_types):
             return value
 
-        raise ValueError(
-            'Can not convert {0:s} to unicode'.format(repr(value)),
-        )
+        raise ValueError("Can not convert {0:s} to unicode".format(repr(value)))
 
     def toFieldValue(self, value):
         """ """
@@ -121,9 +111,7 @@ class FhirResourceAreaConverter(BaseDataConverter):
         elif isinstance(value, six.string_types):
             return IFhirResource(self.field).fromUnicode(value)
 
-        elif value in (NOVALUE, None, ''):
+        elif value in (NOVALUE, None, ""):
             return IFhirResource(self.field).from_none()
 
-        raise ValueError(
-            'Can not convert {0!r} to an IFhirResourceValue'.format(value),
-        )
+        raise ValueError("Can not convert {0!r} to an IFhirResourceValue".format(value))

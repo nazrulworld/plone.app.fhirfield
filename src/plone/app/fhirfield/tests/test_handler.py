@@ -18,26 +18,27 @@ from . import FHIR_FIXTURE_PATH
 from .schema import IFFOrganization
 
 
-___author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+___author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class HandlerIntegrationTest(unittest.TestCase):
     """ """
+
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
     def setUp(self):
         """ """
-        self.portal = self.layer['portal']
-        self.request = self.layer['request']
+        self.portal = self.layer["portal"]
+        self.request = self.layer["request"]
 
     def test_handler(self):
         """ """
-        with open(os.path.join(FHIR_FIXTURE_PATH, 'Organization.json'), 'r') as f:
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
             fhir_str = f.read()
 
-        fhir_field = getFields(IFFOrganization)['organization_resource']
+        fhir_field = getFields(IFFOrganization)["organization_resource"]
         # Test: available as adapter
-        resource_handler = queryMultiAdapter((fhir_field, ), IToUnicode)
+        resource_handler = queryMultiAdapter((fhir_field,), IToUnicode)
 
         self.assertIsNotNone(resource_handler)
         self.assertIsInstance(resource_handler, handler.FhirResourceToUnicode)
@@ -48,18 +49,19 @@ class HandlerIntegrationTest(unittest.TestCase):
 
         # Test: available as Uitility
         fhir_hanlder_util = queryUtility(
-            IFieldExportImportHandler,
-            name='plone.app.fhirfield.field.FhirResource')
+            IFieldExportImportHandler, name="plone.app.fhirfield.field.FhirResource"
+        )
         self.assertIsNotNone(fhir_hanlder_util)
         self.assertEqual(fhir_hanlder_util, handler.FhirResourceHandler)
 
         class ITestPatient(model.Schema):
-            model.load(os.path.join(BASE_TEST_PATH, 'schema', 'patient.xml'))
+            model.load(os.path.join(BASE_TEST_PATH, "schema", "patient.xml"))
 
-        fhir_field2 = getFields(ITestPatient)['resource']
+        fhir_field2 = getFields(ITestPatient)["resource"]
         self.assertEqual(fhir_field2.__class__, fhir_field.__class__)
 
         xml_schema = serializeSchema(ITestPatient)
         self.assertIn(
             '<field name="resource" type="plone.app.fhirfield.field.FhirResource">',
-            xml_schema)
+            xml_schema,
+        )

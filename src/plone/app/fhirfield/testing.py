@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
+import os
+import sys
+
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
-from plone.app.testing import applyProfile
+from plone.app.testing import TEST_USER_ID
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import applyProfile
 from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID
 from plone.testing import z2
 from zope.configuration import xmlconfig
-
-import os
-import sys
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@zitelab.dk>"
@@ -100,7 +100,7 @@ PLONE_APP_FHIRFIELD_INTEGRATION_TESTING = IntegrationTesting(
 
 
 PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_FHIRFIELD_FIXTURE, ),
+    bases=(PLONE_APP_FHIRFIELD_FIXTURE,),
     name="PloneAppFhirfieldLayer:FunctionalTesting",
 )
 

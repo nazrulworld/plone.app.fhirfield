@@ -6,4 +6,4 @@
 # All imports here
 
 
-__author__ = 'Md Nazrul Islam (email2nazrul@gmail.com)'
+__author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"

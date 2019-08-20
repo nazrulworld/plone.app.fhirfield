@@ -7,22 +7,24 @@
 # https://smilecdr.com/docs/current/tutorial_and_tour/fhir_search_queries.html
 # https://github.com/FirelyTeam/RonFHIR
 # All imports here
-from . import FHIR_FIXTURE_PATH
-from .base import BaseFunctionalTesting
-from collective.elasticsearch.es import ElasticSearchCatalog
-from DateTime import DateTime
-from plone import api
-from plone.app.fhirfield.exc import SearchQueryValidationError
-from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import FhirFieldIndex  # noqa: E501
-from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import make_fhir_index_datum
-from plone.app.fhirfield.testing import IS_TRAVIS  # noqa: E501
-
 import copy
 import json
 import os
 import time
 import unittest
 import uuid
+
+from collective.elasticsearch.es import ElasticSearchCatalog
+from DateTime import DateTime
+from plone import api
+from plone.app.fhirfield.exc import SearchQueryValidationError
+from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import \
+    FhirFieldIndex  # noqa: E501
+from plone.app.fhirfield.indexes.PluginIndexes.FHIRIndex import make_fhir_index_datum
+from plone.app.fhirfield.testing import IS_TRAVIS  # noqa: E501
+
+from . import FHIR_FIXTURE_PATH
+from .base import BaseFunctionalTesting
 
 
 __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"

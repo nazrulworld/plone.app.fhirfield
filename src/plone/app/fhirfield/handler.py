@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import six
+
 from plone.app.fhirfield.field import FhirResource
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.supermodel.exportimport import BaseHandler
@@ -6,10 +8,8 @@ from plone.supermodel.interfaces import IToUnicode
 from zope.component import adapter
 from zope.interface import implementer
 
-import six
 
-
-__author__ = 'Md Nazrul Islam <email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 
 class FhirResourceHandler_(BaseHandler):
@@ -19,7 +19,7 @@ class FhirResourceHandler_(BaseHandler):
 
     # Don't read or write 'schema'
     filteredAttributes = BaseHandler.filteredAttributes.copy()
-    filteredAttributes.update({'schema': 'rw'})
+    filteredAttributes.update({"schema": "rw"})
 
     def __init__(self, klass):
         super(FhirResourceHandler_, self).__init__(klass)
@@ -28,7 +28,6 @@ class FhirResourceHandler_(BaseHandler):
 @implementer(IToUnicode)
 @adapter(IFhirResource)
 class FhirResourceToUnicode(object):
-
     def __init__(self, context):
         self.context = context
 

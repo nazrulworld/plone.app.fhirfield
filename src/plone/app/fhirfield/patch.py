@@ -13,4 +13,3 @@ def monkey_patch_fhir_base_model():
     fhir.resources.STU3.resource.Resource = implementer(IFhirResourceModel)(
         fhir.resources.STU3.resource.Resource
     )
-

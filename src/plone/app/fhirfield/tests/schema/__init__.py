@@ -6,14 +6,15 @@ from plone.supermodel import model
 from zope.interface import implementer
 
 
-__author__ = 'Md Nazrul Islam<email2nazrul@gmail.com>'
+__author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 
 class IFFOrganization(model.Schema):
     """ """
+
     organization_resource = FhirResource(
-        title=u'Fhir Organization Field',
-        model='fhir.resources.STU3.organization.Organization',
+        title=u"Fhir Organization Field",
+        model="fhir.resources.STU3.organization.Organization",
     )
 
 
@@ -24,9 +25,9 @@ class FFOrganization(Container):
 
 class IFFPatient(model.Schema):
     """ """
+
     patient_resource = FhirResource(
-        title=u'Fhir Patient Field',
-        model='fhir.resources.STU3.patient.Patient',
+        title=u"Fhir Patient Field", model="fhir.resources.STU3.patient.Patient"
     )
 
 
@@ -37,9 +38,10 @@ class FFPatient(Container):
 
 class IFFPractitioner(model.Schema):
     """ """
+
     practitioner_resource = FhirResource(
-        title=u'Fhir Practitioner Field',
-        model='fhir.resources.STU3.practitioner.Practitioner',
+        title=u"Fhir Practitioner Field",
+        model="fhir.resources.STU3.practitioner.Practitioner",
     )
 
 
@@ -50,9 +52,10 @@ class FFPractitioner(Container):
 
 class IFFQuestionnaire(model.Schema):
     """ """
+
     questionnaire_resource = FhirResource(
-        title=u'Fhir Questionnaire Field',
-        model='fhir.resources.STU3.questionnaire.Questionnaire',
+        title=u"Fhir Questionnaire Field",
+        model="fhir.resources.STU3.questionnaire.Questionnaire",
     )
 
 
@@ -63,9 +66,10 @@ class FFQuestionnaire(Container):
 
 class IFFQuestionnaireResponse(model.Schema):
     """ """
+
     questionnaireresponse_resource = FhirResource(
-        title=u'Fhir QuestionnaireResponse Field',
-        model='fhir.resources.STU3.questionnaireresponse.QuestionnaireResponse',
+        title=u"Fhir QuestionnaireResponse Field",
+        model="fhir.resources.STU3.questionnaireresponse.QuestionnaireResponse",
     )
 
 
@@ -76,9 +80,9 @@ class FFQuestionnaireResponse(Container):
 
 class IFFTask(model.Schema):
     """ """
+
     task_resource = FhirResource(
-        title=u'Fhir Task Field',
-        model='fhir.resources.STU3.task.Task',
+        title=u"Fhir Task Field", model="fhir.resources.STU3.task.Task"
     )
 
 
@@ -89,9 +93,10 @@ class FFTask(Container):
 
 class IFFProcedureRequest(model.Schema):
     """ """
+
     procedurerequest_resource = FhirResource(
-        title=u'Fhir ProcedureRequest Field',
-        model='fhir.resources.STU3.procedurerequest.ProcedureRequest',
+        title=u"Fhir ProcedureRequest Field",
+        model="fhir.resources.STU3.procedurerequest.ProcedureRequest",
     )
 
 
@@ -102,10 +107,8 @@ class FFProcedureRequest(Item):
 
 class IFFDevice(model.Schema):
     """ """
-    device_resource = FhirResource(
-        title=u'Fhir Device Field',
-        resource_type='Device',
-    )
+
+    device_resource = FhirResource(title=u"Fhir Device Field", resource_type="Device")
 
 
 @implementer(IFFDevice)
@@ -115,9 +118,9 @@ class FFDevice(Item):
 
 class IFFDeviceRequest(model.Schema):
     """ """
+
     task_resource = FhirResource(
-        title=u'Fhir DeviceRequest Field',
-        resource_type='DeviceRequest',
+        title=u"Fhir DeviceRequest Field", resource_type="DeviceRequest"
     )
 
 
@@ -128,9 +131,9 @@ class FFDeviceRequest(Item):
 
 class IFFValueSet(model.Schema):
     """ """
+
     valueset_resource = FhirResource(
-        title=u'Fhir ValueSet Field',
-        resource_type='ValueSet',
+        title=u"Fhir ValueSet Field", resource_type="ValueSet"
     )
 
 
@@ -141,9 +144,9 @@ class FFValueSet(Item):
 
 class IFFChargeItem(model.Schema):
     """"""
+
     chargeitem_resource = FhirResource(
-        title=u'Fhir ChargeItem Field',
-        resource_type='ChargeItem',
+        title=u"Fhir ChargeItem Field", resource_type="ChargeItem"
     )
 
 
@@ -154,9 +157,9 @@ class FFChargeItem(Item):
 
 class IFFEncounter(model.Schema):
     """"""
+
     encounter_resource = FhirResource(
-        title=u'Fhir FFEncounter Field',
-        resource_type='Encounter',
+        title=u"Fhir FFEncounter Field", resource_type="Encounter"
     )
 
 
@@ -167,9 +170,9 @@ class FFEncounter(Item):
 
 class IFFMedicationRequest(model.Schema):
     """"""
+
     medicationrequest_resource = FhirResource(
-        title=u'Fhir MedicationRequest Field',
-        resource_type='MedicationRequest',
+        title=u"Fhir MedicationRequest Field", resource_type="MedicationRequest"
     )
 
 
@@ -180,9 +183,9 @@ class FFMedicationRequest(Item):
 
 class IFFObservation(model.Schema):
     """"""
+
     observation_resource = FhirResource(
-        title=u'Fhir Observation Field',
-        resource_type='Observation',
+        title=u"Fhir Observation Field", resource_type="Observation"
     )
 
 
@@ -193,10 +196,8 @@ class FFObservation(Item):
 
 class IFFMedia(model.Schema):
     """"""
-    media_resource = FhirResource(
-        title=u'Fhir Media Field',
-        resource_type='Media',
-    )
+
+    media_resource = FhirResource(title=u"Fhir Media Field", resource_type="Media")
 
 
 @implementer(IFFMedia)

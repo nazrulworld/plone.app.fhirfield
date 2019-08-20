@@ -1,11 +1,11 @@
 # _*_ coding: utf-8 _*_
+import logging
+
 from plone import api
 from plone.app.fhirfield import field
 from plone.app.fhirfield import interfaces
 from plone.app.fhirfield.compat import _
 from plone.schemaeditor.fields import FieldFactory
-
-import logging
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
