@@ -713,7 +713,7 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
 
         index_datum = make_fhir_index_datum(FhirFieldIndex.mapping, fhir_json)
 
-        self.assertEqual(indexed_data, index_datum)
+        self.assertEqual(indexed_data, json.dumps(index_datum, sort_keys=True))
 
     def test_quantity_type_search(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/7"""

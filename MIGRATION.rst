@@ -1,6 +1,11 @@
 Migration
 =========
 
+2.0.0 to 2.x.x
+--------------
+
+1. Do full reindex of objects (remove and build)
+
 1.0.0 to 2.0.0
 --------------
 
