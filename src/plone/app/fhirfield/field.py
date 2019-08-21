@@ -94,6 +94,15 @@ class FhirResource(Object):
         """"""
         return FhirResourceValue()
 
+    def get_resource_type(self):
+        """ """
+        if self.resource_type:
+            return self.resource_type
+        elif self.model:
+            return import_string(self.model).resource_type
+        else:
+            raise NotImplementedError
+
     def _init_validate(self):
         """ """
         if self.resource_type and self.model is not None:

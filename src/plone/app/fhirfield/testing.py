@@ -50,6 +50,10 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
         self.loadZCML(package=plone.app.z3cform)
 
+        import fhirpath.providers.plone_app
+
+        self.loadZCML(package=fhirpath.providers.plone_app)
+
         import collective.elasticsearch
 
         self.loadZCML(package=collective.elasticsearch)
