@@ -5,6 +5,7 @@ from collective.elasticsearch.es import ElasticSearchCatalog
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.interfaces import IEngine
 from fhirpath.interfaces import IFhirSearch  # noqa
+from fhirpath.interfaces import ISearchContext
 from fhirpath.interfaces import ISearchContextFactory  # noqa
 from fhirpath.providers.interfaces import IElasticsearchEngineFactory
 from plone import api
@@ -36,3 +37,32 @@ class FhirpathPloneUtilitiesIntegrationTest(unittest.TestCase):
         self.assertIsNotNone(factory)
         engine = factory(fhir_version=FHIR_VERSION.STU3)
         self.assertTrue(IEngine.providedBy(engine))
+
+    def test_search_context_creation(self):
+        """ """
+        engine = queryMultiAdapter(
+            (self.get_es_catalog(),), IElasticsearchEngineFactory
+        )(fhir_version=FHIR_VERSION.STU3)
+
+        factory = queryMultiAdapter(
+            (engine,), ISearchContextFactory
+        )
+        self.assertIsNotNone(factory)
+
+        context = factory("Organization")
+        self.assertTrue(ISearchContext.providedBy(context))
+
+    def test_search_factory_creation(self):
+        """ """
+        engine = queryMultiAdapter(
+            (self.get_es_catalog(),), IElasticsearchEngineFactory
+        )(fhir_version=FHIR_VERSION.STU3)
+
+        context = queryMultiAdapter(
+            (engine,), ISearchContextFactory
+        )("Organization")
+
+        factory = queryMultiAdapter(
+            (context,), IFhirSearch
+        )
+        self.assertIsNotNone(factory)
