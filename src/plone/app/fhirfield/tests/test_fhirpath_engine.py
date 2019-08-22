@@ -38,3 +38,9 @@ class FhirpathPloneEngineIntegrationTest(unittest.TestCase):
         engine = self.get_engine()
         index_field_name = engine.calculate_field_index_name("Organization")
         self.assertEqual(index_field_name, "organization_resource")
+
+    def test_build_security_query(self):
+        """ """
+        engine = self.get_engine()
+        security_params = engine.build_security_query()
+        self.assertIn("user:test_user_1_", security_params["allowedRolesAndUsers"])
