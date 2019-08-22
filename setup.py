@@ -20,7 +20,7 @@ install_requires = [
     'fhirpath'
 ]
 elasticsearch_requires = [
-    'collective.elasticsearch'
+    'collective.elasticsearch>=3.0.4'
 ]
 test_requires = [
     'plone.restapi',
