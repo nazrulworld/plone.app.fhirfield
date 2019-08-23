@@ -4,9 +4,9 @@ import unittest
 from collective.elasticsearch.es import ElasticSearchCatalog
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.interfaces import IEngine
-from fhirpath.interfaces import IFhirSearch  # noqa
+from fhirpath.interfaces import IFhirSearch
 from fhirpath.interfaces import ISearchContext
-from fhirpath.interfaces import ISearchContextFactory  # noqa
+from fhirpath.interfaces import ISearchContextFactory
 from fhirpath.providers.interfaces import IElasticsearchEngineFactory
 from plone import api
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
