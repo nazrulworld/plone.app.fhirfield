@@ -13,7 +13,7 @@ from .base import BaseFunctionalTesting
 __author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 
-class FhirPathPloneSearch(BaseFunctionalTesting):
+class FhirPathPloneSearchFunctional(BaseFunctionalTesting):
     """ """
 
     def get_es_catalog(self):
