@@ -6,8 +6,9 @@
 # All imports here
 import warnings
 
-import six
+import pkg_resources
 
+import six
 from App.special_dtml import DTMLFile
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.helpers import validate_index_name
@@ -16,6 +17,13 @@ from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex
 
 
 __author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
+
+try:
+    pkg_resources.get_distribution("collective.elasticsearch")
+    HAS_ES = True
+    from ..es.helpers import get_elasticsearch_mapping
+except pkg_resources.DistributionNotFound:
+    HAS_ES = False
 
 
 def make_fhir_index_datum(mapping, fhir_json):
@@ -50,7 +58,7 @@ class FhirFieldIndex(FieldIndex):
     query_options = ("query", "not")
     manage = manage_main = DTMLFile("dtml/manageFhirFieldIndex", globals())
     manage_main._setName("manage_main")
-    mapping = {
+    default_mapping = {
         "id": {"type": "string"},
         "meta": {
             "properties": {
@@ -116,6 +124,22 @@ class FhirFieldIndex(FieldIndex):
     def index_object(self, documentId, obj, threshold=None):
         """ """
         return super(FhirFieldIndex, self).index_object(documentId, obj, threshold=None)
+
+    @property
+    def mapping(self):
+        """Minimal mapping for all kind of fhir models"""
+        if HAS_ES:
+            key = self.id.split("_")[0]
+            try:
+                return get_elasticsearch_mapping(key)
+            except LookupError:
+                warnings.warn(
+                    "No mapping found for `{0}`, instead minimal "
+                    "mapping has been used.".format(self.id),
+                    UserWarning,
+                )
+        # Return the base/basic mapping
+        return self.default_mapping
 
 
 def manage_addFhirFieldIndex(
