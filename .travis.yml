@@ -15,7 +15,7 @@ cache:
     - $HOME/buildout-cache
 env:
   global:
-    - ES_VERSION=6.3.0
+    - ES_VERSION=6.8.3
   matrix:
     - PLONE_VERSION=5.2.x  QA=true
 

@@ -108,6 +108,7 @@ def QueryAssembler___call__(self, dquery):
 
         if context in query["bool"] and len(query["bool"][context]) == 0:
             del query["bool"][context]
+
     return query
 
 

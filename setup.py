@@ -5,39 +5,36 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-long_description = '\n\n'.join([
-    open('README.rst').read(),
-    open('MIGRATION.rst').read(),
-    open('SEARCH.rst').read(),
-    open('RESTAPI.rst').read(),
-    open('CONTRIBUTORS.rst').read(),
-    open('CHANGES.rst').read(),
-])
+long_description = "\n\n".join(
+    [
+        open("README.rst").read(),
+        open("MIGRATION.rst").read(),
+        open("SEARCH.rst").read(),
+        open("RESTAPI.rst").read(),
+        open("CONTRIBUTORS.rst").read(),
+        open("CHANGES.rst").read(),
+    ]
+)
 
-install_requires = [
-    'setuptools',
-    'jsonpatch',
-    'fhirpath'
-]
-elasticsearch_requires = [
-    'collective.elasticsearch>=3.0.4'
-]
+install_requires = ["setuptools", "jsonpatch"]
+elasticsearch_requires = ["collective.elasticsearch>=3.0.4"]
+fhirpath_requires = ["collective.fhirpath"]
 test_requires = [
-    'plone.restapi',
-    'plone.schemaeditor',
-    'plone.supermodel',
-    'plone.app.testing',
-    'plone.testing>=5.0.0',
-    'plone.app.contenttypes',
-    'plone.app.robotframework[debug]',
-    'collective.MockMailHost',
-    'Products.contentmigration',
-    'requests',
+    "plone.restapi",
+    "plone.schemaeditor",
+    "plone.supermodel",
+    "plone.app.testing",
+    "plone.testing>=5.0.0",
+    "plone.app.contenttypes",
+    "plone.app.robotframework[debug]",
+    "collective.MockMailHost",
+    "Products.contentmigration",
+    "requests",
 ]
 
 setup(
-    name='plone.app.fhirfield',
-    version='3.0.0a1.dev0',
+    name="plone.app.fhirfield",
+    version="3.0.0a1.dev0",
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
@@ -57,20 +54,21 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ],
-    keywords='Python Plone Zope FHIR Field',
-    author='Md Nazrul Islam',
-    author_email='email2nazrul@gmail.com',
-    url='https://pypi.python.org/pypi/plone.app.fhirfield',
-    license='GPL version 2',
-    packages=find_packages('src', exclude=['ez_setup']),
-    namespace_packages=['plone', 'plone.app'],
-    package_dir={'': 'src'},
+    keywords="Python Plone Zope FHIR Field",
+    author="Md Nazrul Islam",
+    author_email="email2nazrul@gmail.com",
+    url="https://pypi.org/project/plone.app.fhirfield/",
+    license="GPL version 2",
+    packages=find_packages("src", exclude=["ez_setup"]),
+    namespace_packages=["plone", "plone.app"],
+    package_dir={"": "src"},
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
-        'test': test_requires + elasticsearch_requires,
-        'elasticsearch': elasticsearch_requires
+        "test": test_requires + elasticsearch_requires,
+        "elasticsearch": elasticsearch_requires,
+        "fhirpath": fhirpath_requires
     },
     entry_points="""
     [z3c.autoinclude.plugin]
