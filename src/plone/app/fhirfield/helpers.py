@@ -1,4 +1,5 @@
 # _*_ coding: utf-8 _*_
+import os
 import pkgutil
 import re
 import sys
@@ -20,6 +21,7 @@ from .compat import EMPTY_STRING
 from .compat import NO_VALUE
 from .exc import SearchQueryError
 from .exc import SearchQueryValidationError
+from .variables import FHIR_ES_MAPPINGS_CACHE
 from .variables import FHIR_RESOURCE_LIST  # noqa: F401
 from .variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
 from .variables import FHIR_SEARCH_PARAMETER_SEARCHABLE
@@ -271,3 +273,37 @@ def parse_query_string(request, allow_none=False):
         params.append((param_name, value))
 
     return params
+
+
+def get_elasticsearch_mapping(resource, mapping_dir=None, cache=True):
+    """Elastic search mapping for FHIR resources"""
+
+    key = resource.lower()
+    if mapping_dir is None:
+        mapping_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "indexes", "es", "mapping"
+        )
+
+    if key not in FHIR_ES_MAPPINGS_CACHE or cache is False:
+        file_location = None
+        expected_filename = "{0}.mapping.json".format(FHIR_RESOURCE_LIST[key]["name"])
+        for root, dirs, files in os.walk(mapping_dir, topdown=True):
+            for filename in files:
+                if filename == expected_filename:
+                    file_location = os.path.join(root, filename)
+                    break
+
+        if file_location is None:
+            raise LookupError(
+                "Mapping files {0}/{1} doesn't exists.".format(
+                    mapping_dir, expected_filename
+                )
+            )
+
+        with open(os.path.join(root, file_location), "r") as f:
+            content = json.load(f)
+            assert filename.split(".")[0] == content["resourceType"]
+
+            FHIR_ES_MAPPINGS_CACHE[key] = content
+
+    return FHIR_ES_MAPPINGS_CACHE[key]["mapping"]

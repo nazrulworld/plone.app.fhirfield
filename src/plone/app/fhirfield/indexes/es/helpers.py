@@ -1,7 +1,6 @@
 # _*_ coding: utf-8 _*_
 import ast
 import copy
-import os
 import re
 
 import six
@@ -10,17 +9,16 @@ from DateTime import DateTime
 from plone.api.validation import at_least_one_of
 from plone.api.validation import mutually_exclusive_parameters
 from plone.app.fhirfield.compat import _
-from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.exc import SearchQueryValidationError
 from plone.app.fhirfield.helpers import PATH_WITH_DOT_AS
 from plone.app.fhirfield.helpers import PATH_WITH_DOT_IS
 from plone.app.fhirfield.helpers import PATH_WITH_DOT_WHERE
 from plone.app.fhirfield.helpers import fhir_search_path_meta_info
+from plone.app.fhirfield.helpers import get_elasticsearch_mapping
 from plone.app.fhirfield.variables import ERROR_MESSAGES
 from plone.app.fhirfield.variables import ERROR_PARAM_UNKNOWN
 from plone.app.fhirfield.variables import ERROR_PARAM_UNSUPPORTED
 from plone.app.fhirfield.variables import ERROR_PARAM_WRONG_DATATYPE
-from plone.app.fhirfield.variables import FHIR_ES_MAPPINGS_CACHE
 from plone.app.fhirfield.variables import FHIR_FIELD_DEBUG
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST  # noqa: F401
 from plone.app.fhirfield.variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
@@ -1462,37 +1460,3 @@ def build_elasticsearch_sortable(field_definitions, sort_fields, container=None)
     builder = ElasticsearchSortQueryBuilder(field_definitions, sort_fields)
 
     return builder.build(container)
-
-
-def get_elasticsearch_mapping(resource, mapping_dir=None, cache=True):
-    """Elastic search mapping for FHIR resources"""
-
-    key = resource.lower()
-    if mapping_dir is None:
-        mapping_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "mapping"
-        )
-
-    if key not in FHIR_ES_MAPPINGS_CACHE or cache is False:
-        file_location = None
-        expected_filename = "{0}.mapping.json".format(FHIR_RESOURCE_LIST[key]["name"])
-        for root, dirs, files in os.walk(mapping_dir, topdown=True):
-            for filename in files:
-                if filename == expected_filename:
-                    file_location = os.path.join(root, filename)
-                    break
-
-        if file_location is None:
-            raise LookupError(
-                "Mapping files {0}/{1} doesn't exists.".format(
-                    mapping_dir, expected_filename
-                )
-            )
-
-        with open(os.path.join(root, file_location), "r") as f:
-            content = json.load(f)
-            assert filename.split(".")[0] == content["resourceType"]
-
-            FHIR_ES_MAPPINGS_CACHE[key] = content
-
-    return FHIR_ES_MAPPINGS_CACHE[key]["mapping"]

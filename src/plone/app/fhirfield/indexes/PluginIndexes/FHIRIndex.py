@@ -6,6 +6,7 @@
 # All imports here
 import warnings
 
+import pkg_resources
 import six
 
 from App.special_dtml import DTMLFile
@@ -16,6 +17,13 @@ from Products.PluginIndexes.FieldIndex.FieldIndex import FieldIndex
 
 
 __author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
+
+try:
+    pkg_resources.get_distribution("collective.elasticsearch")
+    HAS_ES = True
+    from plone.app.fhirfield.helpers import get_elasticsearch_mapping
+except pkg_resources.DistributionNotFound:
+    HAS_ES = False
 
 
 def make_fhir_index_datum(mapping, fhir_json):
@@ -50,16 +58,18 @@ class FhirFieldIndex(FieldIndex):
     query_options = ("query", "not")
     manage = manage_main = DTMLFile("dtml/manageFhirFieldIndex", globals())
     manage_main._setName("manage_main")
-    mapping = {
-        "id": {"type": "string"},
-        "meta": {
-            "properties": {
-                "lastUpdated": {"type": "datetime"},
-                "versionId": {"type": "string"},
-            }
-        },
-        "resourceType": {"type": "string"},
-    }
+    default_mapping = dict(
+        properties={
+            "id": {"type": "string"},
+            "meta": {
+                "properties": {
+                    "lastUpdated": {"type": "datetime"},
+                    "versionId": {"type": "string"},
+                }
+            },
+            "resourceType": {"type": "string"},
+        }
+    )
 
     def __init__(self, id, ignore_ex=None, call_methods=None, extra=None, caller=None):
         """ """
@@ -102,7 +112,10 @@ class FhirFieldIndex(FieldIndex):
                 )
                 return
         if fhir_value:
-            datum = make_fhir_index_datum(self.mapping, fhir_value)
+            # we make datum very tiny version! do we need whole doc? but stored in ES
+            datum = make_fhir_index_datum(
+                self.default_mapping.get("properties"), fhir_value
+            )
             # issue: https://github.com/zopefoundation/BTrees/issues/109
             datum = json.dumps(datum, sort_keys=True)
             # https://stackoverflow.com/questions/10844064/items-in-json-object-are-out-of-order-using-json-dumps
@@ -116,6 +129,22 @@ class FhirFieldIndex(FieldIndex):
     def index_object(self, documentId, obj, threshold=None):
         """ """
         return super(FhirFieldIndex, self).index_object(documentId, obj, threshold=None)
+
+    @property
+    def mapping(self):
+        """Minimal mapping for all kind of fhir models"""
+        if HAS_ES:
+            key = self.id.split("_")[0]
+            try:
+                return get_elasticsearch_mapping(key)
+            except LookupError:
+                warnings.warn(
+                    "No mapping found for `{0}`, instead minimal "
+                    "mapping has been used.".format(self.id),
+                    UserWarning,
+                )
+        # Return the base/basic mapping
+        return self.default_mapping
 
 
 def manage_addFhirFieldIndex(

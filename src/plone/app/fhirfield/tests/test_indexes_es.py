@@ -570,7 +570,10 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
 
         indexed_data = portal_catalog.getIndexDataForRID(rid)["organization_resource"]
 
-        index_datum = make_fhir_index_datum(FhirFieldIndex.mapping, fhir_json)
+        index_datum = make_fhir_index_datum(
+            FhirFieldIndex("organization_resource").default_mapping.get("properties"),
+            fhir_json,
+        )
 
         self.assertEqual(indexed_data, json.dumps(index_datum, sort_keys=True))
 

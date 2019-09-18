@@ -25,8 +25,11 @@ class FHIRIndexIntergrationTest(unittest.TestCase):
         """Test datum for zope PluginIndex"""
         with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
             fhir_json = json.load(f)
-
-        index_datum = make_fhir_index_datum(FhirFieldIndex.mapping, fhir_json)
+        # xxx: need improvment to work with all mappings, not just default
+        index_datum = make_fhir_index_datum(
+            FhirFieldIndex("organization_resource").default_mapping.get("properties"),
+            fhir_json,
+        )
 
         expected = {
             "id": fhir_json["id"],
@@ -36,5 +39,4 @@ class FHIRIndexIntergrationTest(unittest.TestCase):
                 "versionId": fhir_json["meta"]["versionId"],
             },
         }
-
         self.assertEqual(index_datum, expected)
