@@ -1,13 +1,34 @@
 dist: xenial
 sudo: required
 language: python
-python:
-  - 3.5
-  - 3.6
-  - 3.7
-
 services:
   - docker
+
+matrix:
+  include:
+    - name: Plone 5.2 (Python 3.6)
+      python: 3.6
+      env:
+        - python_version=3.6
+        - PLONE_VERSION=5.2.x
+
+    - name: Plone 5.2 (Python 3.7)
+      python: 3.7
+      env:
+        - python_version=3.7
+        - PLONE_VERSION=5.2.x
+
+    - name: Plone 5.2 (Python 3.8)
+      python: 3.8-dev
+      env:
+        - python_version=3.8-dev
+        - PLONE_VERSION=5.2.x
+      dist: bionic
+
+  fast_finish: true
+
+  allow_failures:
+    - python: 3.8-dev
 
 cache:
   pip: true
@@ -20,7 +41,7 @@ env:
     - PLONE_VERSION=5.2.x  QA=true
 
 before_script:
-  - sleep 10
+  - sleep 5
 
 before_install:
   - docker run -d -e "cluster.name=docker-cluster" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -p 9200:9200 docker.elastic.co/elasticsearch/elasticsearch-oss:${ES_VERSION}
