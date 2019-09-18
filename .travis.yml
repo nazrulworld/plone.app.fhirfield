@@ -64,12 +64,8 @@ script:
   - bin/test-no-sphinx-warnings
 after_success:
   - bin/test-coverage
-  - pip install coverage==3.7.1 coveralls
+  - pip install coverage==4.5.4 coveralls
   - coveralls
-
-matrix:
-  allow_failures:
-    - python: 3.5
 
 notifications:
   email:
