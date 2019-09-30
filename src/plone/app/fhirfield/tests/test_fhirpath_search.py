@@ -10,8 +10,6 @@
 import copy
 import json
 import os
-import time
-import unittest
 import uuid
 
 from collective.elasticsearch.es import ElasticSearchCatalog
@@ -21,8 +19,6 @@ from fhirpath.interfaces import IElasticsearchEngineFactory
 from fhirpath.interfaces import IFhirSearch
 from fhirpath.interfaces import ISearchContextFactory
 from plone import api
-from plone.app.fhirfield.exc import SearchQueryValidationError
-from plone.app.fhirfield.testing import IS_TRAVIS  # noqa: E501
 from zope.component import queryMultiAdapter
 
 from . import FHIR_FIXTURE_PATH
@@ -95,7 +91,6 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         bundle = factory(params)
         # result should contains only item
         self.assertEqual(len(bundle.entry), 2)
-        return  # xxx: fix me at fhirpath
         # ** Issue: 21 **
         factory = self.get_factory("Task")
         # test IN/OR
@@ -235,18 +230,18 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's test
         factory = self.get_factory("Patient", unrestricted=True)
 
-        params = (("gender:missing", "true"), )
+        params = (("gender:missing", "true"),)
         bundle = factory(params)
 
         self.assertEqual(1, len(bundle.entry))
         self.assertIsNone(bundle.entry[0].resource.gender)
 
-        params = (("gender:missing", "false"), )
+        params = (("gender:missing", "false"),)
         bundle = factory(params)
         self.assertEqual(1, len(bundle.entry))
         self.assertIsNotNone(bundle.entry[0].resource.gender)
 
-    def offtest_issue_5(self):
+    def test_issue_5(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/5
         FHIR search's modifier `missing` is not working for nested mapping
         """
@@ -254,177 +249,101 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
 
         # ------ Test in Complex Data Type -------------
         # Parent Task has not partOf but each child has partOf referenced to parent
-        portal_catalog = api.portal.get_tool("portal_catalog")
+        factory = self.get_factory("Task", unrestricted=True)
 
-        result = portal_catalog.unrestrictedSearchResults(
-            task_resource={"part-of:missing": "false"}
-        )
+        params = (("part-of:missing", "false"),)
+        bundle = factory(params)
         # should be two
-        self.assertEqual(len(result), 2)
+        self.assertEqual(len(bundle.entry), 2)
 
-        result = portal_catalog.unrestrictedSearchResults(
-            task_resource={"part-of:missing": "true"}
-        )
+        params = (("part-of:missing", "true"),)
+        bundle = factory(params)
         # should be one (parent Task)
-        self.assertEqual(len(result), 1)
+        self.assertEqual(len(bundle.entry), 1)
 
-    def offtest_catalogsearch_identifier(self):
+    def test_catalogsearch_identifier(self):
         """ """
         self.load_contents()
 
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        result = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"identifier": "240365-0002"}
-        )
-        self.assertEqual(len(result), 1)
+        factory = self.get_factory("Patient", unrestricted=True)
+        params = (("identifier", "240365-0002"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 1)
 
         # Test with system+value
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        result = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"identifier": "CPR|240365-0002"}
-        )
-        self.assertEqual(len(result), 1)
+        params = (("identifier", "CPR|240365-0002"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 1)
 
         # Test with system only with pipe sign
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        result = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"identifier": "UUID|"}
-        )
-        self.assertEqual(len(result), 1)
+        params = (("identifier", "UUID|"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # Test with value only with pipe sign
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        result = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"identifier": "|19c5245f-89a8-49f8-b244-666b32adb92e"}
-        )
-        self.assertEqual(len(result), 1)
+        params = (("identifier", "|19c5245f-89a8-49f8-b244-666b32adb92e"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # Test with empty result
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        result = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"identifier": "CPR|19c5245f-89a8-49f8-b244-666b32adb92e"}
-        )
-        self.assertEqual(len(result), 0)
+        params = (("identifier", "CPR|19c5245f-89a8-49f8-b244-666b32adb92e"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 0)
 
         # Test with text modifier
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        result = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"identifier:text": "Plone Patient UUID"}
-        )
-        self.assertEqual(len(result), 1)
+        params = (("identifier:text", "Plone Patient UUID"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
-    @unittest.skipIf(IS_TRAVIS or 1, "Ignore for travis for now, fix later")
-    def offtest_identifier_query_validation(self):
-        """ """
-        # *
-        # * unrestrictedSearchResults aka es.searchResults
-        # * capture all exceptions not raising
-        # * instead of logging error
-        # * May be good way to capture log message
-        # * https://pythonhosted.org/logutils/testing.html
-        # *
-        # *
-        self.load_contents()
-
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        try:
-            portal_catalog.unrestrictedSearchResults(
-                patient_resource={"identifier:text": "Plone|Patient-UUID"}
-            )
-            raise AssertionError(
-                "Code should not come here, as validation error should raise"
-            )
-        except SearchQueryValidationError as e:
-            self.assertIn("Pipe (|) is not allowed", str(e))
-
-        try:
-            portal_catalog.unrestrictedSearchResults(
-                patient_resource={"identifier": "Plone|Patient|UUID"}
-            )
-            raise AssertionError(
-                "Code should not come here, as validation error should raise"
-            )
-        except SearchQueryValidationError as e:
-            self.assertIn("Only single Pipe (|)", str(e))
-
-    def offtest_catalogsearch_array_type_reference(self):
+    def test_catalogsearch_array_type_reference(self):
         """Search where reference inside List """
         self.load_contents()
 
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        # Search with based on
-        result = portal_catalog.unrestrictedSearchResults(
-            task_resource={
-                "based-on": "ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce"
-            }
+        factory = self.get_factory("Task", unrestricted=True)
+        params = (
+            ("based-on", "ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce"),
         )
-        self.assertEqual(len(result), 1)
+        bundle = factory(params)
+        # Search with based on
+
+        self.assertEqual(bundle.total, 1)
 
         # Search with part-of
         # should be two sub tasks
-        result = portal_catalog.unrestrictedSearchResults(
-            task_resource={"part-of": "Task/5df31190-0ed4-45ba-8b16-3c689fc2e686"}
-        )
-        self.assertEqual(len(result), 2)
+        params = (("part-of", "Task/5df31190-0ed4-45ba-8b16-3c689fc2e686"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 2)
 
-    def offtest_elasticsearch_sorting(self):
+    def test_elasticsearch_sorting(self):
         """Search where reference inside List """
         self.load_contents()
-        portal_catalog = api.portal.get_tool("portal_catalog")
 
+        factory = self.get_factory("Task")
+        params = (("status:missing", "false"), ("_sort", "_lastUpdated"))
         # Test ascending order
-        result = portal_catalog.unrestrictedSearchResults(
-            task_resource={"status:missing": "false"},
-            portal_type="FFTask",
-            _sort="_lastUpdated",
-        )
+        bundle = factory(params)
 
         self.assertGreater(
-            result[1].getObject().task_resource.meta.lastUpdated.date,
-            result[0].getObject().task_resource.meta.lastUpdated.date,
+            bundle.entry[1].resource.meta.lastUpdated.date,
+            bundle.entry[0].resource.meta.lastUpdated.date,
         )
         self.assertGreater(
-            result[2].getObject().task_resource.meta.lastUpdated.date,
-            result[1].getObject().task_resource.meta.lastUpdated.date,
+            bundle.entry[2].resource.meta.lastUpdated.date,
+            bundle.entry[1].resource.meta.lastUpdated.date,
         )
         # Test descending order
-        result = portal_catalog.unrestrictedSearchResults(
-            task_resource={"status:missing": "false"}, _sort="-_lastUpdated"
-        )
-
+        params = (("status:missing", "false"), ("_sort", "-_lastUpdated"))
+        bundle = factory(params)
         self.assertGreater(
-            result[0].getObject().task_resource.meta.lastUpdated.date,
-            result[1].getObject().task_resource.meta.lastUpdated.date,
+            bundle.entry[0].resource.meta.lastUpdated.date,
+            bundle.entry[1].resource.meta.lastUpdated.date,
         )
         self.assertGreater(
-            result[1].getObject().task_resource.meta.lastUpdated.date,
-            result[2].getObject().task_resource.meta.lastUpdated.date,
+            bundle.entry[1].resource.meta.lastUpdated.date,
+            bundle.entry[2].resource.meta.lastUpdated.date,
         )
 
-        # Test sorting with fhir param
-        result = portal_catalog.unrestrictedSearchResults(
-            portal_type="FFTask", _sort="-_lastUpdated", sort_on="task_resource"
-        )
-
-        self.assertGreater(
-            result[0].getObject().task_resource.meta.lastUpdated.date,
-            result[1].getObject().task_resource.meta.lastUpdated.date,
-        )
-
-    def offtest_mapping_adapter_patch(self):
-        """collective.elasticsearch.mapping.MappingAdapter.
-        The patch provides default index settings"""
-        self.convert_to_elasticsearch()
-        # Let's flush
-        self.es.connection.indices.flush()
-        es = ElasticSearchCatalog(api.portal.get_tool("portal_catalog"))
-
-        settings = es.connection.indices.get_settings(es.index_name)
-        settings = settings[es.real_index_name]["settings"]
-
-        self.assertEqual(settings["index"]["mapping"]["nested_fields"]["limit"], "100")
-
-    def offtest_quantity_type_search(self):
+    def test_quantity_type_search(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/7"""
         self.load_contents()
 
@@ -446,32 +365,27 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's flush
         self.es.connection.indices.flush()
         # Test so normal
-        portal_catalog = api.portal.get_tool("portal_catalog")
+        factory = self.get_factory("ChargeItem", unrestricted=True)
 
         # Test ascending order
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"quantity": "5"}, portal_type="FFChargeItem"
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("quantity", "5"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 1)
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"quantity": "lt5.1"}, portal_type="FFChargeItem"
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("quantity", "lt5.1"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # Test with value code/unit and system
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"price-override": "gt39.99|urn:iso:std:iso:4217|EUR"},
-            portal_type="FFChargeItem",
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("price-override", "gt39.99|urn:iso:std:iso:4217|EUR"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 1)
 
         # Test with code/unit and system
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"price-override": "40|EUR"}, portal_type="FFChargeItem"
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("price-override", "40||EUR"),)
+        bundle = factory(params)
 
+        self.assertEqual(len(bundle.entry), 1)
         # Test Issue#21
         fhir_json_copy = copy.deepcopy(fhir_json)
         fhir_json_copy["id"] = str(uuid.uuid4())
@@ -511,41 +425,42 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's flush
         self.es.connection.indices.flush()
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={
-                "price-override": (
-                    "gt39.99|urn:iso:std:iso:4217|EUR," "le850|urn:iso:std:iso:4217|BDT"
-                )
-            }
+        params = (
+            (
+                "price-override",
+                "gt39.99|urn:iso:std:iso:4217|EUR,le850|urn:iso:std:iso:4217|BDT",
+            ),
         )
-        self.assertEqual(len(brains), 2)
+        bundle = factory(params)
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"price-override": ("ge12," "le850")}
-        )
+        self.assertEqual(len(bundle.entry), 2)
+
+        params = (("price-override", "ge12,le850"),)
+        bundle = factory(params)
         # should be all three now
-        self.assertEqual(len(brains), 3)
+        self.assertEqual(len(bundle.entry), 3)
         # serach by only system and code
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={
-                "price-override": (
+        params = (
+            (
+                "price-override",
+                (
                     "|urn:iso:std:iso:4217|USD,"
                     "|urn:iso:std:iso:4217|BDT,"
                     "|urn:iso:std:iso:4217|DKK"
-                )
-            }
+                ),
+            ),
         )
+        bundle = factory(params)
         # should be 2
-        self.assertEqual(len(brains), 2)
+        self.assertEqual(len(bundle.entry), 2)
 
         # serach by unit only
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"price-override": ("|BDT," "|DKK")}
-        )
+        params = (("price-override", "|BDT,|DKK"),)
+        bundle = factory(params)
         # should be one
-        self.assertEqual(len(brains), 1)
+        self.assertEqual(len(bundle.entry), 1)
 
-    def offtest_number_type_search(self):
+    def test_number_type_search(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/8"""
         self.load_contents()
 
@@ -567,19 +482,16 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's flush
         self.es.connection.indices.flush()
         # Test so normal
-        portal_catalog = api.portal.get_tool("portal_catalog")
+        factory = self.get_factory("ChargeItem", unrestricted=True)
 
         # Test normal float value order
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"factor-override": "0.8"}, portal_type="FFChargeItem"
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("factor-override", "0.8"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 1)
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"factor-override": "gt0.79"},
-            portal_type="FFChargeItem",
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("factor-override", "gt0.79"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # Test for Encounter
         self.admin_browser.open(self.portal_url + "/++add++FFEncounter")
@@ -599,10 +511,12 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's flush
         self.es.connection.indices.flush()
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            encounter_resource={"length": "gt139"}, portal_type="FFEncounter"
-        )
-        self.assertEqual(len(brains), 1)
+        factory = self.get_factory("Encounter", unrestricted=True)
+
+        params = (("length", "gt139"),)
+
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 1)
 
         # Test Issue#21
         fhir_json_copy = copy.deepcopy(fhir_json_charge_item)
@@ -643,17 +557,17 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's flush
         self.es.connection.indices.flush()
         # Test with multiple equal values
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"factor-override": "0.8,0.21"}
-        )
-        self.assertEqual(len(brains), 2)
+        factory = self.get_factory("ChargeItem", unrestricted=True)
+        params = (("factor-override", "0.8,0.21"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 2)
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"factor-override": "gt0.8,lt0.54"}
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("factor-override", "gt0.8,lt0.54"),)
+        bundle = factory(params)
 
-    def offtest_issue_12(self):
+        self.assertEqual(bundle.total, 1)
+
+    def test_issue_12(self):
         """Issue: https://github.com/nazrulworld/plone.app.fhirfield/issues/12"""
         self.load_contents()
 
@@ -675,39 +589,31 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         self.es.connection.indices.flush()
 
         # Test code (Coding)
-        portal_catalog = api.portal.get_tool("portal_catalog")
+        factory = self.get_factory("ChargeItem", unrestricted=True)
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"code": "F01510"}, portal_type="FFChargeItem"
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("code", "F01510"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # Test with system+code
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"code": "http://snomed.info/sct|F01510"},
-            portal_type="FFChargeItem",
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("code", "http://snomed.info/sct|F01510"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # test with code only
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"code": "|F01510"}, portal_type="FFChargeItem"
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("code", "|F01510"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # test with system only
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"code": "http://snomed.info/sct|"},
-            portal_type="FFChargeItem",
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("code", "http://snomed.info/sct|"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # test with text
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"code:text": "Nice Code"}, portal_type="FFChargeItem"
-        )
-        self.assertEqual(len(brains), 1)
-
+        params = (("code:text", "Nice Code"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
         # test with .as(
         self.admin_browser.open(self.portal_url + "/++add++FFMedicationRequest")
 
@@ -727,79 +633,66 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         self.es.connection.indices.flush()
 
         # test with only code
-        brains = portal_catalog.unrestrictedSearchResults(
-            medicationrequest_resource={"code": "322254008"},
-            portal_type="FFMedicationRequest",
-        )
-        self.assertEqual(len(brains), 1)
-        # test with system and code
-        brains = portal_catalog.unrestrictedSearchResults(
-            medicationrequest_resource={"code": "http://snomed.info/sct|"},
-            portal_type="FFMedicationRequest",
-        )
-        self.assertEqual(len(brains), 1)
+        factory = self.get_factory("MedicationRequest", unrestricted=True)
+        params = (("code", "322254008"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
-    def offtest_issue_13_address_telecom(self):
+        # test with system and code
+        params = (("code", "http://snomed.info/sct|"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
+
+    def test_issue_13_address_telecom(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/13"""
         self.load_contents()
 
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        brains = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"email": "demo1@example.com"}, portal_type="FFPatient"
-        )
+        factory = self.get_factory("Patient", unrestricted=True)
+        params = (("email", "demo1@example.com"),)
+        bundle = factory(params)
 
-        self.assertEqual(len(brains), 1)
+        self.assertEqual(bundle.total, 1)
 
         # Test address with multiple paths and value for city
-        brains = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"address": "Indianapolis"}, portal_type="FFPatient"
-        )
-
-        self.assertEqual(len(brains), 1)
+        params = (("address", "Indianapolis"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # Test address with multiple paths and value for postCode
-        brains = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"address": "46240"}, portal_type="FFPatient"
-        )
-
-        self.assertEqual(len(brains), 1)
+        params = (("address", "46240"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
         # Test with single path for state
-        brains = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"address-state": "IN"}, portal_type="FFPatient"
-        )
+        params = (("address-state", "IN"),)
+        bundle = factory(params)
 
-        self.assertEqual(len(brains), 1)
+        self.assertEqual(len(bundle.entry), 1)
 
-    def offtest_issue_15_address_telecom(self):
+    def test_issue_15_address_telecom(self):
         """https://github.com/nazrulworld/plone.app.fhirfield/issues/15"""
         self.load_contents()
 
         # test with family name
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        brains = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"family": "Saint"}, portal_type="FFPatient"
-        )
+        factory = self.get_factory("Patient", unrestricted=True)
 
-        self.assertEqual(len(brains), 1)
+        params = (("family", "Saint"),)
+        bundle = factory(params)
+
+        self.assertEqual(len(bundle.entry), 1)
 
         # test with given name (array)
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        brains = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"given": "Eelector"}, portal_type="FFPatient"
-        )
+        params = (("given", "Eelector"),)
+        bundle = factory(params)
 
-        self.assertEqual(len(brains), 1)
+        self.assertEqual(len(bundle.entry), 1)
 
         # test with full name represent as text
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        brains = portal_catalog.unrestrictedSearchResults(
-            patient_resource={"name": "Patient Saint"}, portal_type="FFPatient"
-        )
+        params = (("name", "Patient Saint"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
-        self.assertEqual(len(brains), 1)
-
-    def offtest_issue_10(self):
+    def test_issue_10(self):
         """Composite type param:
         https://github.com/nazrulworld/plone.app.fhirfield/issues/10"""
         self.load_contents()
@@ -818,46 +711,31 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         ).value = json.dumps(fhir_json)
         self.admin_browser.getControl(name="form.buttons.save").click()
         self.assertIn("Item created", self.admin_browser.contents)
-        # take a tiny snap
-        time.sleep(1)
-        portal_catalog = api.portal.get_tool("portal_catalog")
 
+        # Let's flush
+        self.es.connection.indices.flush()
+
+        factory = self.get_factory("Observation", unrestricted=True)
         # Test simple composite
-        brains = portal_catalog.unrestrictedSearchResults(
-            observation_resource={
-                "code-value-quantity": "http://loinc.org|11557-6&6.2"
-            },
-            portal_type="FFObservation",
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("code-value-quantity", "http://loinc.org|11557-6&6.2"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
-        # Test complex composite
-        brains = portal_catalog.unrestrictedSearchResults(
-            observation_resource={
-                "code-value-quantity": (
-                    "http://loinc.org|11557-6&lt7.0," "http://kbc.org|11557-6&gt6.1"
-                )
-            },
-            portal_type="FFObservation",
-        )
-        self.assertEqual(len(brains), 1)
-
-    def offtest_issue_17(self):
+    def test_issue_17(self):
         """Support for duplicate param name/value
         https://github.com/nazrulworld/plone.app.fhirfield/issues/17"""
         self.load_contents()
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        query = {
-            "task_resource": [
-                ("_lastUpdated", "gt2015-10-15T06:31:18+00:00"),
-                ("_lastUpdated", "lt2018-01-15T06:31:18+00:00"),
-            ]
-        }
-        brains = portal_catalog.unrestrictedSearchResults(**query)
 
-        self.assertEqual(len(brains), 1)
+        factory = self.get_factory("Task", unrestricted=True)
+        params = [
+            ("_lastUpdated", "gt2015-10-15T06:31:18+00:00"),
+            ("_lastUpdated", "lt2018-01-15T06:31:18+00:00"),
+        ]
+        bundle = factory(params)
 
-    def offtest_issue_21(self):
+        self.assertEqual(bundle.total, 1)
+
+    def test_issue_21(self):
         """Add Support for IN/OR query for token and other if possible search type
         https://github.com/nazrulworld/plone.app.fhirfield/issues/21"""
         self.load_contents()
@@ -889,35 +767,38 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's flush
         self.es.connection.indices.flush()
 
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        query = {"task_resource": {"status": "ready,draft"}}
-        brains = portal_catalog.unrestrictedSearchResults(**query)
+        factory = self.get_factory("Task", unrestricted=True)
+        params = (("status", "ready,draft"),)
+        bundle = factory(params)
         # should All three tasks
-        self.assertEqual(len(brains), 3)
+        self.assertEqual(bundle.total, 3)
 
-        query = {
-            "task_resource": {
-                "patient": "Patient/19c5245f-89a8-49f8-b244-666b32adb92e,Patient/"
-                + new_patient_id
-            }
-        }
-        brains = portal_catalog.unrestrictedSearchResults(**query)
+        params = (
+            (
+                "patient",
+                "Patient/19c5245f-89a8-49f8-b244-666b32adb92e,Patient/"
+                + new_patient_id,
+            ),
+        )
+        bundle = factory(params)
         # should All three tasks + one
-        self.assertEqual(len(brains), 4)
+        self.assertEqual(bundle.total, 4)
 
-        query = {
-            "task_resource": {
-                "based-on": (
-                    "ProcedureRequest/0c57a6c9-c275-4a0a-bd96-701daf7bd7ce,"
-                    "ProcedureRequest/" + new_procedure_request_id
+        params = (
+            (
+                "based-on",
+                (
+                    "ProcedureRequest/0c57a6c9-c275-4a0a-"
+                    "bd96-701daf7bd7ce,ProcedureRequest/"
                 )
-            }
-        }
-        brains = portal_catalog.unrestrictedSearchResults(**query)
+                + new_procedure_request_id,
+            ),
+        )
+        bundle = factory(params)
         # should two tasks
-        self.assertEqual(len(brains), 2)
+        self.assertEqual(len(bundle.entry), 2)
 
-    def offtest_issue_21_code_and_coding(self):
+    def test_issue_21_code_and_coding(self):
         """Add Support for IN/OR query for token and other if possible search type
         https://github.com/nazrulworld/plone.app.fhirfield/issues/21"""
         self.load_contents()
@@ -968,32 +849,33 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # Let's flush
         self.es.connection.indices.flush()
 
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={"code": "387517004,387137007"}
-        )
-        self.assertEqual(len(brains), 2)
+        factory = self.get_factory("ChargeItem", unrestricted=False)
+
+        params = (("code", "387517004,387137007"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 2)
 
         # Test with system+code with negetive
-        brains = portal_catalog.unrestrictedSearchResults(
-            chargeitem_resource={
-                "code:not": (
+        params = (
+            (
+                "code:not",
+                (
                     "http://snomed.info/sct|F01510,"
                     "http://snomed.info/387137007|387137007"
-                )
-            }
+                ),
+            ),
         )
-        self.assertEqual(len(brains), 1)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)
 
-    def offtest_issue14_path_analizer(self):
+    def test_issue14_path_analizer(self):
         """ """
         self.load_contents()
-        portal_catalog = api.portal.get_tool("portal_catalog")
-        brains = portal_catalog.unrestrictedSearchResults(
-            task_resource={"patient": "Patient"}
-        )
+        factory = self.get_factory("Task", unrestricted=True)
         # Should Get All Tasks
-        self.assertEqual(len(brains), 3)
+        params = (("patient", "Patient"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 3)
 
         self.admin_browser.open(self.portal_url + "/++add++FFObservation")
         with open(os.path.join(FHIR_FIXTURE_PATH, "Observation.json"), "r") as f:
@@ -1027,27 +909,22 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         self.assertIn("Item created", self.admin_browser.contents)
         self.es.connection.indices.flush()
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            observation_resource={"subject": "Device"}
-        )
+        factory = self.get_factory("Observation", unrestricted=True)
         # Should One
-        self.assertEqual(len(brains), 1)
+        params = (("subject", "Device"),)
+        bundle = factory(params)
+        self.assertEqual(bundle.total, 1)
 
         # Little bit complex
-        brains = portal_catalog.unrestrictedSearchResults(
-            observation_resource={"subject": "Device,Patient"}
-        )
-        self.assertEqual(len(brains), 2)
+        params = (("subject", "Device,Patient"),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 2)
 
         # Search By Multiple Ids
-        brains = portal_catalog.unrestrictedSearchResults(
-            observation_resource={
-                "subject": device_id + "," + json_value1["subject"]["reference"]
-            }
-        )
-        self.assertEqual(len(brains), 2)
+        params = (("subject", device_id + "," + json_value1["subject"]["reference"]),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 2)
 
-        brains = portal_catalog.unrestrictedSearchResults(
-            observation_resource={"subject": device_id}
-        )
-        self.assertEqual(len(brains), 1)
+        params = (("subject", device_id),)
+        bundle = factory(params)
+        self.assertEqual(len(bundle.entry), 1)

@@ -1,11 +1,19 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
-------------------
+3.0.0b1 (unreleased)
+--------------------
 
-- Nothing changed yet.
+Newfeatures
 
+- `FHIRPath`_ support added through `collective.fhirpath`_.
+
+- Now supports Elasticsearch server version ``6.8.3``.
+
+
+Breakings
+
+- Drop support python 2.x.x.
 
 2.0.0 (2019-05-18)
 ------------------
@@ -220,3 +228,5 @@ New Features:
   [nazrulworld]
 
 .. _`FHIR Patch`: https://www.hl7.org/fhir/fhirpatch.html
+.. _`FHIRPath`: https://pypi.org/project/fhirpath/
+.. _`collective.fhirpath`: https://pypi.org/project/collective.fhirpath/
