@@ -15,6 +15,7 @@ __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 def initialize(context):
     """ """
+    return
     import logging
 
     log = logging.getLogger("plone.app.fhirfield")

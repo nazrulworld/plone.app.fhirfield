@@ -6,24 +6,21 @@
 # All imports here
 import warnings
 
-from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
 from collective.elasticsearch.mapping import MappingAdapter
 from collective.elasticsearch.query import QueryAssembler
-from plone.app.fhirfield.indexes.PluginIndexes import FhirFieldIndex
 from plone.app.fhirfield.variables import FHIR_RESOURCE_LIST  # noqa: F401
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
-from .fhir import EsFhirFieldIndex
 from .helpers import build_elasticsearch_sortable
 
 
 __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"
 
-INDEX_MAPPING = {FhirFieldIndex: EsFhirFieldIndex}
+# INDEX_MAPPING = {FhirFieldIndex: EsFhirFieldIndex}
 
 # Tiny patch
-CIM.update(INDEX_MAPPING)
+# CIM.update(INDEX_MAPPING)
 
 
 def QueryAssembler_normalize(self, query):

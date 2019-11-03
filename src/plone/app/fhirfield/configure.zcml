@@ -7,7 +7,6 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="plone.app.fhirfield">
 
-    <five:registerPackage package="." initialize=".initialize" />
     <i18n:registerTranslations directory="locales" />
 
     <include package=".browser" />
