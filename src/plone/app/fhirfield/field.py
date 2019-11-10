@@ -2,8 +2,8 @@
 import sys
 
 import six
-
 from fhir.resources.STU3.fhirabstractbase import FHIRValidationError
+from fhirpath.enums import FHIR_VERSION
 from plone import api
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.helpers import import_string
@@ -46,7 +46,9 @@ class FhirResource(Object):
 
     _type = FhirResourceValue
 
-    def __init__(self, model=None, resource_type=None, model_interface=None, **kw):
+    def __init__(
+        self, fhir_version, model=None, resource_type=None, model_interface=None, **kw
+    ):
         """
         :arg model: dotted path of FHIR Model class
 
@@ -60,6 +62,8 @@ class FhirResource(Object):
         self.resource_type = resource_type
         self.model_interface = model_interface
         self.validate_invariants = kw.pop("validate_invariants", False)
+        self._index_mapping = kw.pop("mapping", None)
+        self._fhir_version = FHIR_VERSION[fhir_version]
 
         self._init_validate()
 
@@ -102,6 +106,14 @@ class FhirResource(Object):
             return import_string(self.model).resource_type
         else:
             raise NotImplementedError
+
+    def get_fhir_version(self):
+        """ """
+        return self._fhir_version
+
+    def get_mapping(self):
+        """ """
+        return self._index_mapping
 
     def _init_validate(self):
         """ """
