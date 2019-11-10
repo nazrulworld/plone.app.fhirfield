@@ -6,6 +6,8 @@
 # All imports here
 import warnings
 
+import pkg_resources
+
 from collective.elasticsearch.indexes import INDEX_MAPPING as CIM
 from collective.elasticsearch.mapping import MappingAdapter
 from collective.elasticsearch.query import QueryAssembler
@@ -20,10 +22,12 @@ from .helpers import build_elasticsearch_sortable
 
 __author__ = "Md Nazrul Islam (email2nazrul@gmail.com)"
 
-INDEX_MAPPING = {FhirFieldIndex: EsFhirFieldIndex}
-
-# Tiny patch
-CIM.update(INDEX_MAPPING)
+try:
+    pkg_resources.get_distribution("collective.fhirpath")
+except pkg_resources.DistributionNotFound:
+    INDEX_MAPPING = {FhirFieldIndex: EsFhirFieldIndex}
+    # Tiny patch
+    CIM.update(INDEX_MAPPING)
 
 
 def QueryAssembler_normalize(self, query):

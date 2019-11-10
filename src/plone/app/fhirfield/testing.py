@@ -57,6 +57,7 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         import collective.fhirpath
 
         self.loadZCML(package=collective.fhirpath)
+        z2.installProduct(app, "collective.fhirpath")
 
         import plone.app.fhirfield
 

@@ -15,9 +15,17 @@ __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
 
 def initialize(context):
     """ """
+    import pkg_resources
     import logging
 
     log = logging.getLogger("plone.app.fhirfield")
+
+    try:
+        pkg_resources.get_distribution("collective.fhirpath")
+        log.info("No need to install, as collective.fhirpath is doing that.")
+        return
+    except pkg_resources.DistributionNotFound:
+        pass
 
     # Registering Pluggable indexes for FHIR
     from plone.app.fhirfield.indexes.PluginIndexes import REGISTRABLE_CLASSES
