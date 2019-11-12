@@ -1,10 +1,26 @@
 Changelog
 =========
 
-3.0.0b2 (unreleased)
+3.0.0b3 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Newfeatures
+
+- Fully compatiable with `collective.fhirpath`_.
+
+- It is possible to provide custom index mapping through ``FhirResource`` field.
+
+Breakings
+
+- ``fhir_version`` value is manadatory, so you have provide fhir version number.
+
+Deprecations
+
+- Using PluginIndexes (EsFhirFieldIndex) has been deprecated.
+
+- FHIR Search through ``portal_catalog`` has been deprecated.
+
+- Using elasticsearch mapping from this project has been deprecated.
 
 
 3.0.0b1 (2019-10-01)

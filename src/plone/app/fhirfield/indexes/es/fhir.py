@@ -73,6 +73,16 @@ class EsFhirFieldIndex(BaseIndex):
     def get_query(self, name, value):
         """Only prepared fhir query is acceptable
         other query is building here"""
+
+        deprecated_msg = """
+        Doing FHIR Search using ``portal_catalog`` has been deprecated, will be removed
+        from next version. You should starting using ``fhir_search`` and/or
+        ``zcatalog_fhir_search`` factory from ``collective.fhirpath``.
+        See
+        https://collective-fhirpath.readthedocs.io/en/latest/readme.html#how-it-works
+        """
+        warnings.warn(deprecated_msg, DeprecationWarning)
+
         self.validate_name(name)
         value = self._normalize_query(value)
         if value in (None, ""):

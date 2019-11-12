@@ -82,6 +82,18 @@ This field has got all standard options (i.e `title`, `required`, `desciption` a
 
 
 
+fhir_version
+    Required: Yes
+
+    Default: None
+
+    Type: String
+
+    The release version of `FHIR`_
+
+    Example: ``R4``, ``STU3``
+
+
 resource_type
     Required: No
 
@@ -112,6 +124,15 @@ model_interface
     Unlike `model` option, this option has more versatile goal although you can use it for single resource restriction. The advanced usecase like, the field could accept muiltiple resources types those model class implements the provided interface. For example you made a interface called `IMedicalService` and (`Organization`, `Patient`, `Practitioner`) models those are implementing `IMedicalService`. So when you provides this option value, actually three types of fhir json can now be accepted by this field.
     Example: `FhirResource(....,model='plone.app.interfaces.IFhirResourceModel')`
 
+
+index_mapping
+    Required: No
+
+    Default: None
+
+    Type: JSON
+
+    The custom index mapping, best case is elasticsearch mapping. Default mapping would be replaced by custom.
 
 Field's Value API
 =================
@@ -189,8 +210,8 @@ This package provides some useful functions those could be usable in your codeba
         >>> task_model_class = resource_type_str_to_fhir_model('Task')
 
 
-elasticsearch setup
-===================
+elasticsearch setup (deprecated)
+================================
 
 If your intent to use elasticsearch based indexing and query, this section for you! you can `find more details here <http://collectiveelasticsearch.readthedocs.io/en/latest/>`_
 

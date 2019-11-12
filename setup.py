@@ -61,6 +61,7 @@ setup(
     namespace_packages=["plone", "plone.app"],
     package_dir={"": "src"},
     include_package_data=True,
+    python_requires=">=3.6",
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
