@@ -33,7 +33,7 @@ test_requires = [
 
 setup(
     name="plone.app.fhirfield",
-    version="3.0.0b2",
+    version="3.0.0b3.dev0",
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
