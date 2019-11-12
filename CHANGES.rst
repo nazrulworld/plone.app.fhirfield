@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0.0b2 (unreleased)
+3.0.0b2 (2019-11-12)
 --------------------
 
 Newfeatures
