@@ -129,6 +129,8 @@ class FhirResource(Object):
         ifields = getFields(IFhirResource)
         ifields["model"].validate(self.model)
         ifields["model_interface"].validate(self.model_interface)
+        ifields["index_mapping"].validate(self.index_mapping)
+        ifields["fhir_version"].validate(self.fhir_version.value)
 
         if self.model:
             try:

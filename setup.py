@@ -16,9 +16,8 @@ long_description = "\n\n".join(
     ]
 )
 
-install_requires = ["setuptools", "jsonpatch"]
+install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.4.1"]
 elasticsearch_requires = ["collective.elasticsearch>=3.0.4"]
-fhirpath_requires = ["collective.fhirpath"]
 test_requires = [
     "plone.restapi",
     "plone.schemaeditor",
@@ -66,8 +65,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         "test": test_requires + elasticsearch_requires,
-        "elasticsearch": elasticsearch_requires,
-        "fhirpath": fhirpath_requires
+        "elasticsearch": elasticsearch_requires
     },
     entry_points="""
     [z3c.autoinclude.plugin]

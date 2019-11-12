@@ -54,11 +54,6 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
         self.loadZCML(package=collective.elasticsearch)
 
-        import collective.fhirpath
-
-        self.loadZCML(package=collective.fhirpath)
-        z2.installProduct(app, "collective.fhirpath")
-
         import plone.app.fhirfield
 
         self.loadZCML(package=plone.app.fhirfield)
@@ -88,8 +83,6 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
         applyProfile(portal, "plone.restapi:default")
 
         applyProfile(portal, "collective.elasticsearch:default")
-
-        applyProfile(portal, "collective.fhirpath:default")
 
         applyProfile(portal, "plone.app.fhirfield:default")
 

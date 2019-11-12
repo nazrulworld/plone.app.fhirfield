@@ -27,7 +27,6 @@ def initialize(context):
         return
     except pkg_resources.DistributionNotFound:
         pass
-
     # Registering Pluggable indexes for FHIR
     from plone.app.fhirfield.indexes.PluginIndexes import REGISTRABLE_CLASSES
 
