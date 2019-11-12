@@ -332,7 +332,7 @@ class ElasticSearchFhirIndexFunctionalTest(BaseFunctionalTesting):
         # result should contains two items
         self.assertEqual(len(result), 2)
 
-    def offtest_catalogsearch_missing_modifier(self):
+    def test_catalogsearch_missing_modifier(self):
         """ """
         self.load_contents()
         # add another patient

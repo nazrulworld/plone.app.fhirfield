@@ -89,6 +89,8 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
         applyProfile(portal, "collective.elasticsearch:default")
 
+        applyProfile(portal, "collective.fhirpath:default")
+
         applyProfile(portal, "plone.app.fhirfield:default")
 
         # Apply Test profile

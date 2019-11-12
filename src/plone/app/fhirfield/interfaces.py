@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """Module where all interfaces, events and exceptions live."""
 from plone.app.fhirfield.compat import _
+from plone.schema import JSONField
 from zope import schema as zs
 from zope.interface import Attribute
 from zope.interface import Interface
 from zope.schema.interfaces import IObject
-from plone.schema import JSONField
 
 
 class IFhirResourceModel(Interface):
@@ -32,7 +32,7 @@ class IFhirResource(IObject):
     )
     model_interface = zs.DottedName(title=_("FHIR Model Interface"), required=False)
     fhir_version = zs.TextLine(title="FHIR Version(Release)", required=True)
-    mapping = JSONField(title=_("Index Mapping"), required=False)
+    index_mapping = JSONField(title=_("Index Mapping"), required=False)
 
     def from_dict(dict_value):
         """ """
