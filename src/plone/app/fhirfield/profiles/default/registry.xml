@@ -5,21 +5,21 @@
         <field type="plone.registry.field.Int">
             <title>Index Mapping nested_fields</title>
         </field>
-        <value>100</value>
+        <value>500</value>
     </record>
     <record name="fhirfield.es.index.mapping.depth.limit"
             field="depth_limit">
         <field type="plone.registry.field.Int">
             <title>Index Mapping depth</title>
         </field>
-        <value>20</value>
+        <value>50</value>
     </record>
     <record name="fhirfield.es.index.mapping.total_fields.limit"
             field="total_fields_limit">
         <field type="plone.registry.field.Int">
             <title>Index Mapping total_fields</title>
         </field>
-        <value>1000</value>
+        <value>2500</value>
     </record>
 
     <records prefix="plone.resources/fhirfield-json-viewer-js"
