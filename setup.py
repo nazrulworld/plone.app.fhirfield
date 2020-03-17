@@ -16,7 +16,7 @@ long_description = "\n\n".join(
     ]
 )
 
-install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.5.0"]
+install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.5.1"]
 elasticsearch_requires = ["collective.elasticsearch>=3.0.4"]
 test_requires = [
     "plone.restapi",
