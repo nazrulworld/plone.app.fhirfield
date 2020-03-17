@@ -7,8 +7,8 @@
 import warnings
 
 import pkg_resources
-import six
 
+import six
 from App.special_dtml import DTMLFile
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.helpers import validate_index_name

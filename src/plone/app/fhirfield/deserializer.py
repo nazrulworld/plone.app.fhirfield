@@ -1,6 +1,5 @@
 # _*_ coding: utf-8 _*_
 import six
-
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.dexterity.interfaces import IDexterityContent
 from plone.restapi.deserializer.dxfields import DefaultFieldDeserializer

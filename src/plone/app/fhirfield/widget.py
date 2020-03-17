@@ -1,6 +1,5 @@
 # _*_ coding: utf-8 _*_
 import six
-
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from Products.CMFPlone.resources import add_resource_on_request

@@ -4,8 +4,9 @@ import copy
 import re
 
 import six
-
 from DateTime import DateTime
+from fhirpath.enums import FHIR_VERSION
+from fhirpath.search import Search
 from plone.api.validation import at_least_one_of
 from plone.api.validation import mutually_exclusive_parameters
 from plone.app.fhirfield.compat import _
@@ -76,6 +77,10 @@ class ElasticsearchQueryBuilder(object):
         self.query_tree = {
             "bool": {"must_not": list(), "must": list(), "filter": list()}
         }
+        # create definition
+        self.definition = Search.get_parameter_definition(
+            FHIR_VERSION.STU3, self.resource_type
+        )
 
     #       => Private methods stared from here <=
 
@@ -973,6 +978,7 @@ class ElasticsearchQueryBuilder(object):
             )
 
         else:
+
             path_info = fhir_search_path_meta_info(raw_path)
             array_ = path_info[1] is True
             query = self._make_token_query(
@@ -1213,12 +1219,14 @@ class ElasticsearchQueryBuilder(object):
     def resolve_query_meta(self, param_name):
         """Seprates if any logic_in_path is provided
         and also change the field type based on logic_in_path"""
-        param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[param_name][0]
+        # param_type = FHIR_SEARCH_PARAMETER_SEARCHABLE[param_name][0]
+        param_type = getattr(self.definition, param_name).type
         map_cls = None
         logic_in_path = None
         # replace with unique
         replacer = "XXXXXXX"
-        raw_path = self.find_path(param_name)
+        # raw_path = self.find_path(param_name)
+        raw_path = getattr(self.definition, param_name).expression
 
         if PATH_WITH_DOT_AS.search(raw_path):
             word = PATH_WITH_DOT_AS.search(raw_path).group()
@@ -1359,7 +1367,6 @@ def build_elasticsearch_query(
     builder = ElasticsearchQueryBuilder(
         copy.copy(params), field_name, resource_type, handling
     )
-
     return builder.build()
 
 

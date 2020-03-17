@@ -94,6 +94,7 @@ HumanName = {
         "prefix": Token,
         "given": Token,
         "use": Token,
+        "period": Period,
     }
 }
 Duration = Quantity

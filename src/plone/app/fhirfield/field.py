@@ -2,7 +2,6 @@
 import sys
 
 import six
-
 from fhir.resources.STU3.fhirabstractbase import FHIRValidationError
 from fhirpath.enums import FHIR_VERSION
 from plone import api

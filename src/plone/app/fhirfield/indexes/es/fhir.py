@@ -102,5 +102,4 @@ class EsFhirFieldIndex(BaseIndex):
         query = build_elasticsearch_query(
             params, field_name=name, resource_type=resource_type
         )
-
         return query

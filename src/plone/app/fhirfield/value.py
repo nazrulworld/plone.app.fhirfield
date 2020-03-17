@@ -2,9 +2,8 @@
 import sys
 from collections import OrderedDict
 
-import six
-
 import jsonpatch
+import six
 from persistent import Persistent
 from plone import api
 from plone.app.fhirfield.compat import json

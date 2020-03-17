@@ -1,10 +1,12 @@
 Changelog
 =========
 
-3.0.0b3 (unreleased)
+3.0.0 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Improvements
+
+- Elasticsearch mappings are updated with correct value.
 
 
 3.0.0b2 (2019-11-12)

@@ -3,11 +3,10 @@ import inspect
 import os
 import unittest
 
-from six.moves.urllib.parse import urlencode
-
 from plone.app.fhirfield import compat
 from plone.app.fhirfield import helpers
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
+from six.moves.urllib.parse import urlencode
 from zope.interface import Invalid
 
 from . import FHIR_FIXTURE_PATH

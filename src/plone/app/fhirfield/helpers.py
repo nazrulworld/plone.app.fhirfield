@@ -7,14 +7,13 @@ import time
 from importlib import import_module
 
 import six
-from six.moves.urllib.parse import unquote_plus
-
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.utils import lookup_fhir_class_path
 from plone.api.validation import required_parameters
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.compat import json
 from plone.memoize import ram
+from six.moves.urllib.parse import unquote_plus
 from zope.interface import Invalid
 
 from .compat import EMPTY_STRING

@@ -5,7 +5,6 @@ import pickle as cPickle
 import unittest
 
 import six
-
 from plone.app.fhirfield import value
 from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model

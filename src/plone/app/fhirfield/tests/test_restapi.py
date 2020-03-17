@@ -6,7 +6,6 @@ import time
 import unittest
 
 import six
-
 import transaction
 from plone.app.fhirfield.testing import \
     PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING  # noqa: 501
