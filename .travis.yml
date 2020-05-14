@@ -6,11 +6,6 @@ services:
 
 matrix:
   include:
-    - name: Plone 5.2 (Python 3.6)
-      python: 3.6
-      env:
-        - python_version=3.6
-        - PLONE_VERSION=5.2.x
 
     - name: Plone 5.2 (Python 3.7)
       python: 3.7
@@ -19,16 +14,23 @@ matrix:
         - PLONE_VERSION=5.2.x
 
     - name: Plone 5.2 (Python 3.8)
-      python: 3.8-dev
+      python: 3.8
       env:
-        - python_version=3.8-dev
+        - python_version=3.8
         - PLONE_VERSION=5.2.x
-      dist: bionic
+
+    - name: Plone 5.2 (Python 3.9)
+      python: 3.9-dev
+      env:
+        - python_version=3.9-dev
+        - PLONE_VERSION=5.2.x
+
 
   fast_finish: true
 
   allow_failures:
-    - python: 3.8-dev
+    - python: 3.8
+    - python: 3.9-dev
 
 cache:
   pip: true

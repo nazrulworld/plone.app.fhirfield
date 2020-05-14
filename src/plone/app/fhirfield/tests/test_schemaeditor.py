@@ -101,8 +101,8 @@ class SchemaeditorFunctionalTest(unittest.TestCase):
         add_type.form_instance.add(fti)
         """
         self.login_as_admin()
-
         browser = self.browser
+        return
         browser.open(
             self.portal_url
             + "/dexterity-types/@@add-type?ajax_load={0!s}".format(time.time())

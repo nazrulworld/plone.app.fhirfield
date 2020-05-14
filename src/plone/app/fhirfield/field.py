@@ -62,7 +62,12 @@ class FhirResource(Object):
     _type = FhirResourceValue
 
     def __init__(
-        self, fhir_release, model=None, resource_type=None, model_interface=None, **kw
+        self,
+        fhir_release,
+        model=None,
+        resource_type=None,
+        model_interface=None,
+        **kw,
     ):
         """
         :arg model: dotted path of FHIR Model class

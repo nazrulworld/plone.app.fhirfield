@@ -94,3 +94,4 @@ with open(os.path.join(FHIR_RESOURCE_LIST_DIR, FHIR_VERSION + ".json"), "r") as 
     """ """
     FHIR_RESOURCE_LIST = json.load(f)["resources"]
 
+FHIR_ES_MAPPINGS_CACHE = dict()

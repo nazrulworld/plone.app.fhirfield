@@ -23,7 +23,7 @@ test_requires = [
     "plone.schemaeditor",
     "plone.supermodel",
     "plone.app.testing",
-    "plone.testing>=7.0.3",
+    "plone.testing>=7.0.1",
     "plone.app.contenttypes",
     "plone.app.robotframework[debug]",
     "collective.MockMailHost",
@@ -33,7 +33,7 @@ test_requires = [
 
 setup(
     name="plone.app.fhirfield",
-    version="3.0.1.dev0",
+    version="3.1.0.dev0",
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
@@ -46,9 +46,9 @@ setup(
         "Framework :: Plone :: Addon",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Operating System :: OS Independent",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ],

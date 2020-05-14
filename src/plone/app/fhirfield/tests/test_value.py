@@ -4,11 +4,10 @@ import os
 import pickle as cPickle
 import unittest
 
-import six
-from plone.app.fhirfield import value
-from plone.app.fhirfield.helpers import parse_json_str
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.utils import lookup_fhir_class
+from plone.app.fhirfield import value
+from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.interfaces import IFhirResourceModel
 from zope.interface import Invalid
 from zope.interface import implementer

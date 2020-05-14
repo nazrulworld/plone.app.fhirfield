@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Module where all interfaces, events and exceptions live."""
+from fhirspec import FHIR_RELEASES
 from plone.app.fhirfield.compat import _
 from plone.schema import JSONField
 from zope import schema as zs
 from zope.interface import Attribute
 from zope.interface import Interface
 from zope.schema.interfaces import IObject
-from fhirspec import FHIR_RELEASES
 
 
 class IFhirResourceModel(Interface):

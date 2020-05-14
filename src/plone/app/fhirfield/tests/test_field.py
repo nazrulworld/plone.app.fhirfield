@@ -4,9 +4,9 @@ import os
 import unittest
 
 import six
-from plone.app.fhirfield import field
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.utils import lookup_fhir_class
+from plone.app.fhirfield import field
 from plone.app.fhirfield.value import FhirResourceValue
 from zope.interface import Invalid
 from zope.schema._bootstrapinterfaces import ConstraintNotSatisfied

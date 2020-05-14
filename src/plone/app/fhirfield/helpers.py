@@ -16,6 +16,7 @@ from zope.interface import Invalid
 from .compat import EMPTY_STRING
 from .compat import NO_VALUE
 from .exc import SearchQueryError
+from .variables import FHIR_ES_MAPPINGS_CACHE
 from .variables import FHIR_RESOURCE_LIST  # noqa: F401
 from .variables import FHIR_RESOURCE_MODEL_CACHE  # noqa: F401
 from .variables import FHIR_SEARCH_PARAMETER_SEARCHABLE

@@ -1,10 +1,12 @@
 Changelog
 =========
 
-3.0.1 (unreleased)
+3.1.0 (unreleased)
 ------------------
 
 Breakings
+
+- Drop support python version until 3.6.x
 
 - ``FhirResource.get_fhir_release`` no longer returns Enum member instead just string value.
 
