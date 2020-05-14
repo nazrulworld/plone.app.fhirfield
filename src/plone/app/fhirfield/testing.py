@@ -80,6 +80,7 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
         setRoles(portal, TEST_USER_ID, ["Manager"])
 
+        applyProfile(portal, "plone.app.dexterity:default")
         applyProfile(portal, "plone.restapi:default")
 
         applyProfile(portal, "collective.elasticsearch:default")

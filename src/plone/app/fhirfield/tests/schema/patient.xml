@@ -8,7 +8,7 @@
       <title>Patient</title>
       <model>fhir.resources.STU3.patient.Patient</model>
       <model_interface>plone.app.fhirfield.interfaces.IFhirResourceModel</model_interface>
-      <fhir_version>STU3</fhir_version>
+      <fhir_release>STU3</fhir_release>
     </field>
   </schema>
 </model>

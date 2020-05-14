@@ -28,4 +28,8 @@ class IFhirResource(interfaces.IFhirResource):
     """ """
 
 
-FhirResourceFieldFactory = FieldFactory(field.FhirResource, _(u"FHIR Resource Field"))
+FhirResourceFieldFactory = FieldFactory(
+    field.FhirResource,
+    _(u"FHIR Resource Field"),
+    fhir_release=field.DEFAULT_FHIR_RELEASE,
+)

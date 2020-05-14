@@ -20,61 +20,61 @@ class HelperIntegrationTest(unittest.TestCase):
 
     layer = PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 
-    def test_search_fhir_model(self):
-        """ """
-        dotted_path = helpers.search_fhir_model("DeviceRequest")
-        self.assertEqual("fhir.resources.STU3.devicerequest.DeviceRequest", dotted_path)
+    # def test_search_fhir_model(self):
+    #     """ """
+    #     dotted_path = helpers.search_fhir_model("DeviceRequest")
+    #     self.assertEqual("fhir.resources.STU3.devicerequest.DeviceRequest", dotted_path)
 
-        dotted_path = helpers.search_fhir_model("FakeResource")
-        self.assertIsNone(dotted_path)
+    #     dotted_path = helpers.search_fhir_model("FakeResource")
+    #     self.assertIsNone(dotted_path)
 
-    def test_resource_type_str_to_fhir_model(self):
-        """ """
-        task = helpers.resource_type_str_to_fhir_model("Task")
+    # def __test_resource_type_str_to_fhir_model(self):
+    #     """ """
+    #     task = helpers.resource_type_str_to_fhir_model("Task")
 
-        self.assertTrue(inspect.isclass(task))
+    #     self.assertTrue(inspect.isclass(task))
 
-        self.assertEqual(task.resource_type, "Task")
+    #     self.assertEqual(task.resource_type, "Task")
 
-        try:
-            helpers.resource_type_str_to_fhir_model("FakeResource")
-            raise AssertionError(
-                "Code shouldn't come here! as invalid resource type is provided"
-            )
-        except Invalid as e:
-            self.assertIn("FakeResource", str(e))
+    #     try:
+    #         helpers.resource_type_str_to_fhir_model("FakeResource")
+    #         raise AssertionError(
+    #             "Code shouldn't come here! as invalid resource type is provided"
+    #         )
+    #     except Invalid as e:
+    #         self.assertIn("FakeResource", str(e))
 
-    def test_import_string(self):
-        """ """
-        current_user_func = helpers.import_string("plone.api.user.get_current")
-        self.assertTrue(inspect.isfunction(current_user_func))
+    # def test_import_string(self):
+    #     """ """
+    #     current_user_func = helpers.import_string("plone.api.user.get_current")
+    #     self.assertTrue(inspect.isfunction(current_user_func))
 
-        try:
-            # Invalid dotted path!
-            helpers.import_string("plone_api_user_get_current")
-            raise AssertionError(
-                "Code shouldn't come here! as invalid dotted path is provided"
-            )
-        except ImportError:
-            pass
+    #     try:
+    #         # Invalid dotted path!
+    #         helpers.import_string("plone_api_user_get_current")
+    #         raise AssertionError(
+    #             "Code shouldn't come here! as invalid dotted path is provided"
+    #         )
+    #     except ImportError:
+    #         pass
 
-        try:
-            # Invalid class or function!
-            helpers.import_string("plone.api.user.fake")
-            raise AssertionError(
-                "Code shouldn't come here! as invalid function name is provided"
-            )
-        except ImportError:
-            pass
+    #     try:
+    #         # Invalid class or function!
+    #         helpers.import_string("plone.api.user.fake")
+    #         raise AssertionError(
+    #             "Code shouldn't come here! as invalid function name is provided"
+    #         )
+    #     except ImportError:
+    #         pass
 
-        try:
-            # Invalid pyton module!
-            helpers.import_string("fake.fake.FakeClass")
-            raise AssertionError(
-                "Code shouldn't come here! as invalid python module is provided"
-            )
-        except ImportError:
-            pass
+    #     try:
+    #         # Invalid pyton module!
+    #         helpers.import_string("fake.fake.FakeClass")
+    #         raise AssertionError(
+    #             "Code shouldn't come here! as invalid python module is provided"
+    #         )
+    #     except ImportError:
+    #         pass
 
     def test_parse_json_str(self):
         """ """

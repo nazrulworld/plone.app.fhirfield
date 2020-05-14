@@ -13,11 +13,12 @@ def monkey_patch_fhir_base_model():
 
     releases = set(
         [
-            member.value
+            member.name
             for member in FHIR_VERSION
-            if member.value != FHIR_VERSION.DEFAULT.value
+            if member.name != FHIR_VERSION.DEFAULT.value and member.name != "DEFAULT"
         ]
     )
+
     # We forcely implement IFhirResourceModel
     _resource = importlib.import_module("fhir.resources.resource")
     _resource.Resource = implementer(IFhirResourceModel)(_resource.Resource)

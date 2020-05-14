@@ -39,7 +39,7 @@ class SchemaeditorIntegrationTest(unittest.TestCase):
         self.assertIsNotNone(field_factory)
         fhir_field2 = field_factory(
             title=u"Fhir Resource Field",
-            model="fhir.resources.STU3.organization.Organization", fhir_version="STU3"
+            model="fhir.resources.STU3.organization.Organization", fhir_release="STU3"
         )
 
         self.assertEqual(fhir_field.model, fhir_field2.model)
@@ -92,7 +92,14 @@ class SchemaeditorFunctionalTest(unittest.TestCase):
         browser.getControl(name="buttons.login").click()
 
     def test_schemaeditor(self):
-        """" """
+        """
+        context = queryMultiAdapter(
+            (self.context, self.request), name="dexterity-types"
+        )
+        add_type = queryMultiAdapter((context, self.request), name="add-type")
+        fti = add_type.form_instance.create(data=properties)
+        add_type.form_instance.add(fti)
+        """
         self.login_as_admin()
 
         browser = self.browser

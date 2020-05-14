@@ -4,7 +4,18 @@ Changelog
 3.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Breakings
+
+- ``FhirResource.get_fhir_release`` no longer returns Enum member instead just string value.
+
+
+Removed Helper Functions
+
+- ``plone.app.fhirfield.helpers.resource_type_str_to_fhir_model`` use ``fhirpath.utils.lookup_fhir_class``.
+
+- ``plone.app.fhirfield.helpers.search_fhir_model`` use ``fhirpath.utils.lookup_fhir_class_path``
+
+- ``plone.app.fhirfield.helpers.import_string`` use ``fhirpath.utils.import_string``
 
 
 3.0.0 (2020-03-18)

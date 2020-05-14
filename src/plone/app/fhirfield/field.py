@@ -1,15 +1,17 @@
 # _*_ coding:utf-8 _*_
-import sys
+import importlib
+import os
 
-import six
-from fhir.resources.STU3.fhirabstractbase import FHIRValidationError
+from fhir.resources.fhirabstractbase import FHIRValidationError
 from fhirpath.enums import FHIR_VERSION
+from fhirpath.utils import import_string
+from fhirpath.utils import lookup_fhir_class
+from fhirpath.utils import lookup_fhir_class_path
+from fhirpath.utils import reraise
+from fhirspec import FHIR_RELEASES
 from plone import api
 from plone.app.fhirfield.compat import _
-from plone.app.fhirfield.helpers import import_string
 from plone.app.fhirfield.helpers import parse_json_str
-from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
-from plone.app.fhirfield.helpers import search_fhir_model
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceModel
 from plone.app.fhirfield.interfaces import IFhirResourceValue
@@ -31,6 +33,19 @@ from zope.schema.interfaces import WrongType
 
 __author__ = "Md Nazrul Islam<nazrul@zitelab.dk>"
 
+DEFAULT_FHIR_RELEASE = FHIR_RELEASES[
+    os.environ.get("DEFAULT_FHIR_RELEASE", "STU3")
+].value
+
+if DEFAULT_FHIR_RELEASE != FHIR_VERSION.DEFAULT.value:
+
+    FHIRValidationError = getattr(  # noqa: F811
+        importlib.import_module(
+            "fhir.resources.{0}.fhirabstractbase".format(DEFAULT_FHIR_RELEASE)
+        ),
+        "FHIRValidationError",
+    )
+
 
 @implementer(IFhirResource, IFromUnicode)
 class FhirResource(Object):
@@ -47,7 +62,7 @@ class FhirResource(Object):
     _type = FhirResourceValue
 
     def __init__(
-        self, fhir_version, model=None, resource_type=None, model_interface=None, **kw,
+        self, fhir_release, model=None, resource_type=None, model_interface=None, **kw
     ):
         """
         :arg model: dotted path of FHIR Model class
@@ -63,13 +78,13 @@ class FhirResource(Object):
         self.model_interface = model_interface
         self.validate_invariants = kw.pop("validate_invariants", False)
         self.index_mapping = kw.pop("index_mapping", None)
-        self.fhir_version = FHIR_VERSION[fhir_version]
+        self.fhir_release = FHIR_RELEASES[fhir_release].value
 
         self._init_validate()
 
         if "default" in kw:
             default = kw["default"]
-            if isinstance(default, six.string_types):
+            if isinstance(default, str):
                 kw["default"] = self.fromUnicode(default)
             elif isinstance(default, dict):
                 kw["default"] = self.from_dict(default)
@@ -107,9 +122,9 @@ class FhirResource(Object):
         else:
             raise NotImplementedError
 
-    def get_fhir_version(self):
+    def get_fhir_release(self):
         """ """
-        return self.fhir_version
+        return self.fhir_release
 
     def get_mapping(self):
         """ """
@@ -129,7 +144,7 @@ class FhirResource(Object):
         ifields["model"].validate(self.model)
         ifields["model_interface"].validate(self.model_interface)
         ifields["index_mapping"].validate(self.index_mapping)
-        ifields["fhir_version"].validate(self.fhir_version.value)
+        ifields["fhir_release"].validate(self.fhir_release)
 
         if self.model:
             try:
@@ -141,7 +156,7 @@ class FhirResource(Object):
                 )
                 if api.env.debug_mode():
                     msg += "\nOriginal Exception: {0!s}".format(exc)
-                raise six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
+                raise reraise(Invalid, msg)
 
             if not IFhirResourceModel.implementedBy(klass):
                 raise Invalid(
@@ -152,7 +167,13 @@ class FhirResource(Object):
                     )
                 )
 
-        if self.resource_type and search_fhir_model(self.resource_type) is None:
+        if (
+            self.resource_type
+            and lookup_fhir_class_path(
+                self.resource_type, FHIR_VERSION[self.fhir_release]
+            )
+            is None
+        ):
             msg = "{0} is not valid fhir resource type!".format(self.resource_type)
             raise Invalid(msg)
 
@@ -168,7 +189,7 @@ class FhirResource(Object):
                 )
                 if api.env.debug_mode():
                     msg += "\nOriginal Exception: {0!s}".format(exc)
-                raise six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
+                raise reraise(Invalid, msg)
 
             if not IInterface.providedBy(klass):
                 raise WrongType("An interface is required", klass, self.__name__)
@@ -190,7 +211,7 @@ class FhirResource(Object):
     def _pre_value_validate(self, fhir_json):
         """ """
         fhir_dict = None
-        if isinstance(fhir_json, six.string_types):
+        if isinstance(fhir_json, str):
             fhir_dict = parse_json_str(fhir_json).copy()
         elif isinstance(fhir_json, dict):
             fhir_dict = fhir_json.copy()
@@ -216,11 +237,15 @@ class FhirResource(Object):
             klass = import_string(self.model)
 
         elif self.resource_type:
-            klass = resource_type_str_to_fhir_model(self.resource_type)
+            klass = lookup_fhir_class(
+                self.resource_type, FHIR_VERSION[self.fhir_release]
+            )
 
         else:
             # relay on json value for resource type
-            klass = resource_type_str_to_fhir_model(dict_value["resourceType"])
+            klass = lookup_fhir_class(
+                dict_value["resourceType"], FHIR_VERSION[self.fhir_release]
+            )
 
         # check constraint
         if klass.resource_type != dict_value.get("resourceType"):
@@ -248,7 +273,7 @@ class FhirResource(Object):
                 BrokenMethodImplementation,
                 DoesNotImplement,
             ) as exc:
-                six.reraise(Invalid, Invalid(str(exc)), sys.exc_info()[2])
+                reraise(Invalid, str(exc))
 
         if self.resource_type and value.resource_type != self.resource_type:
             msg = (
@@ -281,4 +306,4 @@ class FhirResource(Object):
                     "There is invalid element inside fhir "
                     "model object.\n{0!s}".format(exc)
                 )
-                six.reraise(Invalid, Invalid(msg), sys.exc_info()[2])
+                reraise(Invalid, msg)

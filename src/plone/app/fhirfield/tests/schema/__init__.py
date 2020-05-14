@@ -15,7 +15,7 @@ class IFFOrganization(model.Schema):
     organization_resource = FhirResource(
         title=u"Fhir Organization Field",
         model="fhir.resources.STU3.organization.Organization",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -30,7 +30,7 @@ class IFFPatient(model.Schema):
     patient_resource = FhirResource(
         title=u"Fhir Patient Field",
         model="fhir.resources.STU3.patient.Patient",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -45,7 +45,7 @@ class IFFPractitioner(model.Schema):
     practitioner_resource = FhirResource(
         title=u"Fhir Practitioner Field",
         model="fhir.resources.STU3.practitioner.Practitioner",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -60,7 +60,7 @@ class IFFQuestionnaire(model.Schema):
     questionnaire_resource = FhirResource(
         title=u"Fhir Questionnaire Field",
         model="fhir.resources.STU3.questionnaire.Questionnaire",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -75,7 +75,7 @@ class IFFQuestionnaireResponse(model.Schema):
     questionnaireresponse_resource = FhirResource(
         title=u"Fhir QuestionnaireResponse Field",
         model="fhir.resources.STU3.questionnaireresponse.QuestionnaireResponse",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -90,7 +90,7 @@ class IFFTask(model.Schema):
     task_resource = FhirResource(
         title=u"Fhir Task Field",
         model="fhir.resources.STU3.task.Task",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -105,7 +105,7 @@ class IFFProcedureRequest(model.Schema):
     procedurerequest_resource = FhirResource(
         title=u"Fhir ProcedureRequest Field",
         model="fhir.resources.STU3.procedurerequest.ProcedureRequest",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -118,7 +118,7 @@ class IFFDevice(model.Schema):
     """ """
 
     device_resource = FhirResource(
-        title=u"Fhir Device Field", resource_type="Device", fhir_version="STU3"
+        title=u"Fhir Device Field", resource_type="Device", fhir_release="STU3"
     )
 
 
@@ -133,7 +133,7 @@ class IFFDeviceRequest(model.Schema):
     devicerequest_resource = FhirResource(
         title=u"Fhir DeviceRequest Field",
         resource_type="DeviceRequest",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -146,7 +146,7 @@ class IFFValueSet(model.Schema):
     """ """
 
     valueset_resource = FhirResource(
-        title=u"Fhir ValueSet Field", resource_type="ValueSet", fhir_version="STU3"
+        title=u"Fhir ValueSet Field", resource_type="ValueSet", fhir_release="STU3"
     )
 
 
@@ -159,7 +159,7 @@ class IFFChargeItem(model.Schema):
     """"""
 
     chargeitem_resource = FhirResource(
-        title=u"Fhir ChargeItem Field", resource_type="ChargeItem", fhir_version="STU3"
+        title=u"Fhir ChargeItem Field", resource_type="ChargeItem", fhir_release="STU3"
     )
 
 
@@ -172,7 +172,7 @@ class IFFEncounter(model.Schema):
     """"""
 
     encounter_resource = FhirResource(
-        title=u"Fhir FFEncounter Field", resource_type="Encounter", fhir_version="STU3"
+        title=u"Fhir FFEncounter Field", resource_type="Encounter", fhir_release="STU3"
     )
 
 
@@ -187,7 +187,7 @@ class IFFMedicationRequest(model.Schema):
     medicationrequest_resource = FhirResource(
         title=u"Fhir MedicationRequest Field",
         resource_type="MedicationRequest",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -202,7 +202,7 @@ class IFFObservation(model.Schema):
     observation_resource = FhirResource(
         title=u"Fhir Observation Field",
         resource_type="Observation",
-        fhir_version="STU3",
+        fhir_release="STU3",
     )
 
 
@@ -215,7 +215,7 @@ class IFFMedia(model.Schema):
     """"""
 
     media_resource = FhirResource(
-        title=u"Fhir Media Field", resource_type="Media", fhir_version="STU3"
+        title=u"Fhir Media Field", resource_type="Media", fhir_release="STU3"
     )
 
 

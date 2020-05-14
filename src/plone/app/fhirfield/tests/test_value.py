@@ -7,7 +7,8 @@ import unittest
 import six
 from plone.app.fhirfield import value
 from plone.app.fhirfield.helpers import parse_json_str
-from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
+from fhirpath.enums import FHIR_VERSION
+from fhirpath.utils import lookup_fhir_class
 from plone.app.fhirfield.interfaces import IFhirResourceModel
 from zope.interface import Invalid
 from zope.interface import implementer
@@ -42,7 +43,7 @@ class ValueIntegrationTest(unittest.TestCase):
         with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
             fhir_json = json.load(f)
 
-        model = resource_type_str_to_fhir_model(fhir_json["resourceType"])
+        model = lookup_fhir_class(fhir_json["resourceType"], FHIR_VERSION["STU3"])
         fhir_resource = model(fhir_json)
         fhir_resource_value = value.FhirResourceValue(raw=fhir_resource)
 
@@ -51,7 +52,7 @@ class ValueIntegrationTest(unittest.TestCase):
         self.assertTrue(
             IFhirResourceModel.providedBy(fhir_resource_value.foreground_origin())
         )
-        self.assertIsInstance(fhir_resource_value.stringify(), six.string_types)
+        self.assertIsInstance(fhir_resource_value.stringify(), str)
 
         # Test Patch
         patch_data = {"hello": 123}
@@ -164,7 +165,7 @@ class ValueIntegrationTest(unittest.TestCase):
         with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
             fhir_json = json.load(f)
 
-        model = resource_type_str_to_fhir_model(fhir_json["resourceType"])
+        model = lookup_fhir_class(fhir_json["resourceType"], FHIR_VERSION["STU3"])
         fhir_resource = model(fhir_json)
         fhir_resource_value = value.FhirResourceValue(raw=fhir_resource)
 

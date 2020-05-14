@@ -16,14 +16,14 @@ long_description = "\n\n".join(
     ]
 )
 
-install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.5.1"]
+install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.6.1"]
 elasticsearch_requires = ["collective.elasticsearch>=3.0.4"]
 test_requires = [
     "plone.restapi",
     "plone.schemaeditor",
     "plone.supermodel",
     "plone.app.testing",
-    "plone.testing>=5.0.0",
+    "plone.testing>=7.0.3",
     "plone.app.contenttypes",
     "plone.app.robotframework[debug]",
     "collective.MockMailHost",
@@ -61,7 +61,7 @@ setup(
     namespace_packages=["plone", "plone.app"],
     package_dir={"": "src"},
     include_package_data=True,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
