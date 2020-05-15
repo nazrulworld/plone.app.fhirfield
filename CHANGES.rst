@@ -4,7 +4,7 @@ Changelog
 3.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Nothing changed but some documents updated.
 
 
 3.1.0 (2020-05-14)
@@ -14,8 +14,9 @@ Breakings
 
 - Drop support python version until 3.6.x
 
-- ``FhirResource.get_fhir_release`` no longer returns Enum member instead just string value.
+- ``FhirResource.get_fhir_version`` been changed to ``FhirResource.get_fhir_release`` and no longer returns Enum member instead just string value.
 
+- One of required ``FhirResource`` init parameter ``fhir_version`` has been changed to ``fhir_release``.
 
 Removed Helper Functions
 

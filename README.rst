@@ -46,6 +46,7 @@ Example::
         <resource_type>_resource = FhirResource(
             title=u'your title',
             desciption=u'your desciption',
+            fhir_release='any of FHIR release name'
             resource_type='any fhir resource type[optional]'
         )
 
@@ -82,7 +83,7 @@ This field has got all standard options (i.e `title`, `required`, `desciption` a
 
 
 
-fhir_version
+fhir_release
     Required: Yes
 
     Default: None
@@ -193,21 +194,6 @@ FhirResourceValue::foreground_origin
 
         task = task_content.resource.foreground_origin()
         assert isinstance(task, Task)
-
-
-Helper API
-==========
-
-This package provides some useful functions those could be usable in your codebase.
-
-`resource_type_str_to_fhir_model`
-
-    This function return appropriate `fhirclient model <https://github.com/smart-on-fhir/client-py>`_ class based on provided `resource type`. On wrong resource type `zope.interface.Invalid` exception is raisen.
-
-    Example::
-
-        >>> from plone.app.fhirfield.helpers import resource_type_str_to_fhir_model
-        >>> task_model_class = resource_type_str_to_fhir_model('Task')
 
 
 elasticsearch setup (deprecated)

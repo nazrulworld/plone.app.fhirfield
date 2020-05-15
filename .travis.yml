@@ -52,12 +52,11 @@ before_install:
   - echo "[buildout]" > $HOME/.buildout/default.cfg
   - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
   - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
-  - virtualenv --clear -p `which python` .
-  - bin/pip install -U pip
-  - bin/pip install -r plone-$PLONE_VERSION-requirements.txt
+  - pip install -U pip
+  - pip install -r plone-$PLONE_VERSION-requirements.txt
 install:
   - sed -ie "s#plone-x.x.x.cfg#plone-$PLONE_VERSION.cfg#" travis.cfg
-  - bin/buildout -N -t 3 -c travis.cfg
+  - buildout -N -t 3 -c travis.cfg
 script:
   - wget -q --waitretry=1 --retry-connrefused -T 10 -O - http://127.0.0.1:9200
   - bin/code-analysis
