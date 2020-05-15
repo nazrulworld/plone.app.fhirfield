@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.1.1 (unreleased)
+3.1.1 (2020-05-15)
 ------------------
 
 - Nothing changed but some documents updated.
