@@ -9,15 +9,12 @@ long_description = "\n\n".join(
     [
         open("README.rst").read(),
         open("MIGRATION.rst").read(),
-        open("SEARCH.rst").read(),
-        open("RESTAPI.rst").read(),
         open("CONTRIBUTORS.rst").read(),
         open("CHANGES.rst").read(),
     ]
 )
 
-install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.6.1"]
-elasticsearch_requires = ["collective.elasticsearch>=3.0.4"]
+install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.7.1"]
 test_requires = [
     "plone.restapi",
     "plone.schemaeditor",
@@ -29,11 +26,12 @@ test_requires = [
     "collective.MockMailHost",
     "Products.contentmigration",
     "requests",
+    "flake8-bugbear"
 ]
 
 setup(
     name="plone.app.fhirfield",
-    version="3.1.2.dev0",
+    version="4.0.0.dev0",
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers
@@ -61,12 +59,11 @@ setup(
     namespace_packages=["plone", "plone.app"],
     package_dir={"": "src"},
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
-        "test": test_requires + elasticsearch_requires,
-        "elasticsearch": elasticsearch_requires
+        "test": test_requires
     },
     entry_points="""
     [z3c.autoinclude.plugin]

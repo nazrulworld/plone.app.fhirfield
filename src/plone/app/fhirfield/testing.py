@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
@@ -11,17 +10,11 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
 from plone.app.testing import setRoles
 from plone.testing import z2
-from zope.configuration import xmlconfig
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@zitelab.dk>"
 
-TEST_ZCML = """\
-<configure
-    xmlns="http://namespaces.zope.org/zope">
-    <include package="fhirfield_rest.services" />
-</configure>
-"""
+
 IS_TRAVIS = "TRAVIS" in os.environ
 
 
@@ -50,31 +43,10 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
         self.loadZCML(package=plone.app.z3cform)
 
-        import collective.elasticsearch
-
-        self.loadZCML(package=collective.elasticsearch)
-
         import plone.app.fhirfield
 
         self.loadZCML(package=plone.app.fhirfield)
         # initialize method not calling automatically
-        z2.installProduct(app, "plone.app.fhirfield")
-        # Load Custom
-        example_rest_path = os.path.join(
-            os.path.dirname(
-                os.path.dirname(
-                    os.path.dirname(
-                        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                    )
-                )
-            ),
-            "examples",
-        )
-
-        if example_rest_path not in sys.path[:]:
-            sys.path.append(example_rest_path)
-
-        xmlconfig.string(TEST_ZCML, context=configuration_context)
 
     def setUpPloneSite(self, portal):  # noqa: N802
 
@@ -82,8 +54,6 @@ class PloneAppFhirfieldLayer(PloneSandboxLayer):
 
         applyProfile(portal, "plone.app.dexterity:default")
         applyProfile(portal, "plone.restapi:default")
-
-        applyProfile(portal, "collective.elasticsearch:default")
 
         applyProfile(portal, "plone.app.fhirfield:default")
 

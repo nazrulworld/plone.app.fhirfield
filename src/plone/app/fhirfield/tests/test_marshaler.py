@@ -80,9 +80,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
         self.assertIsNone(value)
 
         decoded_value = field_marshaler.decode(encode_str)
-        self.assertEqual(
-            decoded_value.as_json(), context.organization_resource.as_json()
-        )
+        self.assertEqual(decoded_value.dict(), context.organization_resource.dict())
 
         encoding = field_marshaler.getCharset()
         self.assertEqual(encoding, "utf-8")

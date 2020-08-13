@@ -15,9 +15,9 @@ from plone.restapi.interfaces import IFieldDeserializer
 from plone.restapi.services.content.utils import add
 from plone.restapi.services.content.utils import create
 from plone.restapi.testing import RelativeSession
+from zExceptions import BadRequest
 from zope.component import queryMultiAdapter
 from zope.event import notify
-from zope.interface import Invalid
 from zope.lifecycleevent import ObjectCreatedEvent
 from zope.publisher.browser import TestRequest
 from zope.schema import getFields
@@ -52,7 +52,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
         self.assertTrue(IFhirResourceValue.providedBy(field_value))
         # Test from string data
         field_value2 = deserializer(json.dumps(json_dict))
-        self.assertTrue(field_value.as_json(), field_value2.as_json())
+        self.assertTrue(json.loads(field_value.json()), json.loads(field_value2.json()))
 
         try:
             deserializer(["I am invalid"])
@@ -74,7 +74,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
             title="Test Organization xxx",
         )
 
-        for name, field in getFields(IFFOrganization).items():
+        for _name, field in getFields(IFFOrganization).items():
 
             if not IFhirResource.providedBy(field):
                 continue
@@ -111,7 +111,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
             raise AssertionError(
                 "Code should not come here! Because invalid fhir json data is provided!"
             )
-        except Invalid:
+        except BadRequest:
             pass
 
 

@@ -69,7 +69,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertIsInstance(fhir_value, FhirResourceValue)
 
         fhir_value = converter.toWidgetValue(fhir_str)
-        self.assertIn(fhir_value.as_json()["resourceType"], fhir_str)
+        self.assertIn(fhir_value.dict()["resourceType"], fhir_str)
 
         try:
             converter.toWidgetValue(("hello", "wrong type"))
@@ -85,7 +85,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertIsInstance(fhir_value, FhirResourceValue)
 
         fhir_value = converter.toFieldValue(fhir_str)
-        self.assertIn(fhir_value.as_json()["resourceType"], fhir_str)
+        self.assertIn(fhir_value.dict()["resourceType"], fhir_str)
 
         fhir_value2 = converter.toFieldValue(fhir_value)
         self.assertEqual(fhir_value, fhir_value2)
@@ -117,7 +117,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         self.assertIsInstance(fhir_value_empty, FhirResourceValue)
 
         fhir_value = converter.toFieldValue(fhir_str)
-        self.assertIn(fhir_value.as_json()["resourceType"], fhir_str)
+        self.assertIn(fhir_value.dict()["resourceType"], fhir_str)
 
         fhir_value2 = converter.toFieldValue(fhir_value)
         self.assertEqual(fhir_value, fhir_value2)

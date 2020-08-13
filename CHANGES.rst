@@ -1,10 +1,12 @@
 Changelog
 =========
 
-3.1.2 (unreleased)
+4.0.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Breakings
+
+-
 
 
 3.1.1 (2020-05-15)

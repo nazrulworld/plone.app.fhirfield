@@ -7,7 +7,6 @@ import unittest
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.utils import lookup_fhir_class
 from plone.app.fhirfield import value
-from plone.app.fhirfield.helpers import parse_json_str
 from plone.app.fhirfield.interfaces import IFhirResourceModel
 from zope.interface import Invalid
 from zope.interface import implementer
@@ -43,7 +42,7 @@ class ValueIntegrationTest(unittest.TestCase):
             fhir_json = json.load(f)
 
         model = lookup_fhir_class(fhir_json["resourceType"], FHIR_VERSION["STU3"])
-        fhir_resource = model(fhir_json)
+        fhir_resource = model(**fhir_json)
         fhir_resource_value = value.FhirResourceValue(raw=fhir_resource)
 
         # __bool__ should be True
@@ -87,10 +86,9 @@ class ValueIntegrationTest(unittest.TestCase):
 
         # Make sure string is transformable to fhir resource
         json_str = fhir_resource_value.stringify()
-        json_dict = parse_json_str(json_str)
 
         try:
-            model(json_dict).as_json()
+            model.parse_raw(json_str)
         except Exception:
             raise AssertionError("Code should not come here!")
 
@@ -123,7 +121,7 @@ class ValueIntegrationTest(unittest.TestCase):
 
         # test if it impact
         self.assertEqual(
-            fhir_resource_value.as_json()["identifier"][0]["use"], "no-official"
+            fhir_resource_value.dict()["identifier"][0]["use"], "no-official"
         )
 
         # Let's try to set value on empty value
@@ -165,7 +163,7 @@ class ValueIntegrationTest(unittest.TestCase):
             fhir_json = json.load(f)
 
         model = lookup_fhir_class(fhir_json["resourceType"], FHIR_VERSION["STU3"])
-        fhir_resource = model(fhir_json)
+        fhir_resource = model(**fhir_json)
         fhir_resource_value = value.FhirResourceValue(raw=fhir_resource)
 
         serialized = cPickle.dumps(fhir_resource_value)

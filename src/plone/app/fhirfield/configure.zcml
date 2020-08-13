@@ -12,12 +12,8 @@
       Be careful if you use general includeDependencies, it can have sideffects!
       Better import explicite packages or configurations ;)
     -->
-    <five:registerPackage package="." initialize=".initialize" />
 
     <include package=".browser" />
-
-    <!-- Pluggable indexers -->
-    <include package=".indexes" />
 
     <include file="permissions.zcml" />
 

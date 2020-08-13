@@ -79,9 +79,9 @@ class FhirResourceValue(object):
             )
         try:
             patcher = jsonpatch.JsonPatch(patch_data)
-            value = patcher.apply(self._storage.raw.as_json())
+            value = patcher.apply(json.loads(self._storage.raw.json()))
 
-            new_value = self._storage.raw.__class__(value)
+            new_value = self._storage.raw.__class__.parse_obj(value)
             self._storage.raw = new_value
 
         except jsonpatch.JsonPatchException as e:
@@ -90,16 +90,11 @@ class FhirResourceValue(object):
     def stringify(self, prettify=False):
         """ """
         params = {}
-        params["encoding"] = self._encoding
         if prettify:
             # will make little bit slow, so apply only if needed
             params["indent"] = 4
 
-        return (
-            self._storage.raw is not None
-            and json.dumps(self._storage.raw.as_json(), **params)
-            or ""
-        )
+        return self._storage.raw is not None and self._storage.raw.json(**params) or ""
 
     def _validate_object(self, obj):
         """ """

@@ -20,7 +20,7 @@ class IFhirResourceModel(Interface):
     language = Attribute("language", _("Language of the resource content."))
     meta = Attribute("meta", _("Metadata about the resource"))
 
-    def as_json():
+    def json():
         """ """
 
 
@@ -31,7 +31,6 @@ class IFhirResource(IObject):
     model = zs.DottedName(
         title=_("FHIR Resource Model from fhirclient"), required=False
     )
-    model_interface = zs.DottedName(title=_("FHIR Model Interface"), required=False)
     fhir_release = zs.Choice(
         title="FHIR Version(Release)",
         values=[r.value for r in FHIR_RELEASES],

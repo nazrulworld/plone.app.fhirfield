@@ -1,4 +1,5 @@
 # _*_ coding: utf-8 _*_
+from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.dexterity.interfaces import IDexterityContent
 from plone.restapi.interfaces import IFieldSerializer
@@ -23,7 +24,7 @@ class FhirResourceSerializer(DefaultFieldSerializer):
         """value type: FhirResourceValue"""
         fhir_value = self.get_value()
         if fhir_value:
-            value = fhir_value.as_json()
+            value = json.loads(fhir_value.json())
         else:
             value = None
         return value
