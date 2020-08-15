@@ -19,6 +19,8 @@
 
     <include file="upgrades.zcml" />
 
+    <include file="error.zcml" />
+
     <!-- Configure plone.supermodel support if available -->
     <include zcml:condition="installed plone.supermodel"
       file="handler.zcml"

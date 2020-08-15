@@ -149,7 +149,7 @@ class FieldIntegrationTest(unittest.TestCase):
             json_dict = json.load(f)
 
         organization = lookup_fhir_class("Organization", FHIR_VERSION["STU3"])(
-            **json_dict
+            **json_dict  # noqa: C815
         )
         fhir_resource_value = FhirResourceValue(raw=organization)
 

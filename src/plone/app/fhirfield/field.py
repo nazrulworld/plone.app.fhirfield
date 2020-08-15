@@ -126,7 +126,7 @@ class FhirResource(Object):
         except PydanticValueError as exc:
             raise InvalidValue(str(exc))
         except ValueError as exc:
-            raise InvalidValue(exc)
+            raise InvalidValue(str(exc))
 
     def _init_validate(self):
         """ """

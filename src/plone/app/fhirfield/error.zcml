@@ -1,0 +1,4 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+  <adapter factory=".error.FhirFieldErrorMessage" name="message" trusted="True" permission="zope.Public" />
+  <adapter factory=".error.FhirFieldErrorViewSnippet" trusted="True" permission="zope.Public" />
+</configure>

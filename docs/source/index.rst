@@ -11,15 +11,9 @@ Welcome to plone.app.fhirfield's documentation!
    introduction
 
 .. toctree::
-   :maxdepth: 2
-
-   fhirsearchquery
-
-.. toctree::
    :maxdepth: 1
 
    api
-   restapi_examples
    migration
    changes
    contribute
