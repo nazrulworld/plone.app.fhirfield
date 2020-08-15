@@ -231,7 +231,7 @@ class FieldIntegrationTest(unittest.TestCase):
             fhir_field.from_dict(invalid_data)
         except ValidationError as exc:
             self.assertIn(
-                "the JSON object must be str, bytes or bytearray, not tuple", str(exc)
+                "the JSON object must be str, bytes or bytearray, not", str(exc)
             )
 
         # Test with invalid fhir data

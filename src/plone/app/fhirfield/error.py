@@ -4,8 +4,8 @@ from z3c.form.error import ComputedErrorViewMessage
 from z3c.form.error import ErrorViewDiscriminators
 from z3c.form.error import ErrorViewSnippet
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
-from zope.schema.interfaces import ValidationError
 
+from .compat import FhirFieldValidationError
 from .compat import json
 from .field import FhirResource
 
@@ -19,7 +19,7 @@ def extract_error_message(computed_value):
 
 
 FhirFieldErrorMessage = ComputedErrorViewMessage(
-    extract_error_message, error=ValidationError, field=FhirResource
+    extract_error_message, error=FhirFieldValidationError, field=FhirResource
 )
 
 
@@ -43,5 +43,5 @@ class FhirFieldErrorViewSnippet(ErrorViewSnippet):
 
 # We now need to assert the special discriminators specific to this view:
 ErrorViewDiscriminators(
-    FhirFieldErrorViewSnippet, error=ValidationError, field=FhirResource
+    FhirFieldErrorViewSnippet, error=FhirFieldValidationError, field=FhirResource
 )

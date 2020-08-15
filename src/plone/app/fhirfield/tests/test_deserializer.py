@@ -111,8 +111,13 @@ class DeserializerIntegrationTest(unittest.TestCase):
             raise AssertionError(
                 "Code should not come here! Because invalid fhir json data is provided!"
             )
-        except BadRequest:
-            pass
+        except BadRequest as exc:
+            field_error = exc.args[0][0]
+            self.assertEqual(field_error["field"], "organization_resource")
+            self.assertEqual(
+                field_error["message"],
+                "Validation has been failed on provided FHIR data.",
+            )
 
 
 class DeserializerFunctionalTest(unittest.TestCase):

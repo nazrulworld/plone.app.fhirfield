@@ -19,9 +19,10 @@ from zope.interface import implementer
 from zope.schema import Object
 from zope.schema import getFields
 from zope.schema.interfaces import IFromUnicode
-from zope.schema.interfaces import InvalidValue
-from zope.schema.interfaces import ValidationError
 from zope.schema.interfaces import WrongContainedType
+
+from .compat import FhirFieldInvalidValue
+from .compat import FhirFieldValidationError
 
 
 __author__ = "Md Nazrul Islam<nazrul@zitelab.dk>"
@@ -122,11 +123,11 @@ class FhirResource(Object):
         try:
             return func(str_or_dict)
         except pydValidationError as exc:
-            raise ValidationError(exc.errors())
+            raise FhirFieldValidationError(exc.errors())
         except PydanticValueError as exc:
-            raise InvalidValue(str(exc))
+            raise FhirFieldInvalidValue(str(exc))
         except ValueError as exc:
-            raise InvalidValue(str(exc))
+            raise Invalid(str(exc))
 
     def _init_validate(self):
         """ """
