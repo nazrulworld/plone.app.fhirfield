@@ -16,6 +16,10 @@ Breakings
 
 - ``model_interface`` parameter has been removed from `FhirResource` field.
 
+- Removed three ``fhirfield.es.index.mapping`` registry.
+
+- extra option ``elasticsearch`` has been removed from setup.py
+
 
 3.1.1 (2020-05-15)
 ------------------

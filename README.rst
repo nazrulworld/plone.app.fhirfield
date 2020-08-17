@@ -50,20 +50,7 @@ Example::
             resource_type='any fhir resource type[optional]'
         )
 
-The field's value is the instance of a specilized class `FhirResourceValue` inside the context, which is kind of proxy class of `fhirclient model <https://github.com/smart-on-fhir/client-py>`_ with additional methods and attributes.
-
-**Make field indexable**
-
-A specilized Catalog PluginIndexes is named ``FhirFieldIndex`` is available, you will use it as like other catalog indexes. However importantly you have to maintain a strict convention (index name must be started with any valid fhir resource name (no matter uppercase or lowercase) and should _(underscore) be used as separator, i.e task_index(<resource>_<any name>))
-
-Example::
-
-    <?xml version="1.0"?>
-    <object name="portal_catalog" meta_type="Plone Catalog Tool">
-        <index name="organization_resource" meta_type="FhirFieldIndex">
-            <indexed_attr value="organization_resource"/>
-        </index>
-    </object>
+The field's value is the instance of a specilized class `FhirResourceValue` inside the context, which is kind of proxy class of `fhir model <https://pypi.org/project/fhir.resources/>`_ with additional methods and attributes.
 
 
 Features
@@ -73,14 +60,11 @@ Features
 - Widget: z3cform support
 - plone.supermodel support
 - plone.rfc822 marshaler field support
-- `100% FHIR search compliance <https://www.hl7.org/fhir/search.html>`_ catalog search.
-
 
 Available Field's Options
 =========================
 
 This field has got all standard options (i.e `title`, `required`, `desciption` and so on) with additionally options for the purpose of either validation or constraint those are related to `FHIR`_.
-
 
 
 fhir_release
@@ -115,16 +99,6 @@ model
     Like `resource_type` option, it can be used as constraint, however additionally this option enable us to use custom model class other than fhirclient's model.
     Example: `FhirResource(....,model='fhirclient.models.patient.Patient')`
 
-model_interface
-    Required: No
-
-    Default: None
-
-    Type: String + full python path (dotted) of the model class.
-
-    Unlike `model` option, this option has more versatile goal although you can use it for single resource restriction. The advanced usecase like, the field could accept muiltiple resources types those model class implements the provided interface. For example you made a interface called `IMedicalService` and (`Organization`, `Patient`, `Practitioner`) models those are implementing `IMedicalService`. So when you provides this option value, actually three types of fhir json can now be accepted by this field.
-    Example: `FhirResource(....,model='plone.app.interfaces.IFhirResourceModel')`
-
 
 index_mapping
     Required: No
@@ -140,9 +114,9 @@ Field's Value API
 
 Field's value is a specilized class `plone.app.fhirfield.value.FhirResourceValue` which has reponsibilty to act as proxy of `fhirclient model's class <https://github.com/smart-on-fhir/client-py>`_. This class provides some powerful methods.
 
-FhirResourceValue::as_json
+FhirResourceValue::json
 
-    Originally this method is derived from fhirclient base model, you will always have to use this method during negotiation (although our serializer doing that for you automatically). This method not takes any argument, it returns FHIR json representation of resource.
+    Originally this method is derived from fhir base model, you will always have to use this method during negotiation (although our serializer doing that for you automatically). This method not takes any argument, it returns FHIR json representation of resource.
 
 
 FhirResourceValue::patch
@@ -196,37 +170,6 @@ FhirResourceValue::foreground_origin
         assert isinstance(task, Task)
 
 
-elasticsearch setup (deprecated)
-================================
-
-If your intent to use elasticsearch based indexing and query, this section for you! you can `find more details here <http://collectiveelasticsearch.readthedocs.io/en/latest/>`_
-
-server setup
-------------
-
-server version is restricted to `2.4.x`, means we cannot use latest version of elasticsearch. i.e 5.6.x
-
-- `Download from here <https://www.elastic.co/downloads/past-releases/elasticsearch-2-4-6>`_ and install according to documentation.
-- For development you could use docker container. The Makefile is available, `~$ make run-es`
-
-
-collective.elasticsearch setup
-------------------------------
-
-Full configuration `guide could be found here <http://collectiveelasticsearch.readthedocs.io/en/latest/config.html#basic-configuration>`_. Simple steps are described bellow.
-
-1. **create catalog/indexes**: First you will need add indexes for each fhirfield used in your project. each resource type has it's own Meta Index. `example is here <https://github.com/nazrulworld/plone.app.fhirfield/blob/master/src/plone/app/fhirfield/profiles/testing/catalog.xml>`_
-
-2. Install `collective.elasticsearch` addon from plone control panel.
-
-3. Convert your Indexes to elasticsearch. Go To `{portal url}/@@elastic-controlpanel`
-
-4. In the settings form's `Indexes for which all searches are done through ElasticSearch` section add your all indexes those you mentioned into catalog.xml file, also add `portal_type`
-
-5. Now save and again `Convert Catalog`.
-
-
-
 Installation
 ============
 
@@ -237,15 +180,10 @@ Install plone.app.fhirfield by adding it to your buildout::
     ...
 
     eggs =
-        plone.app.fhirfield [elasticsearch]
+        plone.app.fhirfield
 
 
 and then running ``bin/buildout``. Go to plone control and install ``plone.app.fhirfield`` or If you are creating an addon that depends on this product, you may add ``<dependency>profile-plone.app.fhirfield:default</dependency>`` in ``metadata.xml`` at profiles.
-
-configuration
--------------
-
-This product provides three plone registry based records ``fhirfield.es.index.mapping.nested_fields.limit``, ``fhirfield.es.index.mapping.depth.limit``, ``fhirfield.es.index.mapping.total_fields.limit``. Those are related to ElasticSearch index mapping setup, if you aware about it, then you have option to modify from plone control panel (Registry).
 
 
 
