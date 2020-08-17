@@ -4,9 +4,17 @@ Changelog
 4.0.0 (unreleased)
 ------------------
 
+Improvements
+
+- supports `pydantic <https://pypi.org/project/pydantic/>`_ powered latest `fhir.resources <https://pypi.org/project/fhir.resources/>`_ via `fhirpath <https://pypi.org/project/fhirpath/>`_.
+- suports Python 3.6.
+
+
 Breakings
 
--
+- Any FHIR search, FhirFieldIndex, EsFhirFieldIndex are removed. Please see `collective.fhirpath <https://pypi.org/project/collective.fhirpath/>`_ for those implementation.
+
+- ``model_interface`` parameter has been removed from `FhirResource` field.
 
 
 3.1.1 (2020-05-15)
