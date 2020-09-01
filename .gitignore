@@ -21,6 +21,7 @@ var/
 build/
 dist/
 mr-developer-src/
+venv/
 
 # files
 .installed.cfg

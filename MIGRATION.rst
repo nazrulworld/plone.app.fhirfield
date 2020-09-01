@@ -41,3 +41,17 @@ Migration
 3. List out any products those defined (profile/catalog.xml) indexes based on `Fhir*******Index` as meta type. Reninstall them all.
 
 4. From ZMI, portal_catalog tool, `{site url}/portal_catalog/manage_catalogAdvanced` ``Clear and Rebuild``
+
+
+4.x.x to 5.x.x
+--------------
+
+1. There is no known migration applicable as because of complete refactoring.
+
+2. Do pure backup to your current database.
+
+3. Export all FHIR Data (dexterity contents) as json or ndjson files.
+
+4. Delete all FHIR dexterity contents and Rebuild catalog.
+
+5. Import FHIR Contents.

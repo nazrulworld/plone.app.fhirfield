@@ -5,7 +5,6 @@ import unittest
 
 from plone import api
 from plone.app.fhirfield.interfaces import IFhirResource
-from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_REST_FUNCTIONAL_TESTING
 from plone.app.testing import SITE_OWNER_NAME
@@ -49,10 +48,10 @@ class DeserializerIntegrationTest(unittest.TestCase):
 
         field_value = deserializer(json_dict)
         # Value type is derived from right interface
-        self.assertTrue(IFhirResourceValue.providedBy(field_value))
+        self.assertTrue(isinstance(field_value, field._model_class))
         # Test from string data
         field_value2 = deserializer(json.dumps(json_dict))
-        self.assertTrue(json.loads(field_value.json()), json.loads(field_value2.json()))
+        self.assertTrue(field_value == field_value2)
 
         try:
             deserializer(["I am invalid"])
@@ -98,7 +97,7 @@ class DeserializerIntegrationTest(unittest.TestCase):
 
         add(self.portal, obj)
 
-        self.assertTrue(IFhirResourceValue.providedBy(obj.organization_resource))
+        self.assertTrue(isinstance(obj.organization_resource, str))
 
         # Test error handling
         body["organization_resource"] = {"data": "FakeID"}

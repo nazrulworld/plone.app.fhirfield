@@ -58,20 +58,22 @@ class FhirResourceConverter(BaseDataConverter):
     """
 
     def toWidgetValue(self, value):
-        if IFhirResourceValue.providedBy(value):
+        if isinstance(value, self.field._model_class):
             return value
 
         elif value in (NOVALUE, None, ""):
             return IFhirResource(self.field).from_none()
 
-        elif isinstance(value, six.string_types):
+        elif isinstance(value, (str, bytes)):
             return IFhirResource(self.field).fromUnicode(value)
 
-        raise ValueError("Can not convert {0!s} to an IFhirResourceValue".format(value))
+        raise ValueError(
+            "Can not convert {0!s} to an {1!s}".format(value, self.field._model_class)
+        )
 
     def toFieldValue(self, value):
         """ """
-        if IFhirResourceValue.providedBy(value):
+        if isinstance(value, self.field._model_class):
             return value
 
         elif isinstance(value, six.string_types):
@@ -80,7 +82,9 @@ class FhirResourceConverter(BaseDataConverter):
         elif value in (NOVALUE, None, ""):
             return IFhirResource(self.field).from_none()
 
-        raise ValueError("Can not convert {0!s} to an IFhirResourceValue".format(value))
+        raise ValueError(
+            "Can not convert {0!s} to an {1!s}".format(value, self.field._model_class)
+        )
 
 
 class FhirResourceAreaConverter(BaseDataConverter):
@@ -91,26 +95,28 @@ class FhirResourceAreaConverter(BaseDataConverter):
         if value in (None, "", NOVALUE):
             return ""
 
-        if IFhirResourceValue.providedBy(value):
+        if isinstance(value, self.field._model_class):
             if self.widget.mode in ("input", "hidden"):
-                return value.stringify()
+                return value.json(indent=2)
             elif self.widget.mode == "display":
-                return value.stringify()
+                return value.json(indent=2)
 
-        if isinstance(value, six.string_types):
+        if isinstance(value, (str, bytes)):
             return value
 
         raise ValueError("Can not convert {0:s} to unicode".format(repr(value)))
 
     def toFieldValue(self, value):
         """ """
-        if IFhirResourceValue.providedBy(value):
+        if isinstance(value, self.field._model_class):
             return value
 
-        elif isinstance(value, six.string_types):
+        elif isinstance(value, (str, bytes)):
             return IFhirResource(self.field).fromUnicode(value)
 
         elif value in (NOVALUE, None, ""):
             return IFhirResource(self.field).from_none()
 
-        raise ValueError("Can not convert {0!r} to an IFhirResourceValue".format(value))
+        raise ValueError(
+            "Can not convert {0!r} to an {1}".format(value, self.field._model_class)
+        )

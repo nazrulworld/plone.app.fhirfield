@@ -7,7 +7,6 @@ import six
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.utils import lookup_fhir_class
 from plone.app.fhirfield import field
-from plone.app.fhirfield.value import FhirResourceValue
 from zope.interface import Invalid
 from zope.schema.interfaces import ValidationError
 from zope.schema.interfaces import WrongContainedType
@@ -151,7 +150,6 @@ class FieldIntegrationTest(unittest.TestCase):
         organization = lookup_fhir_class("Organization", FHIR_VERSION["STU3"])(
             **json_dict  # noqa: C815
         )
-        fhir_resource_value = FhirResourceValue(raw=organization)
 
         fhir_field = field.FhirResource(
             title=six.text_type("Organization resource"),
@@ -160,7 +158,7 @@ class FieldIntegrationTest(unittest.TestCase):
         )
 
         try:
-            fhir_field._validate(fhir_resource_value)
+            fhir_field._validate(organization)
         except Invalid as exc:
             raise AssertionError("Code should not come here!\n{0!s}".format(exc))
 
@@ -172,7 +170,7 @@ class FieldIntegrationTest(unittest.TestCase):
         )
 
         try:
-            fhir_field._validate(fhir_resource_value)
+            fhir_field._validate(organization)
             raise AssertionError("Code should not come here! model mismatched!")
         except WrongContainedType as exc:
             self.assertIn("Wrong fhir resource value", str(exc))
@@ -183,7 +181,7 @@ class FieldIntegrationTest(unittest.TestCase):
         )
 
         try:
-            fhir_field._validate(fhir_resource_value)
+            fhir_field._validate(organization)
             raise AssertionError("Code should not come here! model mismatched!")
         except WrongContainedType as exc:
             self.assertIn(
@@ -357,7 +355,7 @@ class FieldIntegrationTest(unittest.TestCase):
             default=None,
             fhir_release="STU3",
         )
-        self.assertEqual(str(fhir_field3.default), "")
+        self.assertEqual(fhir_field3.default, None)
 
     def test_resource_type_constraint(self):
         """Regarding to issue: #3 """

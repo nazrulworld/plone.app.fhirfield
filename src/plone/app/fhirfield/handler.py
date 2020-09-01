@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import six
 from plone.app.fhirfield.field import FhirResource
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.supermodel.exportimport import BaseHandler
@@ -31,7 +30,7 @@ class FhirResourceToUnicode(object):
         self.context = context
 
     def toUnicode(self, value):
-        return six.text_type(value.stringify())
+        return value.json()
 
 
 FhirResourceHandler = FhirResourceHandler_(FhirResource)

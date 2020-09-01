@@ -23,6 +23,10 @@ class IFFOrganization(model.Schema):
 class FFOrganization(Container):
     """ """
 
+    def get_organization_resource(self):
+        """ """
+        return IFFOrganization["organization_resource"].get(self)
+
 
 class IFFPatient(model.Schema):
     """ """
@@ -37,6 +41,10 @@ class IFFPatient(model.Schema):
 @implementer(IFFPatient)
 class FFPatient(Container):
     """ """
+
+    def get_patient_resource(self):
+        """ """
+        return IFFPatient["patient_resource"].get(self)
 
 
 class IFFPractitioner(model.Schema):

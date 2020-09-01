@@ -1,4 +1,5 @@
 # _*_ coding:utf-8 _*_
+import gzip
 import os
 
 from fhirpath.enums import FHIR_VERSION
@@ -10,13 +11,11 @@ from plone import api
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceModel
-from plone.app.fhirfield.interfaces import IFhirResourceValue
-from plone.app.fhirfield.value import FhirResourceValue
 from pydantic.error_wrappers import ValidationError as pydValidationError
 from pydantic.errors import PydanticValueError
 from zope.interface import Invalid
 from zope.interface import implementer
-from zope.schema import Object
+from zope.schema import Field
 from zope.schema import getFields
 from zope.schema.interfaces import IFromUnicode
 from zope.schema.interfaces import WrongContainedType
@@ -25,7 +24,7 @@ from .compat import FhirFieldInvalidValue
 from .compat import FhirFieldValidationError
 
 
-__author__ = "Md Nazrul Islam<nazrul@zitelab.dk>"
+__author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 DEFAULT_FHIR_RELEASE = FHIR_RELEASES[
     os.environ.get("DEFAULT_FHIR_RELEASE", "STU3")
@@ -33,7 +32,7 @@ DEFAULT_FHIR_RELEASE = FHIR_RELEASES[
 
 
 @implementer(IFhirResource, IFromUnicode)
-class FhirResource(Object):
+class FhirResource(Field):
     """FhirResource also known as FHIR field is the schema
     field derrived from z3c.form's field.
 
@@ -44,46 +43,46 @@ class FhirResource(Object):
         field name must be start with lowercase name of FHIR Resource.
     """
 
-    _type = FhirResourceValue
     _model_class = None
 
     def __init__(
-        self, fhir_release, model=None, resource_type=None, **kw,
+        self,
+        fhir_release,
+        model=None,
+        resource_type=None,
+        gzip_compression=False,
+        **kw,
     ):
         """
         :arg model: dotted path of FHIR Model class
 
         :arg resource_type:
         """
-
-        self.schema = IFhirResourceValue
+        default = kw.pop("default", None)
         self.model = model
         self.resource_type = resource_type
         self.validate_invariants = kw.pop("validate_invariants", False)
         self.index_mapping = kw.pop("index_mapping", None)
         self.fhir_release = FHIR_RELEASES[fhir_release].value
         self._model_class = None
+        self.gzip_compression = gzip_compression
 
         self._init_validate()
 
-        if "default" in kw:
-            default = kw["default"]
-            if isinstance(default, str):
-                kw["default"] = self.fromUnicode(default)
-            elif isinstance(default, dict):
-                kw["default"] = self.from_dict(default)
-            elif default is None:
-                kw["default"] = self.from_none()
+        super(FhirResource, self).__init__(**kw)
 
-        super(FhirResource, self).__init__(schema=self.schema, **kw)
+        if default is not None:
+            if isinstance(default, str):
+                self.default = self.fromUnicode(default)
+            elif isinstance(default, dict):
+                self.default = self.from_dict(default)
 
     def fromUnicode(self, str_val):
         """ """
         if str_val == "":
             return self.from_none()
 
-        raw = self._prepare_raw(str_val)
-        value = FhirResourceValue(raw=raw, encoding="utf-8")
+        value = self._from_raw(str_val)
         self.validate(value)
         return value
 
@@ -92,15 +91,14 @@ class FhirResource(Object):
         if dict_value is None:
             value = None
         else:
-            raw = self._prepare_raw(dict_value)
-            value = FhirResourceValue(raw=raw, encoding="utf-8")
+            value = self._from_raw(dict_value)
         # do validation now
         self.validate(value)
         return value
 
     def from_none(self):
         """"""
-        return FhirResourceValue()
+        return None
 
     def get_resource_type(self):
         """ """
@@ -114,7 +112,7 @@ class FhirResource(Object):
         """ """
         return self.index_mapping
 
-    def _prepare_raw(self, str_or_dict):
+    def _from_raw(self, str_or_dict):
         """ """
         if isinstance(str_or_dict, dict):
             func = self._model_class.parse_obj
@@ -143,6 +141,7 @@ class FhirResource(Object):
         ifields["model"].validate(self.model)
         ifields["index_mapping"].validate(self.index_mapping)
         ifields["fhir_release"].validate(self.fhir_release)
+        ifields["gzip_compression"].validate(self.gzip_compression)
 
         if self.model:
             try:
@@ -183,13 +182,46 @@ class FhirResource(Object):
         """ """
         super(FhirResource, self)._validate(value)
 
-        if value.foreground_origin() is not None and not isinstance(
-            value.foreground_origin(), self._model_class
-        ):
+        if value is not None and not isinstance(value, self._model_class):
             msg = (
                 "Wrong fhir resource value is provided! "
                 "Value should be object of {0!r} but got {1!r}".format(
-                    self._model_class, value.foreground_origin().__class__
+                    self._model_class, value.__class__
                 )
             )
+
             raise WrongContainedType(msg)
+
+    def query(self, object, default=None):
+        try:
+            getattr(object, self.__name__)
+            return self.get(object)
+        except AttributeError:
+            return default
+
+    def get(self, object):
+        """ """
+        raw_val = super(FhirResource, self).get(object)
+        if raw_val is None:
+            return None
+        if self.gzip_compression:
+            raw_val = gzip.decompress(raw_val)
+
+        return self.fromUnicode(raw_val)
+
+    def set(self, object, value):
+        """ """
+        new_val = None
+        if value is not None:
+            if not isinstance(value, self._model_class):
+                raise TypeError(
+                    (
+                        "'value' must be instance of '{0!s}' but found type is '{1}'"
+                    ).format(self._model_class, type(value))
+                )
+
+            new_val = value.json()
+            if self.gzip_compression:
+                new_val = gzip.compress(new_val)
+
+        super(FhirResource, self).set(object, new_val)

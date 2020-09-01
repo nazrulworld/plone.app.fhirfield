@@ -66,7 +66,7 @@ class MarshalerIntegrationTest(unittest.TestCase):
         value = field_marshaler.encode(fhir_field.from_none())
         self.assertIsNone(value)
 
-        encode_str = field_marshaler.encode(context.organization_resource)
+        encode_str = field_marshaler.encode(context.get_organization_resource())
 
         rfc822_msg = constructMessageFromSchema(context, IFFOrganization)
         self.assertIsInstance(rfc822_msg, Message)
@@ -80,7 +80,9 @@ class MarshalerIntegrationTest(unittest.TestCase):
         self.assertIsNone(value)
 
         decoded_value = field_marshaler.decode(encode_str)
-        self.assertEqual(decoded_value.dict(), context.organization_resource.dict())
+        self.assertEqual(
+            decoded_value.dict(), context.get_organization_resource().dict()
+        )
 
         encoding = field_marshaler.getCharset()
         self.assertEqual(encoding, "utf-8")

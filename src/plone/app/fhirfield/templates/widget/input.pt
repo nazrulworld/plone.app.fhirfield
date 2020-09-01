@@ -35,6 +35,6 @@
                    readonly view/readonly;
                    accesskey view/accesskey;
                    onselect view/onselect"
-   tal:content="view/value/stringify | view/value | nothing" />
+   tal:content="python: view.value and (not isinstance(view.value, (str, bytes)) and view.value.json() or view.value)  or '' " />
 
 </div>

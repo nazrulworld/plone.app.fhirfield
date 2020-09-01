@@ -11,13 +11,13 @@
                           title view/title;
                           lang view/lang">
         <noscript condition="view/value">
-          <tal:block  content="view/value/stringify" />
+          <tal:block  content="python: view.value.json(indent=2)" />
         </noscript>
         <tal:metal condition="view/value">
             <script type="text/javascript">
               $(function() {
                   $('#<span tal:replace="el_id" />').jsonViewer(
-                    <tal:block condition="view/value" content="view/value/stringify" />,
+                    <tal:block condition="view/value" content="view/value/json" />,
                     {collapsed: false, withQuotes: true})
               });
             </script>

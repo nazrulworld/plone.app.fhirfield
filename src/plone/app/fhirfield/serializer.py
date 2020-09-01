@@ -1,4 +1,6 @@
 # _*_ coding: utf-8 _*_
+import gzip
+
 from plone.app.fhirfield.compat import json
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.dexterity.interfaces import IDexterityContent
@@ -20,8 +22,17 @@ class FhirResourceSerializer(DefaultFieldSerializer):
         self.request = request
         self.field = field
 
+    def get_value(self, default=None):
+        raw = DefaultFieldSerializer.get_value(self, default=default)
+        if raw is None:
+            return None
+        if self.field.gzip_compression:
+            raw = gzip.decompress(raw)
+
+        return self.field.fromUnicode(raw)
+
     def __call__(self):
-        """value type: FhirResourceValue"""
+        """value type: BaseModel"""
         fhir_value = self.get_value()
         if fhir_value:
             value = json.loads(fhir_value.json())

@@ -6,7 +6,6 @@ import unittest
 from plone.app.fhirfield import widget
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_FUNCTIONAL_TESTING
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
-from plone.app.fhirfield.value import FhirResourceValue
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
@@ -66,7 +65,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         # All Test: toWidgetValue
         fhir_value = converter.toWidgetValue("")
         self.assertFalse(fhir_value)
-        self.assertIsInstance(fhir_value, FhirResourceValue)
+        self.assertIsInstance(fhir_value, type(None))
 
         fhir_value = converter.toWidgetValue(fhir_str)
         self.assertIn(fhir_value.dict()["resourceType"], fhir_str)
@@ -77,12 +76,12 @@ class WidgetIntegrationTest(unittest.TestCase):
                 "Code should not come here! As wrong types data is provided"
             )
         except ValueError as exc:
-            self.assertIn("IFhirResourceValue", str(exc))
+            self.assertIn("Can not convert ('hello', 'wrong type')", str(exc))
 
         # All Test: toFieldValue
         fhir_value = converter.toFieldValue(NOVALUE)
         self.assertFalse(fhir_value)
-        self.assertIsInstance(fhir_value, FhirResourceValue)
+        self.assertIsInstance(fhir_value, type(None))
 
         fhir_value = converter.toFieldValue(fhir_str)
         self.assertIn(fhir_value.dict()["resourceType"], fhir_str)
@@ -96,7 +95,7 @@ class WidgetIntegrationTest(unittest.TestCase):
                 "Code should not come here! As wrong types data is provided"
             )
         except ValueError as exc:
-            self.assertIn("IFhirResourceValue", str(exc))
+            self.assertIn("Can not convert ('hello', 'wrong type')", str(exc))
 
     def test_textarea_data_converter(self):
         """ """
@@ -114,7 +113,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         # All Test: toFieldValue
         fhir_value_empty = converter.toFieldValue(NOVALUE)
         self.assertFalse(fhir_value_empty)
-        self.assertIsInstance(fhir_value_empty, FhirResourceValue)
+        self.assertIsInstance(fhir_value_empty, type(None))
 
         fhir_value = converter.toFieldValue(fhir_str)
         self.assertIn(fhir_value.dict()["resourceType"], fhir_str)
@@ -128,7 +127,7 @@ class WidgetIntegrationTest(unittest.TestCase):
                 "Code should not come here! As wrong types data is provided"
             )
         except ValueError as exc:
-            self.assertIn("IFhirResourceValue", str(exc))
+            self.assertIn("Can not convert ('hello', 'wrong type')", str(exc))
 
         # All Test: toWidgetValue
         fhir_value = converter.toWidgetValue("")

@@ -14,7 +14,7 @@ long_description = "\n\n".join(
     ]
 )
 
-install_requires = ["setuptools", "jsonpatch", "fhirpath>=0.7.1"]
+install_requires = ["setuptools", "fhirpath>=0.7.1"]
 test_requires = [
     "plone.restapi",
     "plone.schemaeditor",
@@ -31,7 +31,7 @@ test_requires = [
 
 setup(
     name="plone.app.fhirfield",
-    version="4.0.1.dev0",
+    version="5.0.0b1.dev0",
     description="FHIR field for Plone",
     long_description=long_description,
     # Get more from https://pypi.org/pypi?%3Aaction=list_classifiers

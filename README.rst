@@ -109,65 +109,6 @@ index_mapping
 
     The custom index mapping, best case is elasticsearch mapping. Default mapping would be replaced by custom.
 
-Field's Value API
-=================
-
-Field's value is a specilized class `plone.app.fhirfield.value.FhirResourceValue` which has reponsibilty to act as proxy of `fhirclient model's class <https://github.com/smart-on-fhir/client-py>`_. This class provides some powerful methods.
-
-FhirResourceValue::json
-
-    Originally this method is derived from fhir base model, you will always have to use this method during negotiation (although our serializer doing that for you automatically). This method not takes any argument, it returns FHIR json representation of resource.
-
-
-FhirResourceValue::patch
-
-    If you are familar with `FHIRPath Patch <https://www.hl7.org/fhir/fhirpatch.html>`_, this method one of the strongest weapon of this class. Patch applying on any `FHIR`_ resources is noting but so easy.
-    This method takes one mandatory argument `patch_data` and that value should be list of patch items (`jsonpatch <http://jsonpatch.com/>`_).
-
-    Example::
-
-        from plone.app.fhirfield import FhirResource
-        from plone.supermodel import model
-
-        class ITask(model.Schema):
-
-            resource = FhirResource(
-                title=u'your title',
-                desciption=u'your desciption',
-                resource_type='Task'
-            )
-
-        patch_data = [
-          {'op': 'replace', 'path': '/source/display', 'value': 'Patched display'},
-          {'op': 'replace', 'path': '/status', 'value': 'Reopen'}
-        ]
-        task_content.resource.patch(patch_data)
-
-
-FhirResourceValue::stringify
-
-    This method returns string representation of fhir resource json value. Normally `as_json` returns python's dict type data. This method takes optional `prettify` argument, by setting this argument True, method will return human/print friendly representation.
-
-FhirResourceValue::foreground_origin
-
-    There may some situation come, where you will need just pure instance of fhir model, this method serves that purpose. This method returns current fhir resource model's instance.
-
-    Example::
-
-        from fhirclient.models.task import Task
-        from plone.app.fhirfield import FhirResource
-        from plone.supermodel import model
-
-        class ITask(model.Schema):
-
-            resource = FhirResource(
-                title=u'your title',
-                desciption=u'your desciption',
-                resource_type='Task'
-            )
-
-        task = task_content.resource.foreground_origin()
-        assert isinstance(task, Task)
 
 
 Installation

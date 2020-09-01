@@ -54,7 +54,6 @@ class SerializerIntegrationTest(unittest.TestCase):
         deserializer(validate_all=True)
 
         obj = add(self.portal, obj, False)
-
         return obj
 
     def test_available_adapter(self):
@@ -95,7 +94,7 @@ class SerializerIntegrationTest(unittest.TestCase):
 
         self.assertEqual(
             result["organization_resource"]["resourceType"],
-            context.organization_resource.resource_type,
+            context.get_organization_resource().resource_type,
         )
 
 

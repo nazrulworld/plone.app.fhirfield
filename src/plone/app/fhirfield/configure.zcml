@@ -21,6 +21,11 @@
 
     <include file="error.zcml" />
 
+    <!-- Configure z3c.form datamanager if installed -->
+    <include zcml:condition="installed z3c.form"
+        file="datamanager.zcml"
+    />
+
     <!-- Configure plone.supermodel support if available -->
     <include zcml:condition="installed plone.supermodel"
       file="handler.zcml"

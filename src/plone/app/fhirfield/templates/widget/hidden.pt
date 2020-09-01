@@ -9,5 +9,5 @@
                        title view/title;
                        tabindex view/tabindex;
                        accesskey view/accesskey;
-                       value view/value/stringfy" />
+                       value view/value/json" />
 </div>

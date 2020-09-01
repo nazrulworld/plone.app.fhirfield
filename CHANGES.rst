@@ -1,10 +1,27 @@
 Changelog
 =========
 
-4.0.1 (unreleased)
+5.0.0b1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+**Breakings**
+
+- Fully refactored!
+
+- ``value.py`` module has been completely removed, now original value stored in zodb as json string.
+
+- All underlaying APIs from ``FhirResourceValue`` are no longer available as part of this refactoring, you have to
+  take care manually to make patch.
+
+- You should always use field accessor to get field value as `FHIRModel <https://pypi.org/project/fhir.resources/>`_, see example in readme.
+  Direct accesss from object, you will string value!
+
+
+Improvements
+
+- More slimer and faster version ever, should take care of database size.
+
+- GZIP compression support, save your storage! (see in readme)
 
 
 4.0.0 (2020-08-17)

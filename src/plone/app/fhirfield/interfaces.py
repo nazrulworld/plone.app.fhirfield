@@ -6,7 +6,7 @@ from plone.schema import JSONField
 from zope import schema as zs
 from zope.interface import Attribute
 from zope.interface import Interface
-from zope.schema.interfaces import IObject
+from zope.schema.interfaces import IField
 
 
 class IFhirResourceModel(Interface):
@@ -24,7 +24,7 @@ class IFhirResourceModel(Interface):
         """ """
 
 
-class IFhirResource(IObject):
+class IFhirResource(IField):
     """ """
 
     resource_type = zs.TextLine(title=_("FHIR Resource Type"), required=False)
@@ -37,6 +37,7 @@ class IFhirResource(IObject):
         required=True,
     )
     index_mapping = JSONField(title=_("Index Mapping"), required=False)
+    gzip_compression = zs.Bool(title=_("Enable GZip compression"), default=False)
 
     def from_dict(dict_value):
         """ """
