@@ -1,7 +1,6 @@
 # _*_ coding: utf-8 _*_
 import six
 from plone.app.fhirfield.interfaces import IFhirResource
-from plone.app.fhirfield.interfaces import IFhirResourceValue
 from Products.CMFPlone.resources import add_resource_on_request
 from z3c.form.browser.textarea import TextAreaWidget
 from z3c.form.browser.widget import addFieldClass

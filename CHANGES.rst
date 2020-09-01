@@ -2,13 +2,13 @@ Changelog
 =========
 
 5.0.0b1 (unreleased)
-------------------
+--------------------
 
 **Breakings**
 
 - Fully refactored!
 
-- ``value.py`` module has been completely removed, now original value stored in zodb as json string.
+- ``value`` module has been completely removed, now original value stored in zodb as json string.
 
 - All underlaying APIs from ``FhirResourceValue`` are no longer available as part of this refactoring, you have to
   take care manually to make patch.
@@ -16,6 +16,7 @@ Changelog
 - You should always use field accessor to get field value as `FHIRModel <https://pypi.org/project/fhir.resources/>`_, see example in readme.
   Direct accesss from object, you will string value!
 
+- ``api`` module has been wiped.
 
 Improvements
 

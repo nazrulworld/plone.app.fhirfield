@@ -10,7 +10,6 @@ from fhirspec import FHIR_RELEASES
 from plone import api
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.interfaces import IFhirResource
-from plone.app.fhirfield.interfaces import IFhirResourceModel
 from pydantic.error_wrappers import ValidationError as pydValidationError
 from pydantic.errors import PydanticValueError
 from zope.interface import Invalid
@@ -155,10 +154,10 @@ class FhirResource(Field):
                     msg += "\nOriginal Exception: {0!s}".format(exc)
                 raise reraise(Invalid, msg)
 
-            if not IFhirResourceModel.implementedBy(klass):
+            if "FHIRAbstractModel" not in str(klass.mro()):
                 raise Invalid(
                     _(
-                        "{0!r} must be valid model class from fhirclient.model".format(
+                        "{0!r} must be valid model class from fhir.resources".format(
                             klass
                         )
                     )
@@ -205,6 +204,12 @@ class FhirResource(Field):
         if raw_val is None:
             return None
         if self.gzip_compression:
+            if not isinstance(raw_val, bytes):
+                raise TypeError(
+                    "RAW value must gzip compressed bytes data. "
+                    "but found '{0}' type data.".format(type(raw_val))
+                )
+
             raw_val = gzip.decompress(raw_val)
 
         return self.fromUnicode(raw_val)
@@ -222,6 +227,6 @@ class FhirResource(Field):
 
             new_val = value.json()
             if self.gzip_compression:
-                new_val = gzip.compress(new_val)
+                new_val = gzip.compress(new_val.encode())
 
         super(FhirResource, self).set(object, new_val)

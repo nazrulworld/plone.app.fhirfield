@@ -110,6 +110,50 @@ index_mapping
     The custom index mapping, best case is elasticsearch mapping. Default mapping would be replaced by custom.
 
 
+gzip_compression
+    Required: No
+
+    Default: False
+
+    Type: Boolean
+
+    Compressed version of json string will be stored into database.
+
+
+
+Disclaimer!!
+============
+
+Do not directly access (get or set) field value from content object unless, you know, what you are doing. You should
+always use field accessor to get or set value (examples are bellow). Because our expected field value would be ``FHIRModel``
+from https://pypi.org/project/fhir.resources/ but in zodb raw json string or gzip compressed bytes is stored and don´t worry
+about this complexity, Field accessor would take care for everything.
+
+example 1: make accessor function into content class.::
+
+    class IOrganization(model.Schema):
+
+        organization_resource = FhirResource(
+            title=u"Fhir Organization Field",
+            model="fhir.resources.STU3.organization.Organization",
+            fhir_release="STU3",
+        )
+
+    @implementer(IOrganization)
+    class Organization(Container):
+
+        def get_organization_resource(self):
+            return IOrganization["organization_resource"].get(self)
+
+
+example 2: using datamanger accessor::
+
+    >>> from zope.component import queryMultiAdapter
+    >>> from z3c.form.interfaces import IDataManager
+    >>> dm = queryMultiAdapter((content, fhirfield), IDataManager)
+    >>> value = dm.get()
+    >>> dm.set(new_value)
+
 
 Installation
 ============

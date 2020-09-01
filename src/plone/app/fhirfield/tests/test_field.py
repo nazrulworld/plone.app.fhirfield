@@ -97,7 +97,7 @@ class FieldIntegrationTest(unittest.TestCase):
                 "Code should not come here! as should be invalid error"
             )
         except Invalid as exc:
-            self.assertIn("must be valid model class from fhirclient.model", str(exc))
+            self.assertIn("must be valid model class from fhir.resources", str(exc))
 
         # test with invalid ResourceType
         try:
@@ -373,3 +373,39 @@ class FieldIntegrationTest(unittest.TestCase):
             self.assertIn(
                 "expects resource type ``Organization``, but got ``Patient`", str(e)
             )
+
+    def test_gzip_compression(self):
+        """ """
+
+        class Container:
+            resource = None
+
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
+            data = f.read()
+
+        fhir_field1 = field.FhirResource(
+            title="Organization resource",
+            model="fhir.resources.STU3.organization.Organization",
+            fhir_release="STU3",
+            gzip_compression=True,
+        )
+        fhir_field1.__name__ = "resource"
+        container1 = Container()
+
+        fhir_field2 = field.FhirResource(
+            title="Organization resource",
+            model="fhir.resources.STU3.organization.Organization",
+            fhir_release="STU3",
+            gzip_compression=False,
+        )
+        fhir_field2.__name__ = "resource"
+        container2 = Container()
+
+        value = fhir_field1.fromUnicode(data)
+
+        fhir_field1.set(container1, value)
+        fhir_field2.set(container2, value)
+
+        self.assertGreater(len(container2.resource), len(container1.resource))
+
+        self.assertEqual(fhir_field1.get(container1), fhir_field2.get(container2))
