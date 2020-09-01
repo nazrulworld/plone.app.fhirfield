@@ -124,7 +124,7 @@ gzip_compression
 Disclaimer!!
 ============
 
-Do not directly access (get or set) field value from content object unless, you know, what you are doing. You should
+Do not directly access (get or set) field value from content object, unless you know, what you are doing. You should
 always use field accessor to get or set value (examples are bellow). Because our expected field value would be ``FHIRModel``
 from https://pypi.org/project/fhir.resources/ but in zodb raw json string or gzip compressed bytes is stored and don´t worry
 about this complexity, Field accessor would take care for everything.
@@ -135,7 +135,7 @@ example 1: make accessor function into content class.::
 
         organization_resource = FhirResource(
             title=u"Fhir Organization Field",
-            model="fhir.resources.STU3.organization.Organization",
+            resource_type="Organization",
             fhir_release="STU3",
         )
 
