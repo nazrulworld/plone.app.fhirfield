@@ -29,6 +29,12 @@
 Background (plone.app.fhirfield)
 ================================
 
+Warning!!
+---------
+Do not use version ``5.0.0b1`` or ``5.0.0b2``, as both were experemental! see discussion here https://community.plone.org/t/custom-dexterity-field-data-type/12790
+
+
+
 `FHIR`_ (Fast Healthcare Interoperability Resources) is the industry standard for Healthcare system. Our intend to implement `FHIR`_ based system using `Plone`_! `plone.app.fhirfield`_ will make life easier to create, manage content for `FHIR resources`_ as well search facilities for any FHIR Resources.
 
 How It Works

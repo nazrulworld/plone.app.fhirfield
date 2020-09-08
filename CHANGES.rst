@@ -4,7 +4,8 @@ Changelog
 5.0.0b2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Nothing changed, but added some warnings for not to use either ``5.0.0b1`` version or this current version. See discussion here
+  https://community.plone.org/t/custom-dexterity-field-data-type/12790
 
 
 5.0.0b1 (2020-09-01)
