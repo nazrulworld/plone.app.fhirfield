@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.0b2 (unreleased)
+5.0.0b2 (2020-09-08)
 --------------------
 
 - Nothing changed, but added some warnings for not to use either ``5.0.0b1`` version or this current version. See discussion here
