@@ -54,8 +54,7 @@ def FhirResourceFieldWidget(field, request):
 
 
 class FhirResourceConverter(BaseDataConverter):
-    """Data converter for the FhirResourceWidget
-    """
+    """Data converter for the FhirResourceWidget"""
 
     def toWidgetValue(self, value):
         if IFhirResourceValue.providedBy(value):

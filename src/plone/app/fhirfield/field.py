@@ -1,4 +1,5 @@
 # _*_ coding:utf-8 _*_
+import inspect
 import os
 
 from fhirpath.enums import FHIR_VERSION
@@ -9,7 +10,6 @@ from fhirspec import FHIR_RELEASES
 from plone import api
 from plone.app.fhirfield.compat import _
 from plone.app.fhirfield.interfaces import IFhirResource
-from plone.app.fhirfield.interfaces import IFhirResourceModel
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.value import FhirResourceValue
 from pydantic.error_wrappers import ValidationError as pydValidationError
@@ -48,7 +48,11 @@ class FhirResource(Object):
     _model_class = None
 
     def __init__(
-        self, fhir_release, model=None, resource_type=None, **kw,
+        self,
+        fhir_release,
+        model=None,
+        resource_type=None,
+        **kw,
     ):
         """
         :arg model: dotted path of FHIR Model class
@@ -156,10 +160,10 @@ class FhirResource(Object):
                     msg += "\nOriginal Exception: {0!s}".format(exc)
                 raise reraise(Invalid, msg)
 
-            if not IFhirResourceModel.implementedBy(klass):
+            if "FHIRAbstractModel" not in str(inspect.getmro(klass)):
                 raise Invalid(
                     _(
-                        "{0!r} must be valid model class from fhirclient.model".format(
+                        "{0!r} must be valid model class from fhir.resources".format(
                             klass
                         )
                     )

@@ -7,9 +7,7 @@ import unittest
 from fhirpath.enums import FHIR_VERSION
 from fhirpath.utils import lookup_fhir_class
 from plone.app.fhirfield import value
-from plone.app.fhirfield.interfaces import IFhirResourceModel
 from zope.interface import Invalid
-from zope.interface import implementer
 from zope.schema.interfaces import WrongType
 
 from . import FHIR_FIXTURE_PATH
@@ -48,7 +46,8 @@ class ValueIntegrationTest(unittest.TestCase):
         # __bool__ should be True
         self.assertTrue(fhir_resource_value)
         self.assertTrue(
-            IFhirResourceModel.providedBy(fhir_resource_value.foreground_origin())
+            "FHIRAbstractModel"
+            in str(fhir_resource_value.foreground_origin().__class__.mro())
         )
         self.assertIsInstance(fhir_resource_value.stringify(), str)
 
@@ -142,20 +141,6 @@ class ValueIntegrationTest(unittest.TestCase):
             )
         except WrongType:
             pass
-
-        @implementer(IFhirResourceModel)
-        class TestBrokenInterfaceObject(object):
-            def __init__(self):
-                pass
-
-        broken_obj = TestBrokenInterfaceObject()
-        try:
-            fhir_resource_value._validate_object(broken_obj)
-            raise AssertionError(
-                "Code should not come here! because of validation error"
-            )
-        except Invalid as exc:
-            self.assertIn("An object has failed to implement", str(exc))
 
     def test_fhir_resource_value_pickling(self):
         """ """

@@ -9,21 +9,6 @@ from zope.interface import Interface
 from zope.schema.interfaces import IObject
 
 
-class IFhirResourceModel(Interface):
-    """ """
-
-    resource_type = Attribute("resource_type", _("Resource Type"))
-    id = Attribute("id", _("Logical id of this artifact."))
-    implicitRules = Attribute(
-        "implicitRules", _("A set of rules under which this content was created.")
-    )
-    language = Attribute("language", _("Language of the resource content."))
-    meta = Attribute("meta", _("Metadata about the resource"))
-
-    def json():
-        """ """
-
-
 class IFhirResource(IObject):
     """ """
 

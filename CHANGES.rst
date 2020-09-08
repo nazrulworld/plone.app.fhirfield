@@ -1,11 +1,18 @@
 Changelog
 =========
 
-4.0.1 (unreleased)
+4.1.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Improvements
 
+- Not any visibly improvement, but a lot of cleanup unused, unnecessary codes, in that impact made more slimmer version.
+
+Breakings
+
+- ``api`` module has been removed, use any import from ``plone.app.fhirfield`` instead.
+
+- ``IFhirResourceModel`` interface is no longer available.
 
 4.0.0 (2020-08-17)
 ------------------

@@ -98,7 +98,7 @@ class FieldIntegrationTest(unittest.TestCase):
                 "Code should not come here! as should be invalid error"
             )
         except Invalid as exc:
-            self.assertIn("must be valid model class from fhirclient.model", str(exc))
+            self.assertIn("must be valid model class from fhir.resources", str(exc))
 
         # test with invalid ResourceType
         try:
@@ -112,7 +112,8 @@ class FieldIntegrationTest(unittest.TestCase):
             )
         except Invalid as exc:
             self.assertIn(
-                "FakeResource is not valid fhir resource type!", str(exc),
+                "FakeResource is not valid fhir resource type!",
+                str(exc),
             )
 
         # Wrong base interface class

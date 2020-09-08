@@ -1,25 +1,20 @@
 # _*_ coding: utf-8 _*_
+import inspect
 import sys
 from collections import OrderedDict
 
 import jsonpatch
 import six
 from persistent import Persistent
-from plone import api
 from plone.app.fhirfield.compat import json
 from zope.interface import Invalid
 from zope.interface import implementer
-from zope.interface.exceptions import BrokenImplementation
-from zope.interface.exceptions import BrokenMethodImplementation
-from zope.interface.exceptions import DoesNotImplement
-from zope.interface.verify import verifyObject
 from zope.schema.interfaces import WrongType
 
-from .interfaces import IFhirResourceModel
 from .interfaces import IFhirResourceValue
 
 
-__author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
+__author__ = "Md Nazrul Islam <email2nazrul@gmail.com>"
 
 
 class ObjectStorage(Persistent):
@@ -29,18 +24,12 @@ class ObjectStorage(Persistent):
         self.raw = raw
 
     def __repr__(self):
-        return u"<ObjectStorage: {0!r}>".format(self.raw)
+        return "<ObjectStorage: {0!r}>".format(self.raw)
 
     def __eq__(self, other):
         if not isinstance(other, ObjectStorage):
             return NotImplemented
         return self.raw == other.raw
-
-    def __ne__(self, other):
-        equal = self.__eq__(other)
-        if equal is NotImplemented:
-            return NotImplemented
-        return not equal
 
     def __bool__(self):
         """ """
@@ -94,28 +83,17 @@ class FhirResourceValue(object):
             # will make little bit slow, so apply only if needed
             params["indent"] = 4
 
-        return self._storage.raw is not None and self._storage.raw.json(**params) or ""
+        return bool(self._storage.raw) and self._storage.raw.json(**params) or ""
 
     def _validate_object(self, obj):
         """ """
         if obj is None:
             return
 
-        try:
-            verifyObject(IFhirResourceModel, obj, False)
-
-        except (BrokenImplementation, BrokenMethodImplementation) as exc:
-            six.reraise(Invalid, Invalid(str(exc)), sys.exc_info()[2])
-
-        except DoesNotImplement as exc:
-            msg = "Object must be derived from valid FHIR resource model class!"
-            if api.env.debug_mode():
-                msg += "But it is found that object is derived from `{0}`".format(
-                    obj.__class__.__module__ + "." + obj.__class__.__name__
-                )
-                msg += "\nOriginal Exception: {0!s}".format(exc)
-
-            six.reraise(WrongType, WrongType(msg), sys.exc_info()[2])
+        if "FHIRAbstractModel" not in str(inspect.getmro(obj.__class__)):
+            raise WrongType(
+                "Object must be derived from valid FHIR resource model class!"
+            )
 
     def __init__(self, raw=None, encoding="utf-8"):
         """ """
@@ -146,7 +124,7 @@ class FhirResourceValue(object):
 
     def __setstate__(self, odict):
         """ """
-        for attr, value in six.iteritems(odict):
+        for attr, value in odict.items():
             object.__setattr__(self, attr, value)
 
     def __str__(self):
@@ -173,13 +151,7 @@ class FhirResourceValue(object):
     def __eq__(self, other):
         if not isinstance(other, FhirResourceValue):
             return NotImplemented
-        return self._storage.raw == other._storage.raw
-
-    def __ne__(self, other):
-        equal = self.__eq__(other)
-        if equal is NotImplemented:
-            return NotImplemented
-        return not equal
+        return self._storage == other._storage
 
     def __bool__(self):
         """ """
