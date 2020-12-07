@@ -24,7 +24,10 @@ class IFhirResource(IObject):
     index_mapping = JSONField(title=_("Index Mapping"), required=False)
 
     def from_dict(dict_value):
-        """ """
+        """FhirResourceValue from dict data"""
+
+    def from_resource_model(model_obj):
+        """FhirResourceValue from  fhir.resources"""
 
     def from_none():
         """Make FhirResourceValue isntance without FHIR data """

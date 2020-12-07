@@ -3,7 +3,10 @@ import json
 import os
 import unittest
 
+from fhirpath.enums import FHIR_VERSION
+from fhirpath.utils import lookup_fhir_class
 from plone import api
+from plone.app.fhirfield import field
 from plone.app.fhirfield.interfaces import IFhirResource
 from plone.app.fhirfield.interfaces import IFhirResourceValue
 from plone.app.fhirfield.testing import PLONE_APP_FHIRFIELD_INTEGRATION_TESTING
@@ -74,11 +77,11 @@ class DeserializerIntegrationTest(unittest.TestCase):
             title="Test Organization xxx",
         )
 
-        for _name, field in getFields(IFFOrganization).items():
+        for _name, field_ in getFields(IFFOrganization).items():
 
-            if not IFhirResource.providedBy(field):
+            if not IFhirResource.providedBy(field_):
                 continue
-            self.assert_field(context, field, json_dict)
+            self.assert_field(context, field_, json_dict)
 
     def test_deserializer(self):
         """ """
@@ -118,6 +121,45 @@ class DeserializerIntegrationTest(unittest.TestCase):
                 field_error["message"],
                 "Validation has been failed on provided FHIR data.",
             )
+
+    def test_deserializer_with_prepared_value(self):
+        """ """
+        body = {"@type": "FFOrganization", "title": "Test Organization xxx"}
+        organization = lookup_fhir_class(
+            "Organization", FHIR_VERSION["STU3"]
+        ).parse_file(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"))
+
+        obj = create(self.portal, body["@type"], id_=None, title=body["title"])
+        request = TestRequest()
+        deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
+        assert deserializer is not None
+
+        deserializer(validate_all=True, data={"organization_resource": organization})
+
+        notify(ObjectCreatedEvent(obj))
+
+        add(self.portal, obj)
+        self.assertTrue(IFhirResourceValue.providedBy(obj.organization_resource))
+
+        fhir_field = field.FhirResource(
+            title="Organization resource",
+            resource_type="Organization",
+            fhir_release="STU3",
+        )
+        organization_val = fhir_field.from_dict(organization.dict())
+        obj = create(self.portal, body["@type"], id_=None, title=body["title"])
+        request = TestRequest()
+        deserializer = queryMultiAdapter((obj, request), IDeserializeFromJson)
+        assert deserializer is not None
+
+        deserializer(
+            validate_all=True, data={"organization_resource": organization_val}
+        )
+
+        notify(ObjectCreatedEvent(obj))
+
+        add(self.portal, obj)
+        self.assertTrue(IFhirResourceValue.providedBy(obj.organization_resource))
 
 
 class DeserializerFunctionalTest(unittest.TestCase):

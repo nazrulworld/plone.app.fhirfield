@@ -376,3 +376,32 @@ class FieldIntegrationTest(unittest.TestCase):
             self.assertIn(
                 "expects resource type ``Organization``, but got ``Patient`", str(e)
             )
+
+    def test_from_resource_model(self):
+        """ """
+        with open(os.path.join(FHIR_FIXTURE_PATH, "Organization.json"), "r") as f:
+            json_dict = json.load(f)
+
+        organization = lookup_fhir_class("Organization", FHIR_VERSION["STU3"])(
+            **json_dict  # noqa: C815
+        )
+        fhir_field = field.FhirResource(
+            title="Organization resource",
+            resource_type="Organization",
+            fhir_release="STU3",
+        )
+        value = fhir_field.from_resource_model(organization)
+        self.assertEqual(value.foreground_origin(), organization)
+
+        fhir_field = field.FhirResource(
+            title="Patient resource",
+            resource_type="Patient",
+            fhir_release="STU3",
+        )
+        try:
+            value = fhir_field.from_resource_model(organization)
+            raise AssertionError(
+                "Code should not come here. as wrong content has been provided"
+            )
+        except WrongContainedType as exc:
+            self.assertIn("Wrong fhir resource value is provided", str(exc))

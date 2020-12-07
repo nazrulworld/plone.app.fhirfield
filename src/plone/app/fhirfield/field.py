@@ -102,6 +102,13 @@ class FhirResource(Object):
         self.validate(value)
         return value
 
+    def from_resource_model(self, model_obj):
+        """ """
+        value = FhirResourceValue(raw=model_obj, encoding="utf-8")
+        # do validation now
+        self.validate(value)
+        return value
+
     def from_none(self):
         """"""
         return FhirResourceValue()

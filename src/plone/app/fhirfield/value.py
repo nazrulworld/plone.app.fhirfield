@@ -81,7 +81,7 @@ class FhirResourceValue(object):
         params = {}
         if prettify:
             # will make little bit slow, so apply only if needed
-            params["indent"] = 4
+            params["indent"] = 2
 
         return bool(self._storage.raw) and self._storage.raw.json(**params) or ""
 

@@ -1,11 +1,14 @@
 Changelog
 =========
 
-4.1.1 (unreleased)
+4.2.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Improvements
 
+- Field deserializer is now accepting ``fhir.resources``'s model object, FhirResourceValue, alongside with string and dict type value.
+
+- ``FhirResource::from_resource_model`` method has been added.
 
 4.1.0 (2020-09-08)
 ------------------
