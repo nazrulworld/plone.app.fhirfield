@@ -30,7 +30,7 @@ zExceptions                       == 2.13.0
 zLOG                              == 2.11.2
 ZopeUndo                          == 2.12.0
 ZServer                           == 3.0
-Plone                             == 5.1.4
+Plone                             == 5.2.3
 Pillow                            == 5.2.0
 Products.ZCatalog                 == 3.0.3
 AccessControl                     == 3.0.14
