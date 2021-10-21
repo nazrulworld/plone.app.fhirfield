@@ -59,7 +59,7 @@ Products.ZSQLMethods              == 2.13.5
 alabaster==0.7.12
 appdirs==1.4.2
 astunparse==1.6.1
-Babel==2.6.0
+Babel==2.9.1
 certifi==2018.10.15
 chardet==3.0.4
 docutils==0.14
