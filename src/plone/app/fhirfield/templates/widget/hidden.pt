@@ -9,5 +9,5 @@
                        title view/title;
                        tabindex view/tabindex;
                        accesskey view/accesskey;
-                       value view/value/stringfy" />
+                       value python: view.value and view.value.stringify() or None" />
 </div>

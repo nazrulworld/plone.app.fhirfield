@@ -10,6 +10,7 @@ from plone.app.fhirfield.value import FhirResourceValue
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.testing import z2
+from z3c.form.interfaces import DISPLAY_MODE
 from z3c.form.interfaces import NOVALUE
 from z3c.form.interfaces import IDataConverter
 from z3c.form.interfaces import IFieldWidget
@@ -18,6 +19,7 @@ from zope.publisher.browser import TestRequest
 from zope.schema import getFields
 
 from . import FHIR_FIXTURE_PATH
+from .schema import HiddenFhirFieldForm
 from .schema import IFFOrganization
 
 
@@ -142,7 +144,7 @@ class WidgetIntegrationTest(unittest.TestCase):
         fhir_value_2 = converter.toWidgetValue(fhir_value2)
         self.assertEqual(json.loads(fhir_value_1), json.loads(fhir_value_2))
 
-        converter.widget.mode = "display"
+        converter.widget.mode = DISPLAY_MODE
 
         fhir_value_3 = converter.toWidgetValue(fhir_value_empty)
         self.assertEqual(fhir_value_3, "")
@@ -154,6 +156,34 @@ class WidgetIntegrationTest(unittest.TestCase):
             )
         except ValueError as exc:
             self.assertIn("Can not convert", str(exc))
+
+    def test_widget_issue_37(self):
+        """https://github.com/nazrulworld/plone.app.fhirfield/issues/37"""
+        fhir_form = HiddenFhirFieldForm(self.portal, self.request)
+        fhir_form.update()
+        fhir_widget = fhir_form.widgets["resource"]
+        fhir_widget.update()
+
+        self.assertEqual(
+            fhir_widget.render().strip(),
+            (
+                '<input id="form-widgets-resource" name="form.widgets.resource" '
+                'class="hidden-widget" type="hidden" />'
+            ),
+        )
+        fhir_field = getFields(fhir_form.schema)["resource"]
+        fhir_widget.value = fhir_field.from_dict(
+            {"resourceType": "Resource", "id": "909009"}
+        )
+        fhir_widget.update()
+        self.assertEqual(
+            fhir_widget.render().strip(),
+            (
+                '<input id="form-widgets-resource" name="form.widgets.resource" '
+                'value="{&quot;id&quot;: &quot;909009&quot;, &quot;resourceType&quot;:'
+                ' &quot;Resource&quot;}" class="hidden-widget" type="hidden" />'
+            ),
+        )
 
 
 class WidgetFunctionalTest(unittest.TestCase):

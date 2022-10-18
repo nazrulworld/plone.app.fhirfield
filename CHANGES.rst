@@ -4,7 +4,9 @@ Changelog
 4.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Bugfixes
+
+- `Issue-37: <https://github.com/nazrulworld/plone.app.fhirfield/issues/37>`_ Can not add a default value for fhirfield.
 
 
 4.2.0 (2020-12-07)

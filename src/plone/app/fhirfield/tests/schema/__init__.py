@@ -3,10 +3,38 @@ from plone.app.fhirfield import FhirResource
 from plone.dexterity.content import Container
 from plone.dexterity.content import Item
 from plone.supermodel import model
+from z3c.form import field
+from z3c.form import form
+from z3c.form.interfaces import HIDDEN_MODE
+from zope.interface import Interface
 from zope.interface import implementer
 
 
 __author__ = "Md Nazrul Islam<email2nazrul@gmail.com>"
+
+
+class IHiddenFhirField(Interface):
+    """ """
+
+    resource = FhirResource(
+        title=u"Resource field",
+        fhir_release="STU3",
+        resource_type="Resource",
+        required=False,
+    )
+
+
+class HiddenFhirFieldForm(form.Form):
+    """ """
+
+    ignoreContext = True
+    schema = IHiddenFhirField
+    fields = field.Fields(IHiddenFhirField)
+
+    def update(self):
+        """ """
+        super(HiddenFhirFieldForm, self).update()
+        self.widgets["resource"].mode = HIDDEN_MODE
 
 
 class IFFOrganization(model.Schema):
