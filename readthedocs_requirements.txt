@@ -1,4 +1,4 @@
-setuptools == 38.5.1
+setuptools == 65.5.1
 zc.buildout == 2.11.1
 # >>> start zope/plone dependencies >>
 Zope2                             == 2.13.27
